@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKYPAY Platform</title>
+<style>
+  body{font-family:Arial,sans-serif;background:#f1f5ff;color:#18213b;text-align:center;padding:50px;margin:0}
+  .card{background:white;max-width:500px;margin:0 auto;padding:30px;border-radius:14px;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+  h1{color:#2449a7;margin-top:0}
+  p{line-height:1.6}
+  .badge{display:inline-block;background:#e4ecff;color:#2449a7;padding:6px 12px;border-radius:20px;margin:5px;font-weight:bold}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>SKYPAY Platform</h1>
+    <p>আপনার প্রজেক্টের সার্ভার সফলভাবে সচল রয়েছে!</p>
+    <div>
+      <span class="badge">User Panel</span>
+      <span class="badge">Admin Panel</span>
+      <span class="badge">Live & Active</span>
+    </div>
+  </div>
+</body>
+</html>
