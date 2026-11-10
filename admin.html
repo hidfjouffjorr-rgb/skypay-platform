@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKYPAY - এডমিন কন্ট্রোল প্যানেল</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #334155;
+        }
+        .header h1 {
+            color: #38bdf8;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+        .card h3 {
+            color: #f43f5e;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            color: #fff;
+            border-radius: 6px;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #0284c7;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #0369a1;
+        }
+        .status-msg {
+            margin-top: 8px;
+            font-size: 13px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>SKYPAY Admin Control Panel</h1>
+        <p>এখান থেকে সব পরিবর্তন করলে ইউজারের প্যানেলে সাথে সাথে এডিট হবে</p>
+    </div>
+
+    <div class="grid-container">
+
+        <!-- Payment Number Settings -->
+        <div class="card">
+            <h3>পেমেন্ট নম্বর সেটিংস</h3>
+            <div class="form-group">
+                <label>বিকাশ নম্বর (bKash Number)</label>
+                <input type="text" id="bkashNumber" placeholder="০17xxxxxxxx">
+            </div>
+            <button onclick="saveSetting('bkash_number', 'bkashNumber', 'bkashMsg')">বিকাশ নম্বর আপডেট করুন</button>
+            <div id="bkashMsg" class="status-msg"></div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>নগদ নম্বর (Nagad Number)</label>
+                <input type="text" id="nagadNumber" placeholder="০17xxxxxxxx">
+            </div>
+            <button onclick="saveSetting('nagad_number', 'nagadNumber', 'nagadMsg')">নগদ নম্বর আপডেট করুন</button>
+            <div id="nagadMsg" class="status-msg"></div>
+        </div>
+
+        <!-- Deposit & Withdraw Settings -->
+        <div class="card">
+            <h3>ডিপোজিট ও উইথড্র নিয়ম</h3>
+            <div class="form-group">
+                <label>সর্বনিম্ন ডিপোজিট পরিমাণ (টাকা)</label>
+                <input type="number" id="minDeposit" placeholder="যেমন: 500">
+            </div>
+            <button onclick="saveSetting('min_deposit', 'minDeposit', 'depMsg')">ডিপোজিট লিমিট আপডেট করুন</button>
+            <div id="depMsg" class="status-msg"></div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>সর্বনিম্ন উইথড্র পরিমাণ (টাকা)</label>
+                <input type="number" id="minWithdraw" placeholder="যেমন: 1000">
+            </div>
+            <button onclick="saveSetting('min_withdraw', 'minWithdraw', 'withMsg')">উইথড্র লিমিট আপডেট করুন</button>
+            <div id="withMsg" class="status-msg"></div>
+        </div>
+
+        <!-- Product & Plan Settings -->
+        <div class="card">
+            <h3>প্রোডাক্ট ও মেয়াদের সেটিংস</h3>
+            <div class="form-group">
+                <label>প্রোডাক্টের নাম / প্ল্যান</label>
+                <input type="text" id="productName" placeholder="যেমন: VIP Package 1">
+            </div>
+            <div class="form-group">
+                <label>প্রোডাক্টের মেয়াদ (দিন)</label>
+                <input type="number" id="productValidity" placeholder="যেমন: 30">
+            </div>
+            <button onclick="saveProductSetting()">প্রোডাক্ট তথ্য আপডেট করুন</button>
+            <div id="prodMsg" class="status-msg"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // পেজ লোড হলে আগের সেভ করা ডেটাগুলো নিয়ে আসবে
+        window.onload = async function() {
+            try {
+                const res = await fetch('/api/settings');
+                const data = await res.json();
+                if(data.success) {
+                    if(data.settings.bkash_number) document.getElementById('bkashNumber').value = data.settings.bkash_number;
+                    if(data.settings.nagad_number) document.getElementById('nagadNumber').value = data.settings.nagad_number;
+                    if(data.settings.min_deposit) document.getElementById('minDeposit').value = data.settings.min_deposit;
+                    if(data.settings.min_withdraw) document.getElementById('minWithdraw').value = data.settings.min_withdraw;
+                    if(data.settings.product_name) document.getElementById('productName').value = data.settings.product_name;
+                    if(data.settings.product_validity) document.getElementById('productValidity').value = data.settings.product_validity;
+                }
+            } catch(e) {
+                console.error("Error loading settings");
+            }
+        };
+
+        // সিঙ্গেল সেটিং আপডেট ফাংশন
+        async function saveSetting(key, inputId, msgId) {
+            const val = document.getElementById(inputId).value;
+            const msg = document.getElementById(msgId);
+            
+            try {
+                const res = await fetch('/api/admin/update-settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: key, value: val })
+                });
+                const data = await res.json();
+                msg.style.color = data.success ? '#4ade80' : '#f87171';
+                msg.innerText = data.message;
+            } catch(e) {
+                msg.style.color = '#f87171';
+                msg.innerText = 'আপডেট ব্যর্থ হয়েছে!';
+            }
+        }
+
+        // প্রোডাক্ট সংক্রান্ত সেটিংস সেভ করার ফাংশন
+        async function saveProductSetting() {
+            const pName = document.getElementById('productName').value;
+            const pVal = document.getElementById('productValidity').value;
+            
+            await saveSetting('product_name', 'productName', 'prodMsg');
+            await saveSetting('product_validity', 'productValidity', 'prodMsg');
+        }
+    </script>
+</body>
+</html>
