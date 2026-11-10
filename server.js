@@ -1,88 +1,45 @@
-const express = require('express');
-const { Pool } = require('pg');
-const path = require('path');
-const bcrypt = require('bcrypt'); // পাসওয়ার্ড সিকিউর করার জন্য
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
-
-// PostgreSQL Database Connection
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
-
-// Database Table Creation
+// Database Table for Admin Settings (বিকাশ নম্বর, ডিপোজিট, উইথড্র ও প্রোডাক্টের মেয়াদ নিয়ন্ত্রণের জন্য)
 pool.query(`
-  CREATE TABLE IF NOT EXISTS users (
+  CREATE TABLE IF NOT EXISTS admin_settings (
     id SERIAL PRIMARY KEY,
-    mobile VARCHAR(20) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(20) DEFAULT 'user',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    setting_key VARCHAR(50) UNIQUE NOT NULL,
+    setting_value TEXT NOT NULL
   )
 `).then(() => {
-  console.log("Database connected & 'users' table ready.");
-}).catch(err => console.error("Database connection error:", err));
+  console.log("Admin Settings table ready.");
+}).catch(err => console.error("Settings table error:", err));
 
-// --- API ROUTES ---
+// --- ADMIN & USER APIs ---
 
-// 1. User Registration Route
-app.post('/api/register', async (req, res) => {
-  const { mobile, password } = req.body;
+// ১. ইউজারের জন্য সকল সেটিংস (বিকাশ নম্বর, প্রোডাক্ট মেয়াদ ইত্যাদি) ফেচ করার API
+app.get('/api/settings', async (req, res) => {
   try {
-    // চেক করা ইউজার আগে থেকেই আছে কিনা
-    const userCheck = await pool.query('SELECT * FROM users WHERE mobile = $1', [mobile]);
-    if (userCheck.rows.length > 0) {
-      return res.status(400).json({ success: false, message: 'این নম্বর দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!' });
-    }
-
-    // পাসওয়ার্ড হ্যাশ করা
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // নতুন ইউজার ডাটাবেসে সংরক্ষণ করা
-    await pool.query('INSERT INTO users (mobile, password) VALUES ($1, $2)', [mobile, hashedPassword]);
-    res.json({ success: true, message: 'সফলভাবে রেজিস্ট্রেশন সম্পন্ন হয়েছে!' });
+    const result = await pool.query('SELECT setting_key, setting_value FROM admin_settings');
+    const settings = {};
+    result.rows.forEach(row => {
+      settings[row.setting_key] = row.setting_value;
+    });
+    res.json({ success: true, settings });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে।' });
+    res.status(500).json({ success: false, message: 'ডেটা লোড করতে সমস্যা হয়েছে।' });
   }
 });
 
-// 2. User Login Route
-app.post('/api/login', async (req, res) => {
-  const { mobile, password } = req.body;
+// ২. এডমিন প্যানেল থেকে যেকোনো কিছু আপডেট বা এডিট করার API
+app.post('/api/admin/update-settings', async (req, res) => {
+  const { key, value } = req.body; // যেমন: key = 'bkash_number', value = '017xxxxxxxx'
   try {
-    const userResult = await pool.query('SELECT * FROM users WHERE mobile = $1', [mobile]);
-    if (userResult.rows.length === 0) {
-      return res.status(400).json({ success: false, message: 'ভুল নম্বর অথবা অ্যাকাউন্ট পাওয়া যায়নি।' });
-    }
-
-    const user = userResult.rows[0];
-    const isMatch = await bcrypt.compare(password, user.password);
+    await pool.query(`
+      INSERT INTO admin_settings (setting_key, setting_value) 
+      VALUES ($1, $2) 
+      ON CONFLICT (setting_key) 
+      DO UPDATE SET setting_value = $2
+    `, [key, value]);
     
-    if (!isMatch) {
-      return res.status(400).json({ success: false, message: 'পাসওয়ার্ড সঠিক নয়।' });
-    }
-
-    res.json({ success: true, message: 'লগইন সফল হয়েছে!', role: user.role });
+    res.json({ success: true, message: 'সফলভাবে আপডেট করা হয়েছে!' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে।' });
+    res.status(500).json({ success: false, message: 'আপডেট করতে সমস্যা হয়েছে।' });
   }
-});
-
-// Home Route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Server Start
-app.listen(port, () => {
-  console.log(`SKYPAY Server is running on port ${port}`);
 });
