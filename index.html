@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#eaf6e5">
+<meta name="theme-color" content="#00c853">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SKYPAY">
+
+<link rel="manifest" href="/manifest.json">
+
 <title>SKYPAY - Smart Platform</title>
+
 <style>
 :root{--green:#168438;--dark:#155329;--light:#eff8e9;--text:#183d24}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -45,7 +52,7 @@ button{cursor:pointer}
 .section-head a{font-size:12px;color:#20833c;text-decoration:none;font-weight:bold}
 .products{display:grid;grid-template-columns:1fr;gap:16px}
 .product{background:#fff;border-radius:23px;padding:12px;box-shadow:0 7px 20px #245d2512}
-.product-image{height:135px;border-radius:17px;background:linear-gradient(120deg,#e2f6d8,#8bcf72,#27843b);display:grid;place-items:center;color:#fff;font-family:Georgia,serif;font-size:28px;font-weight:bold;text-shadow:0 2px 8px #164b26}
+.product-image{height:135px;border-radius:17px;background:linear-gradient(120deg,#e2f6d8,#8bcf72,#27843b);display:grid;place-items:center;color:#fff;font-family:Georgia,serif;font-size:28px;font-weight:bold;text-shadow:0 2px 8px #164b26;overflow:hidden}
 .product h3{font-size:18px;margin:14px 4px;color:#174d29}
 .product-desc{font-size:12px;color:#748474;margin:0 4px 10px}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
@@ -74,6 +81,7 @@ input:focus{border:2px solid #39964b}
 @media(min-width:650px){.hero,.notice{max-width:650px;margin-left:auto;margin-right:auto}.quick{max-width:650px;margin-left:auto;margin-right:auto}.products{grid-template-columns:1fr 1fr;max-width:900px;margin:auto}.section{max-width:900px;margin:22px auto}.hero{min-height:300px}}
 </style>
 </head>
+
 <body>
 
 <header class="top">
@@ -230,20 +238,26 @@ $("authForm").addEventListener("submit",async e=>{
 function escapeHTML(value){
   return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
+
 async function loadProducts(){
   try{
     const response=await fetch("/api/products");
     const data=await response.json();
     const list=$("productList");
+
     if(!response.ok||!Array.isArray(data.products)||!data.products.length){
       list.innerHTML="<p>No products available right now.</p>";
       return;
     }
+
     list.innerHTML=data.products.map(p=>{
       const price=Number(p.price||0);
       const daily=Number(p.daily_estimate||0);
       const days=Number(p.duration_days||0);
-      const image=p.image_url?`<img src="${escapeHTML(p.image_url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:17px">`:"SKYPAY";
+      const image=p.image_url
+        ? `<img src="${escapeHTML(p.image_url)}" alt="${escapeHTML(p.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:17px">`
+        : "SKYPAY";
+
       return `<article class="product">
         <div class="product-image">${image}</div>
         <h3>${escapeHTML(p.name)}</h3>
@@ -257,6 +271,7 @@ async function loadProducts(){
         <button class="buy" onclick="openAuth('login')">VIEW / ACTIVATE</button>
       </article>`;
     }).join("");
+
   }catch(error){
     $("productList").innerHTML="<p>Products could not be loaded. Please refresh.</p>";
   }
@@ -268,6 +283,7 @@ function contactSupport(){
 function joinTelegram(){
   window.open("https://t.me/skypay_admin_bot","_blank");
 }
+
 async function shareSite(){
   const shareData={title:"SKYPAY",text:"Join SKYPAY",url:location.origin};
   try{
@@ -279,6 +295,19 @@ async function shareSite(){
       prompt("Copy website link",location.origin);
     }
   }catch(e){}
+}
+
+// Register service worker for PWA support
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("/service-worker.js")
+      .then(function (registration) {
+        console.log("SKYPAY App Ready", registration.scope);
+      })
+      .catch(function (error) {
+        console.error("SKYPAY App Setup Failed:", error);
+      });
+  });
 }
 
 loadProducts();
