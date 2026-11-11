@@ -8,7 +8,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #071124; color: #f8fafc; padding-bottom: 40px; }
         
-        /* Top App Bar */
         .app-header { background: linear-gradient(135deg, #10234b, #1769e8); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .user-welcome h3 { font-size: 16px; color: #fff; }
         .user-welcome span { font-size: 12px; color: #38bdf8; background: rgba(56,189,248,0.15); padding: 2px 8px; border-radius: 20px; }
@@ -16,8 +15,7 @@
 
         .container { max-width: 480px; margin: 0 auto; padding: 15px; }
 
-        /* Premium Balance Card */
-        .balance-box { background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ebad7); border-radius: 20px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(29,78,216,0.35); position: relative; overflow: hidden; }
+        .balance-box { background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ebad7); border-radius: 20px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(29,78,216,0.35); }
         .balance-box small { color: #dbeafe; font-size: 13px; font-weight: 500; }
         .balance-amount { font-size: 32px; font-weight: 800; margin: 8px 0 16px; color: #fff; }
         .balance-actions { display: flex; gap: 10px; }
@@ -25,7 +23,6 @@
         .btn-topup { background: #fff; color: #1d4ed8; }
         .btn-withdraw { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
 
-        /* Quick Menu Grid */
         .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
         .menu-item { background: #1e293b; border: 1px solid #334155; padding: 14px 8px; border-radius: 14px; text-align: center; cursor: pointer; transition: 0.2s; }
         .menu-item:hover { border-color: #38bdf8; transform: translateY(-2px); background: #26334d; }
@@ -33,20 +30,26 @@
         .menu-icon { font-size: 22px; margin-bottom: 6px; }
         .menu-text { font-size: 11px; color: #cbd5e1; font-weight: 600; }
 
-        /* Modern Cards */
         .card { background: #1e293b; border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .card-title { font-size: 15px; font-weight: 700; color: #f43f5e; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; }
         
         .info-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; color: #94a3b8; }
         .info-row span:last-child { font-weight: 700; color: #fff; }
 
-        /* Download Section */
         .download-box { background: linear-gradient(135deg, #0f172a, #1e293b); text-align: center; border: 1px solid #38bdf844; }
         .apk-btn { display: block; width: 100%; padding: 12px; background: #10b981; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; margin-top: 12px; text-align: center; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
-        .apk-btn:hover { background: #059669; }
+        
+        .logout-btn { width: 100%; padding: 12px; background: #ef4444; border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; }
 
-        .logout-btn { width: 100%; padding: 12px; background: #ef4444; border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
-        .logout-btn:hover { background: #dc2626; }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; padding: 20px; }
+        .modal-content { background: #1e293b; padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid #334155; }
+        .modal-content h3 { color: #38bdf8; margin-bottom: 15px; font-size: 18px; text-align: center; }
+        .modal-content input, .modal-content select { width: 100%; padding: 12px; margin-bottom: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 8px; outline: none; }
+        .modal-btns { display: flex; gap: 10px; }
+        .modal-btns button { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-submit { background: #2563eb; color: white; }
+        .btn-close { background: #475569; color: white; }
     </style>
 </head>
 <body>
@@ -60,37 +63,34 @@
     </div>
 
     <div class="container">
-        <!-- Balance Card -->
         <div class="balance-box">
             <small>অ্যাভেইলেবল ব্যালেন্স</small>
             <div class="balance-amount" id="userBalance">৳ 0.00</div>
             <div class="balance-actions">
-                <button class="btn-topup" onclick="alert('ডিপোজিট অপশন')">টপ আপ (Top Up)</button>
-                <button class="btn-withdraw" onclick="alert('উইথড্র অপশন')">উইথড্র</button>
+                <button class="btn-topup" onclick="openModal('depositModal')">টপ আপ (Top Up)</button>
+                <button class="btn-withdraw" onclick="openModal('withdrawModal')">উইথড্র</button>
             </div>
         </div>
 
-        <!-- Quick Menu Grid -->
         <div class="menu-grid">
-            <div class="menu-item" onclick="alert('VIP Plans')">
+            <div class="menu-item" onclick="openModal('vipModal')">
                 <span class="menu-icon">👑</span>
                 <span class="menu-text">VIP প্ল্যান</span>
             </div>
-            <div class="menu-item" onclick="alert('Orders')">
+            <div class="menu-item" onclick="alert('আপনার কোনো অর্ডার নেই।')">
                 <span class="menu-icon">📦</span>
                 <span class="menu-text">অর্ডারস</span>
             </div>
-            <div class="menu-item" onclick="alert('Network')">
+            <div class="menu-item" onclick="alert('আপনার রেফারেল লিংক: https://skypay.onrender.com/?ref=user')">
                 <span class="menu-icon">👥</span>
                 <span class="menu-text">রেফারেল</span>
             </div>
-            <div class="menu-item" onclick="alert('Support')">
+            <div class="menu-item" onclick="openModal('supportModal')">
                 <span class="menu-icon">🎧</span>
                 <span class="menu-text">সাপোর্ট</span>
             </div>
         </div>
 
-        <!-- Official Payment Numbers -->
         <div class="card">
             <div class="card-title"><span>অফিসিয়াল পেমেন্ট নম্বর</span> 💳</div>
             <div class="info-row">
@@ -103,7 +103,6 @@
             </div>
         </div>
 
-        <!-- Rules & Limits -->
         <div class="card">
             <div class="card-title"><span>নিয়মাবলী ও লিমিট</span> 📊</div>
             <div class="info-row">
@@ -116,7 +115,6 @@
             </div>
         </div>
 
-        <!-- Active Package -->
         <div class="card">
             <div class="card-title"><span>বর্তমান প্যাকেজ</span> ⭐️</div>
             <div class="info-row">
@@ -129,7 +127,6 @@
             </div>
         </div>
 
-        <!-- Mobile App Download Box -->
         <div class="card download-box">
             <h3 style="font-size: 16px; margin-bottom: 5px; color: #38bdf8;">SKYPAY মোবাইল অ্যাপ</h3>
             <p style="font-size: 12px; color: #94a3b8;">অফিসিয়াল অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন</p>
@@ -139,7 +136,61 @@
         <button class="logout-btn" onclick="handleLogout()">লগআউট করুন</button>
     </div>
 
+    <!-- Modals -->
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <h3>ডিপোজিট (Top Up) করুন</h3>
+            <input type="number" id="depAmount" placeholder="টাকার পরিমাণ লিখুন">
+            <input type="text" id="depTrx" placeholder="ট্রানজ্যাকশন আইডি (TrxID) দিন">
+            <div class="modal-btns">
+                <button class="btn-submit" onclick="alert('ডিপোজিট রিকোয়েস্ট সফল হয়েছে!'); closeModal('depositModal');">জমা দিন</button>
+                <button class="btn-close" onclick="closeModal('depositModal')">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <h3>উইথড্র রিকোয়েস্ট</h3>
+            <input type="number" id="wdAmount" placeholder="উইথড্র পরিমাণ লিখুন">
+            <input type="text" id="wdNumber" placeholder="আপনার বিকাশ/নগদ নম্বর">
+            <div class="modal-btns">
+                <button class="btn-submit" onclick="alert('উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!'); closeModal('withdrawModal');">রিকোয়েস্ট পাঠান</button>
+                <button class="btn-close" onclick="closeModal('withdrawModal')">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIP Plans Modal -->
+    <div id="vipModal" class="modal">
+        <div class="modal-content">
+            <h3>VIP মেম্বারশিপ প্ল্যান</h3>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 10px; text-align: center;">অ্যাডমিন প্যানেল থেকে সেট করা বর্তমান প্ল্যানটি উপভোগ করুন।</p>
+            <div class="modal-btns">
+                <button class="btn-submit" onclick="alert('প্ল্যান সাবস্ক্রাইব করা হয়েছে!'); closeModal('vipModal');">প্ল্যান কিনুন</button>
+                <button class="btn-close" onclick="closeModal('vipModal')">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <h3>২৪/৭ কাস্টমার সাপোর্ট</h3>
+            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">যেকোনো সমস্যায় আমাদের টেলিগ্রাম বা লাইভ চ্যাটে যোগাযোগ করুন।</p>
+            <div class="modal-btns">
+                <button class="btn-submit" onclick="alert('সাপোর্ট টিমের সাথে যুক্ত হচ্ছেন...'); closeModal('supportModal');">লাইভ চ্যাট</button>
+                <button class="btn-close" onclick="closeModal('supportModal')">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
         async function loadAdminData() {
             try {
                 const res = await fetch('/api/settings');
