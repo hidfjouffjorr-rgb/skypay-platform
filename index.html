@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#eaf6e5">
+<title>SKYPAY - Smart Platform</title>
+<style>
+:root{--green:#168438;--dark:#155329;--light:#eff8e9;--text:#183d24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#eaf5e5;color:var(--text);padding-bottom:95px}
+button,input{font:inherit}
+button{cursor:pointer}
+.top{height:75px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px;font-size:25px;font-weight:900;color:#176b32}
+.logo{width:43px;height:43px;border-radius:15px;background:linear-gradient(145deg,#5fc94d,#08702d);display:grid;place-items:center;color:#fff;font-size:24px;box-shadow:0 5px 12px #277c3430}
+.top-actions{display:flex;gap:10px}
+.round{width:43px;height:43px;border:0;border-radius:50%;background:#fff;color:#176b32;font-size:22px}
+.hero{margin:8px 15px 20px;border-radius:27px;min-height:275px;padding:25px 20px;position:relative;overflow:hidden;background:linear-gradient(115deg,#e5f9d8 0%,#a8df8e 48%,#2c963d 100%);box-shadow:0 9px 24px #377b3020}
+.hero:after{content:"🌿";position:absolute;right:-5px;bottom:0;font-size:130px;opacity:.45}
+.hero .eyebrow{font-size:11px;letter-spacing:3px;font-weight:bold;color:#245f2d}
+.hero h1{font-family:Georgia,serif;font-size:35px;line-height:1.08;max-width:255px;margin:13px 0;color:#164d25}
+.hero p{font-size:13px;line-height:1.5;max-width:235px;color:#315e38}
+.hero .pill{display:inline-block;margin-top:18px;background:#ffffffc9;border-radius:20px;padding:9px 13px;font-size:11px;font-weight:bold;color:#246b32}
+.quick{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:0 12px 22px}
+.quick-item{background:#fff;border-radius:19px;padding:11px 3px 13px;text-align:center;box-shadow:0 5px 16px #245d2515;min-width:0}
+.quick-icon{width:48px;height:48px;border-radius:16px;margin:0 auto 8px;display:grid;place-items:center;color:white;font-size:24px;font-weight:bold;box-shadow:0 5px 12px #0002}
+.q-green{background:linear-gradient(135deg,#61c64d,#08752d)}
+.q-orange{background:linear-gradient(135deg,#ffc24b,#ed8d00)}
+.q-purple{background:linear-gradient(135deg,#b26cf1,#7633ce)}
+.q-teal{background:linear-gradient(135deg,#43d6b1,#079a7a)}
+.q-blue{background:linear-gradient(135deg,#55b8f4,#176dc8)}
+.quick-item b{font-size:10px;display:block;white-space:nowrap}
+.quick-item small{font-size:9px;color:#71836f;display:block;margin-top:5px}
+.notice{margin:15px;background:#fff;border-radius:24px;padding:18px;box-shadow:0 7px 20px #245d2512}
+.notice-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.notice h3{font-size:18px;color:#175c2d}
+.notice p{font-size:13px;line-height:1.7;color:#637365}
+.soft-btn,.telegram-btn{width:100%;padding:14px;border:0;border-radius:15px;margin-top:12px;font-weight:bold}
+.soft-btn{background:#e8f5df;color:#176b32}
+.telegram-btn{background:linear-gradient(90deg,#168438,#59b84c);color:white}
+.section{margin:22px 15px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.section-head h2{font-size:20px;color:#17552a}
+.section-head a{font-size:12px;color:#20833c;text-decoration:none;font-weight:bold}
+.products{display:grid;grid-template-columns:1fr;gap:16px}
+.product{background:#fff;border-radius:23px;padding:12px;box-shadow:0 7px 20px #245d2512}
+.product-image{height:135px;border-radius:17px;background:linear-gradient(120deg,#e2f6d8,#8bcf72,#27843b);display:grid;place-items:center;color:#fff;font-family:Georgia,serif;font-size:28px;font-weight:bold;text-shadow:0 2px 8px #164b26}
+.product h3{font-size:18px;margin:14px 4px;color:#174d29}
+.product-desc{font-size:12px;color:#748474;margin:0 4px 10px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
+.stat{background:#eff8e9;border-radius:13px;padding:12px 2px;text-align:center;min-width:0}
+.stat b{font-size:12px;display:block;color:#174b28;overflow-wrap:anywhere}
+.stat small{font-size:9px;color:#71836f;display:block;margin-top:6px}
+.buy{width:100%;border:0;border-radius:28px;padding:15px;background:linear-gradient(90deg,#168438,#5dbb4b);color:#fff;font-size:15px;font-weight:bold}
+.disclaimer{font-size:10px;color:#738272;line-height:1.5;margin:12px 4px 2px}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:5;background:#f5fbea;border-top:1px solid #d8e8d1;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 7px 12px}
+.bottom a{text-decoration:none;color:#70866c;text-align:center;font-size:11px;font-weight:bold;padding:8px 0;border-radius:16px}
+.bottom a span{display:block;font-size:23px;margin-bottom:4px}
+.bottom a.active{background:linear-gradient(135deg,#55b94b,#08732e);color:#fff;box-shadow:0 5px 12px #167e3435}
+.modal-bg{display:none;position:fixed;inset:0;z-index:20;background:#071b0dbb;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:17px}
+.modal{background:#fff;border-radius:28px;padding:25px;width:100%;max-width:430px;max-height:90vh;overflow:auto;position:relative}
+.close{position:absolute;right:17px;top:15px;border:0;background:#eaf5e5;color:#176b32;border-radius:50%;width:37px;height:37px;font-size:23px}
+.modal .mini{font-size:11px;letter-spacing:2px;color:#82927f;font-weight:bold;margin-top:22px}
+.modal h2{font-size:28px;color:#123d20;margin:9px 0}
+.modal .sub{font-size:13px;color:#718273;margin-bottom:20px;line-height:1.5}
+label{display:block;font-size:12px;font-weight:bold;margin:15px 0 7px;color:#183d24}
+input{width:100%;padding:16px;border:1px solid #dce8d9;border-radius:15px;font-size:15px;outline:none;background:#fff}
+input:focus{border:2px solid #39964b}
+.submit{width:100%;padding:17px;border:0;border-radius:30px;margin-top:22px;background:linear-gradient(90deg,#16883b,#62bd4c);color:#fff;font-weight:bold}
+.switch{text-align:center;margin-top:17px;font-size:13px;color:#617264}
+.switch a{color:#16883b;font-weight:bold;text-decoration:none}
+.message{font-size:13px;margin-top:12px;color:#b12b2b;line-height:1.5}
+@media(min-width:650px){.hero,.notice{max-width:650px;margin-left:auto;margin-right:auto}.quick{max-width:650px;margin-left:auto;margin-right:auto}.products{grid-template-columns:1fr 1fr;max-width:900px;margin:auto}.section{max-width:900px;margin:22px auto}.hero{min-height:300px}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><div class="logo">S</div>SKYPAY</div>
+  <div class="top-actions">
+    <button class="round" onclick="openNotice()" aria-label="Notice">♧</button>
+    <button class="round" onclick="openAuth('login')" aria-label="Account">♙</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">SMART PLATFORM · SKYPAY</div>
+  <h1>Build Your Brighter Tomorrow</h1>
+  <p>Welcome to SKYPAY. Explore products and manage your account in one place.</p>
+  <span class="pill">🌱 GROW WITH CONFIDENCE</span>
+</section>
+
+<section class="quick">
+  <div class="quick-item" onclick="openAuth('login')"><div class="quick-icon q-green">$</div><b>Recharge</b><small>Add Balance</small></div>
+  <div class="quick-item" onclick="openAuth('login')"><div class="quick-icon q-orange">▤</div><b>Withdraw</b><small>Request</small></div>
+  <div class="quick-item" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})"><div class="quick-icon q-purple">✓</div><b>Products</b><small>Explore</small></div>
+  <div class="quick-item" onclick="contactSupport()"><div class="quick-icon q-teal">▢</div><b>Service</b><small>Support</small></div>
+  <div class="quick-item" onclick="joinTelegram()"><div class="quick-icon q-blue">➤</div><b>Channel</b><small>Join Now</small></div>
+</section>
+
+<section class="notice">
+  <div class="notice-head"><h3>🌿 SKYPAY Official Notice</h3><span>📢</span></div>
+  <p>Welcome to SKYPAY! Create your account to explore the platform. Please read product details and payment terms carefully before making any transaction.</p>
+  <button class="soft-btn" onclick="contactSupport()">▢ Contact Support</button>
+  <button class="telegram-btn" onclick="joinTelegram()">➤ Join Telegram</button>
+</section>
+
+<section class="section" id="products">
+  <div class="section-head">
+    <h2>Our Products</h2>
+    <a href="dashboard.html">My Dashboard →</a>
+  </div>
+  <div class="products" id="productList">
+    <div class="product">
+      <div class="product-image">SKYPAY</div>
+      <h3>Loading products...</h3>
+    </div>
+  </div>
+  <p class="disclaimer">Important: Daily and total figures are estimates only, not guaranteed returns. Review all terms and risks before making a payment.</p>
+</section>
+
+<nav class="bottom">
+  <a class="active" href="index.html"><span>⌂</span>Home</a>
+  <a href="dashboard.html"><span>＄</span>Ordered</a>
+  <a href="dashboard.html#team"><span>♧</span>Team</a>
+  <a href="#" onclick="shareSite();return false"><span>♧</span>Share</a>
+  <a href="#" onclick="openAuth('login');return false"><span>♙</span>My</a>
+</nav>
+
+<div class="modal-bg" id="authModal">
+  <div class="modal">
+    <button class="close" onclick="closeModal()">×</button>
+    <div class="mini">SKYPAY ACCOUNT</div>
+    <h2 id="formTitle">Plant Your Seed</h2>
+    <p class="sub" id="formSubtitle">Create an account to start your journey.</p>
+    <form id="authForm">
+      <div id="nameField">
+        <label>YOUR NAME</label>
+        <input id="name" autocomplete="name" placeholder="Enter your name" required>
+      </div>
+      <label>PHONE NUMBER</label>
+      <input id="phone" type="tel" autocomplete="tel" placeholder="+8801XXXXXXXXX" required>
+      <label>PASSWORD</label>
+      <input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="Enter your password" required>
+      <div id="refField">
+        <label>INVITATION CODE</label>
+        <input id="referral" placeholder="Invitation code (optional)">
+      </div>
+      <button class="submit" id="submitBtn" type="submit">CONFIRM REGISTRATION</button>
+      <div class="message" id="message" role="status"></div>
+    </form>
+    <div class="switch"><span id="switchText">Already have an account?</span>
+      <a href="#" id="switchLink" onclick="toggleAuth();return false">Log in</a>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="noticeModal">
+  <div class="modal">
+    <button class="close" onclick="closeNotice()">×</button>
+    <div class="mini">NOTICE</div>
+    <h2>SKYPAY Official Notice</h2>
+    <p class="sub">Welcome! Please use the official support channel for help with your account and transactions. Never share your password or verification codes.</p>
+    <button class="soft-btn" onclick="contactSupport()">Contact Support</button>
+    <button class="telegram-btn" onclick="joinTelegram()">Join Telegram</button>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let authMode = "register";
+
+function openAuth(mode){
+  authMode=mode;
+  updateAuthForm();
+  $("authModal").style.display="flex";
+}
+function closeModal(){ $("authModal").style.display="none"; }
+function closeNotice(){ $("noticeModal").style.display="none"; }
+function openNotice(){ $("noticeModal").style.display="flex"; }
+
+function toggleAuth(){
+  authMode=authMode==="register"?"login":"register";
+  updateAuthForm();
+}
+function updateAuthForm(){
+  const isRegister=authMode==="register";
+  $("formTitle").textContent=isRegister?"Plant Your Seed":"Welcome Back";
+  $("formSubtitle").textContent=isRegister?"Create an account to start your journey.":"Log in to your SKYPAY account.";
+  $("nameField").style.display=isRegister?"block":"none";
+  $("name").required=isRegister;
+  $("refField").style.display=isRegister?"block":"none";
+  $("submitBtn").textContent=isRegister?"CONFIRM REGISTRATION":"LOG IN";
+  $("switchText").textContent=isRegister?"Already have an account? ":"New to SKYPAY? ";
+  $("switchLink").textContent=isRegister?"Log in":"Register";
+  $("message").textContent="";
+}
+
+$("authForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  $("message").style.color="#718273";
+  $("message").textContent="Please wait...";
+  const phone=$("phone").value.trim();
+  const password=$("password").value;
+  const body=authMode==="register"
+    ? {name:$("name").value.trim(),phone,password,referralCode:$("referral").value.trim()}
+    : {phone,password};
+
+  try{
+    const endpoint=authMode==="register"?"/api/register":"/api/login";
+    const response=await fetch(endpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(body)
+    });
+    const data=await response.json();
+    if(!response.ok) throw new Error(data.error||"Request failed");
+    localStorage.setItem("skypay_token",data.token);
+    localStorage.setItem("skypay_user",JSON.stringify(data.user));
+    $("message").style.color="green";
+    $("message").textContent="Success! Opening dashboard...";
+    setTimeout(()=>location.href="dashboard.html",700);
+  }catch(error){
+    $("message").style.color="#b12b2b";
+    $("message").textContent=error.message||"Connection error. Please try again.";
+  }
+});
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+async function loadProducts(){
+  try{
+    const response=await fetch("/api/products");
+    const data=await response.json();
+    const list=$("productList");
+    if(!response.ok||!Array.isArray(data.products)||!data.products.length){
+      list.innerHTML="<p>No products available right now.</p>";
+      return;
+    }
+    list.innerHTML=data.products.map(p=>{
+      const price=Number(p.price||0);
+      const daily=Number(p.daily_estimate||0);
+      const days=Number(p.duration_days||0);
+      const image=p.image_url?`<img src="${escapeHTML(p.image_url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:17px">`:"SKYPAY";
+      return `<article class="product">
+        <div class="product-image">${image}</div>
+        <h3>${escapeHTML(p.name)}</h3>
+        <p class="product-desc">${escapeHTML(p.description||"SKYPAY product")}</p>
+        <div class="stats">
+          <div class="stat"><b>৳${price.toLocaleString()}</b><small>PRICE</small></div>
+          <div class="stat"><b>৳${daily.toLocaleString()}</b><small>DAILY EST.</small></div>
+          <div class="stat"><b>${days}</b><small>DAY</small></div>
+          <div class="stat"><b>৳${(daily*days).toLocaleString()}</b><small>EST. TOTAL</small></div>
+        </div>
+        <button class="buy" onclick="openAuth('login')">VIEW / ACTIVATE</button>
+      </article>`;
+    }).join("");
+  }catch(error){
+    $("productList").innerHTML="<p>Products could not be loaded. Please refresh.</p>";
+  }
+}
+
+function contactSupport(){
+  window.open("https://t.me/skypay_admin_bot","_blank");
+}
+function joinTelegram(){
+  window.open("https://t.me/skypay_admin_bot","_blank");
+}
+async function shareSite(){
+  const shareData={title:"SKYPAY",text:"Join SKYPAY",url:location.origin};
+  try{
+    if(navigator.share) await navigator.share(shareData);
+    else if(navigator.clipboard){
+      await navigator.clipboard.writeText(location.origin);
+      alert("Website link copied");
+    }else{
+      prompt("Copy website link",location.origin);
+    }
+  }catch(e){}
+}
+
+loadProducts();
+</script>
+</body>
+</html>
