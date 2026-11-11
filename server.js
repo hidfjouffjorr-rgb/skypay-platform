@@ -48,6 +48,13 @@ const adminLimiter = rateLimit({
   limit: 15
 });
 
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  standardHeaders: "draft-7",
+  legacyHeaders: false
+});
+
 function makeToken(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "7d"
@@ -109,9 +116,47 @@ function validAmountOrZero(value) {
   return Number.isFinite(Number(value)) && Number(value) >= 0;
 }
 
+// TELEGRAM NOTIFICATION
+async function sendTelegramMessage(message) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  if (!botToken || !chatId) {
+    console.error("Telegram configuration is missing.");
+    return false;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.telegram.org/bot${botToken}/sendMessage`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message
+        })
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.ok) {
+      console.error("Telegram error:", result);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Telegram notification failed:", error.message);
+    return false;
+  }
+}
+
 // DATABASE INITIALIZATION AND MIGRATION
 async function initDatabase() {
-  // Create or repair users table
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -142,11 +187,8 @@ async function initDatabase() {
     ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'active';
     ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
-    -- Old username column must not require a separate username
     ALTER TABLE users ALTER COLUMN username DROP NOT NULL;
 
-    -- Some old databases have a password column.
-    -- Make it optional; new passwords are stored in password_hash.
     DO $$
     BEGIN
       IF EXISTS (
@@ -164,7 +206,6 @@ async function initDatabase() {
       ON users(phone) WHERE phone IS NOT NULL;
   `);
 
-  // Products
   await pool.query(`
     CREATE TABLE IF NOT EXISTS products (
       id SERIAL PRIMARY KEY,
@@ -179,7 +220,6 @@ async function initDatabase() {
     );
   `);
 
-  // Payment requests
   await pool.query(`
     CREATE TABLE IF NOT EXISTS payment_requests (
       id SERIAL PRIMARY KEY,
@@ -196,7 +236,6 @@ async function initDatabase() {
     );
   `);
 
-  // Plans
   await pool.query(`
     CREATE TABLE IF NOT EXISTS plans (
       id SERIAL PRIMARY KEY,
@@ -211,7 +250,33 @@ async function initDatabase() {
     );
   `);
 
-  // Add demo products only if product table is empty
+  // AI CHAT HISTORY
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS chat_messages (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      role VARCHAR(20) NOT NULL,
+      content TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE INDEX IF NOT EXISTS chat_messages_user_created_idx
+    ON chat_messages(user_id, created_at);
+  `);
+
+  // AI SUPPORT ESCALATIONS
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS chat_escalations (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      message TEXT NOT NULL,
+      reason TEXT DEFAULT '',
+      status VARCHAR(20) NOT NULL DEFAULT 'pending',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  // DEMO PRODUCTS
   const products = await pool.query("SELECT COUNT(*) FROM products");
 
   if (Number(products.rows[0].count) === 0) {
@@ -320,15 +385,7 @@ app.post("/api/register", authLimiter, async (req, res) => {
        (uid, username, name, phone, password_hash, referral_code, referred_by)
        VALUES ($1,$2,$3,$4,$5,$6,$7)
        RETURNING id,uid,username,name,phone,referral_code,balance,status`,
-      [
-        uid,
-        phone,
-        name,
-        phone,
-        passwordHash,
-        code,
-        referrer
-      ]
+      [uid, phone, name, phone, passwordHash, code, referrer]
     );
 
     const user = result.rows[0];
@@ -724,6 +781,259 @@ app.get("/api/team", userAuth, async (req, res) => {
   }
 });
 
+// AI CHAT HISTORY
+app.get("/api/chat/history", userAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id,role,content,created_at
+       FROM (
+         SELECT id,role,content,created_at
+         FROM chat_messages
+         WHERE user_id=$1
+         ORDER BY id DESC
+         LIMIT 50
+       ) recent
+       ORDER BY id ASC`,
+      [req.userId]
+    );
+
+    res.json({
+      messages: result.rows
+    });
+
+  } catch (error) {
+    console.error("Chat history:", error);
+
+    res.status(500).json({
+      error: "Could not load chat history."
+    });
+  }
+});
+
+// AI LIVE CHAT
+app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
+  try {
+    const message = String(req.body.message || "").trim();
+
+    if (!message || message.length > 2000) {
+      return res.status(400).json({
+        error: "Message must be between 1 and 2000 characters."
+      });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(503).json({
+        error: "AI service is not configured. Please contact support."
+      });
+    }
+
+    const userResult = await pool.query(
+      `SELECT id,uid,name,phone
+       FROM users
+       WHERE id=$1`,
+      [req.userId]
+    );
+
+    if (!userResult.rows.length) {
+      return res.status(404).json({
+        error: "User not found."
+      });
+    }
+
+    const user = userResult.rows[0];
+
+    // Save user message
+    await pool.query(
+      `INSERT INTO chat_messages (user_id,role,content)
+       VALUES ($1,'user',$2)`,
+      [req.userId, message]
+    );
+
+    // Get recent conversation
+    const historyResult = await pool.query(
+      `SELECT role,content
+       FROM (
+         SELECT role,content,id
+         FROM chat_messages
+         WHERE user_id=$1
+         ORDER BY id DESC
+         LIMIT 12
+       ) recent
+       ORDER BY id ASC`,
+      [req.userId]
+    );
+
+    const instructions = `
+You are SKYPAY's helpful customer support AI.
+
+Reply in the same language as the user. If the user writes Bengali,
+reply in simple Bengali.
+
+Help with SKYPAY registration, login, profile, products,
+deposit requests, withdrawal requests and general website navigation.
+
+Never ask for passwords, OTPs, API keys, card details or secret tokens.
+Never claim a deposit or withdrawal has been approved unless the system
+actually confirms it. Never claim you have changed a user's account.
+
+Do not promise guaranteed profit, investment returns or earnings.
+For money, balance, payment approval, account restrictions or other
+private account matters that you cannot verify, ask the user to contact
+a human administrator.
+
+If you cannot confidently solve the problem, or the user asks for a
+human administrator, set needs_human to true.
+
+Return ONLY valid JSON in this exact format:
+{
+  "reply": "Your helpful answer to the user",
+  "needs_human": false,
+  "reason": ""
+}
+
+If human help is required, set needs_human to true and give a short
+reason in the reason field. Keep the reply polite and helpful.
+`;
+
+    const inputMessages = historyResult.rows.map(item => ({
+      role: item.role === "assistant" ? "assistant" : "user",
+      content: item.content
+    }));
+
+    let aiResponse;
+
+    try {
+      const response = await fetch(
+        "https://api.openai.com/v1/responses",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+            instructions,
+            input: inputMessages,
+            max_output_tokens: 700
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("OpenAI API error:", data);
+        throw new Error("AI service request failed.");
+      }
+
+      aiResponse = data.output_text || "";
+
+      if (!aiResponse && Array.isArray(data.output)) {
+        for (const item of data.output) {
+          for (const part of item.content || []) {
+            if (part.type === "output_text") {
+              aiResponse += part.text || "";
+            }
+          }
+        }
+      }
+
+      if (!aiResponse) {
+        throw new Error("AI returned an empty response.");
+      }
+
+    } catch (aiError) {
+      console.error("AI chat error:", aiError.message);
+
+      await pool.query(
+        `INSERT INTO chat_escalations (user_id,message,reason)
+         VALUES ($1,$2,$3)`,
+        [req.userId, message, "AI service error"]
+      );
+
+      await sendTelegramMessage(
+        "SKYPAY URGENT SUPPORT\n\n" +
+        "AI service could not respond.\n" +
+        "User: " + user.name + "\n" +
+        "UID: " + user.uid + "\n" +
+        "Phone: " + user.phone + "\n" +
+        "Message: " + message
+      );
+
+      return res.status(503).json({
+        error: "AI is temporarily unavailable. Your support request has been sent to the administrator."
+      });
+    }
+
+    let parsed;
+
+    try {
+      const cleaned = aiResponse
+        .replace(/^```json/i, "")
+        .replace(/^```/i, "")
+        .replace(/```$/i, "")
+        .trim();
+
+      parsed = JSON.parse(cleaned);
+    } catch {
+      parsed = {
+        reply: aiResponse,
+        needs_human: false,
+        reason: ""
+      };
+    }
+
+    const reply = String(
+      parsed.reply || "দুঃখিত, আমি উত্তর দিতে পারছি না।"
+    ).slice(0, 5000);
+
+    const needsHuman = parsed.needs_human === true;
+    const reason = String(parsed.reason || "Human support requested.")
+      .slice(0, 500);
+
+    // Save AI response
+    await pool.query(
+      `INSERT INTO chat_messages (user_id,role,content)
+       VALUES ($1,'assistant',$2)`,
+      [req.userId, reply]
+    );
+
+    // Send escalation to Telegram
+    let supportSent = false;
+
+    if (needsHuman) {
+      await pool.query(
+        `INSERT INTO chat_escalations (user_id,message,reason)
+         VALUES ($1,$2,$3)`,
+        [req.userId, message, reason]
+      );
+
+      supportSent = await sendTelegramMessage(
+        "SKYPAY HUMAN SUPPORT NEEDED\n\n" +
+        "User: " + user.name + "\n" +
+        "UID: " + user.uid + "\n" +
+        "Phone: " + user.phone + "\n\n" +
+        "User message:\n" + message + "\n\n" +
+        "AI reason:\n" + reason
+      );
+    }
+
+    res.json({
+      reply,
+      needsHuman,
+      supportSent
+    });
+
+  } catch (error) {
+    console.error("Chat endpoint:", error);
+
+    res.status(500).json({
+      error: "Could not process your chat message."
+    });
+  }
+});
+
 // ADMIN LOGIN
 app.post("/api/admin/login", adminLimiter, async (req, res) => {
   try {
@@ -1069,6 +1379,31 @@ app.patch("/api/admin/requests/:id", adminAuth, async (req, res) => {
 
   } finally {
     client.release();
+  }
+});
+
+// ADMIN CHAT SUPPORT REQUESTS
+app.get("/api/admin/chat-escalations", adminAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT e.id,e.user_id,e.message,e.reason,e.status,e.created_at,
+              u.name AS user_name,u.uid AS user_uid,u.phone AS user_phone
+       FROM chat_escalations e
+       JOIN users u ON u.id=e.user_id
+       ORDER BY e.id DESC
+       LIMIT 100`
+    );
+
+    res.json({
+      escalations: result.rows
+    });
+
+  } catch (error) {
+    console.error("Admin chat escalations:", error);
+
+    res.status(500).json({
+      error: "Could not load support requests."
+    });
   }
 });
 
