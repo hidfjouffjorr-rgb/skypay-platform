@@ -79,7 +79,10 @@ function normalizePhone(value) {
 
 async function initDatabase() {
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS users (await pool.query(`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS phone TEXT
+`);
       id SERIAL PRIMARY KEY,
       uid VARCHAR(30) UNIQUE NOT NULL,
       name VARCHAR(100) NOT NULL,
