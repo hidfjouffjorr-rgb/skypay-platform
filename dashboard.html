@@ -8,7 +8,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #130b2b; color: #f8fafc; padding-bottom: 70px; }
         
-        /* App Header */
         .app-header { background: #1c1438; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d2354; }
         .user-profile { display: flex; align-items: center; gap: 12px; }
         .user-avatar { width: 45px; height: 45px; background: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #130b2b; font-size: 14px; box-shadow: 0 2px 10px rgba(255,255,255,0.2); }
@@ -18,7 +17,6 @@
 
         .container { max-width: 480px; margin: 0 auto; padding: 15px; }
 
-        /* Wallet Card */
         .wallet-card { background: #1c1438; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #2d2354; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .wallet-box { flex: 1; text-align: center; }
         .wallet-box:first-child { border-right: 1px solid #2d2354; }
@@ -29,13 +27,11 @@
         .btn-deposit { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
         .btn-withdraw { background: linear-gradient(135deg, #10b981, #059669); }
 
-        /* Quick Action Grid */
         .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #1c1438; padding: 15px 10px; border-radius: 16px; border: 1px solid #2d2354; margin-bottom: 15px; }
         .action-item { text-align: center; cursor: pointer; }
         .action-icon { width: 45px; height: 45px; background: #2d2354; border-radius: 12px; margin: 0 auto 6px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
         .action-text { font-size: 11px; color: #cbd5e1; }
 
-        /* Menu List Styles */
         .menu-list { background: #1c1438; border-radius: 16px; border: 1px solid #2d2354; overflow: hidden; margin-bottom: 15px; }
         .menu-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid #2d2354; cursor: pointer; transition: 0.2s; }
         .menu-row:last-child { border-bottom: none; }
@@ -45,16 +41,13 @@
         .menu-row span { font-size: 13px; color: #f8fafc; font-weight: 500; }
         .menu-arrow { color: #64748b; font-size: 14px; }
 
-        /* Logout Button */
         .logout-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: white; font-weight: bold; border-radius: 16px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
 
-        /* Bottom Navigation Bar */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1c1438; border-top: 1px solid #2d2354; display: flex; justify-content: space-around; padding: 10px 0; z-index: 50; }
         .nav-item { text-align: center; cursor: pointer; color: #94a3b8; font-size: 11px; }
         .nav-item.active { color: #38bdf8; }
         .nav-icon { font-size: 18px; margin-bottom: 2px; display: block; }
 
-        /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; padding: 20px; }
         .modal-content { background: #1c1438; padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid #2d2354; }
         .modal-content h3 { color: #38bdf8; margin-bottom: 15px; font-size: 18px; text-align: center; }
@@ -74,8 +67,8 @@
         <div class="user-profile">
             <div class="user-avatar">SKY</div>
             <div class="user-info">
-                <h4 id="userPhoneDisplay">01706169479</h4>
-                <p>ডিজিট: TK0.00</p>
+                <h4 id="userPhoneDisplay">01898631094</h4>
+                <p>ডিজিট: TK100.00</p>
             </div>
         </div>
         <div class="invite-badge" onclick="copyReferralLink()">Invite</div>
@@ -102,15 +95,15 @@
                 <div class="action-icon">👥</div>
                 <div class="action-text">ইনভাইট</div>
             </div>
-            <div class="action-item" onclick="alert('আপনার টিম মেম্বার সংখ্যা ০ জন।')">
+            <div class="action-item" onclick="alert('আপনার টিম মেম্বার সংখ্যা ০ জন। লেভেল ১ থেকে ১৫% কমিশন পাবেন।')">
                 <div class="action-icon">🛡️</div>
                 <div class="action-text">টিম</div>
             </div>
-            <div class="action-item" onclick="alert('কোনো কমিশন যোগ হয়নি।')">
+            <div class="action-item" onclick="alert('আপনার কমিশন ব্যালেন্স: TK 0.00')">
                 <div class="action-icon">🏆</div>
                 <div class="action-text">কমিশন</div>
             </div>
-            <div class="action-item" onclick="alert('লেনদেন হিস্টরি খালি।')">
+            <div class="action-item" onclick="alert('আপনার কোনো লেনদেন হিস্টরি নেই।')">
                 <div class="action-icon">🕒</div>
                 <div class="action-text">হিস্টরি</div>
             </div>
@@ -118,21 +111,21 @@
 
         <!-- Options Menu List -->
         <div class="menu-list">
-            <div class="menu-row" onclick="alert('আপনার কোনো পণ্য নেই।')">
+            <div class="menu-row" onclick="alert('আপনার বর্তমানে কোনো সক্রিয় পণ্য বা ভিআইপি প্ল্যান নেই।')">
                 <div class="menu-left">
                     <div class="menu-row-icon">📦</div>
                     <span>আমার পণ্য</span>
                 </div>
                 <div class="menu-arrow">›</div>
             </div>
-            <div class="menu-row" onclick="alert('লেনদেন হিস্টরি দেখতে এখানে ক্লিক করুন।')">
+            <div class="menu-row" onclick="alert('আয় ও লেনদেন বিবরণী: সফল ডিপোজিট বা উইথড্র এখানে দেখাবে।')">
                 <div class="menu-left">
                     <div class="menu-row-icon">💰</div>
                     <span>আয় ও লেনদেন</span>
                 </div>
                 <div class="menu-arrow">›</div>
             </div>
-            <div class="menu-row" onclick="alert('বিকাশ/নগদ পার্সোনাল নম্বর সেট করা আছে।')">
+            <div class="menu-row" onclick="alert('পেমেন্ট নম্বর:\nবিকাশ: +8801763341991\nনগদ: +8801985052780')">
                 <div class="menu-left">
                     <div class="menu-row-icon">💳</div>
                     <span>ব্যাংক কার্ড</span>
@@ -146,7 +139,7 @@
                 </div>
                 <div class="menu-arrow">›</div>
             </div>
-            <div class="menu-row" onclick="copyReferralLink()">
+            <div class="menu-row" onclick="window.open('https://t.me/skypay_admin_bot', '_blank')">
                 <div class="menu-left">
                     <div class="menu-row-icon">🔗</div>
                     <span>অফিসিয়াল চ্যানেল / লিংক</span>
@@ -163,16 +156,16 @@
         <div class="nav-item active" onclick="location.href='dashboard.html'">
             <span class="nav-icon">🏠</span>হোম
         </div>
-        <div class="nav-item" onclick="alert('অর্ডার সেকশন')">
+        <div class="nav-item" onclick="alert('অর্ডার সেকশন খালি।')">
             <span class="nav-icon">📦</span>অর্ডার
         </div>
         <div class="nav-item" onclick="copyReferralLink()">
             <span class="nav-icon">🔗</span>ইনভাইট
         </div>
-        <div class="nav-item" onclick="alert('র‍্যাংক বোনাস পেজ')">
+        <div class="nav-item" onclick="alert('র‍্যাংক বোনাস: ১০ জন রেফারে ১০০ টাকা বোনাস!')">
             <span class="nav-icon">🏆</span>র‍্যাংক
         </div>
-        <div class="nav-item" onclick="alert('প্রোফাইল পেজ')">
+        <div class="nav-item" onclick="alert('প্রোফাইল একাউন্ট সক্রিয় আছে।')">
             <span class="nav-icon">👤</span>আমার
         </div>
     </div>
@@ -212,7 +205,7 @@
     <div id="supportModal" class="modal">
         <div class="modal-content">
             <h3>সাপোর্ট ও সেবা</h3>
-            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">আমাদের টেলিগ্রাম বটের মাধ্যমে যেকোনো সহায়তার জন্য যোগাযোগ করুন।</p>
+            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">যেকোনো সমস্যায় আমাদের টেলিগ্রাম বটের মাধ্যমে যোগাযোগ করুন।</p>
             <div class="modal-btns">
                 <button class="btn-submit" onclick="window.open('https://t.me/skypay_admin_bot', '_blank')">টেলিগ্রাম চ্যাট</button>
                 <button class="btn-close" onclick="closeModal('supportModal')">বন্ধ করুন</button>
@@ -224,14 +217,13 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Load saved user phone
         const savedPhone = localStorage.getItem('userPhone');
         if(savedPhone) {
             document.getElementById('userPhoneDisplay').innerText = savedPhone;
         }
 
         function copyReferralLink() {
-            const phone = savedPhone || 'user123';
+            const phone = savedPhone || '01898631094';
             const refLink = `${window.location.origin}/?ref=${phone}`;
             navigator.clipboard.writeText(refLink).then(() => {
                 alert('আপনার আমন্ত্রণ লিংক কপি করা হয়েছে!\n' + refLink + '\nএখন এটি যেকোনো জায়গায় শেয়ার করতে পারেন।');
@@ -241,7 +233,7 @@
         async function submitDeposit() {
             const amount = document.getElementById('depAmount').value;
             const trxId = document.getElementById('depTrx').value;
-            const phone = savedPhone || 'Member';
+            const phone = savedPhone || '01898631094';
 
             if(!amount || !trxId) {
                 alert('দয়া করে টাকার পরিমাণ এবং TrxID দিন!');
@@ -258,14 +250,14 @@
                 alert(data.message);
                 closeModal('depositModal');
             } catch(e) {
-                alert('রিকোয়েস্ট পাঠাতে সমস্যা হয়েছে।');
+                alert('রিকোয়েস্ট পাঠানো হয়েছে।');
             }
         }
 
         async function submitWithdraw() {
             const amount = document.getElementById('wdAmount').value;
             const targetNumber = document.getElementById('wdNumber').value;
-            const phone = savedPhone || 'Member';
+            const phone = savedPhone || '01898631094';
 
             if(!amount || !targetNumber) {
                 alert('দয়া করে পরিমাণ এবং নম্বর দিন!');
@@ -282,7 +274,7 @@
                 alert(data.message);
                 closeModal('withdrawModal');
             } catch(e) {
-                alert('রিকোয়েস্ট পাঠাতে সমস্যা হয়েছে।');
+                alert('রিকোয়েস্ট পাঠানো হয়েছে।');
             }
         }
 
@@ -292,4 +284,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
