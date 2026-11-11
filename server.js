@@ -15,7 +15,8 @@ const requiredEnv = [
   "DATABASE_URL",
   "JWT_SECRET",
   "ADMIN_EMAIL",
-  "ADMIN_PASSWORD_HASH"
+  "ADMIN_PASSWORD_HASH",
+  "GEMINI_API_KEY"
 ];
 
 for (const key of requiredEnv) {
@@ -810,7 +811,7 @@ app.get("/api/chat/history", userAuth, async (req, res) => {
   }
 });
 
-// AI LIVE CHAT
+// GEMINI AI LIVE CHAT
 app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
   try {
     const message = String(req.body.message || "").trim();
@@ -821,7 +822,9 @@ app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
       });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+
+    if (!geminiApiKey) {
       return res.status(503).json({
         error: "AI service is not configured. Please contact support."
       });
@@ -866,23 +869,29 @@ app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
     const instructions = `
 You are SKYPAY's helpful customer support AI.
 
-Reply in the same language as the user. If the user writes Bengali,
-reply in simple Bengali.
+Reply in the same language as the user.
+If the user writes Bengali, reply in simple Bengali.
 
 Help with SKYPAY registration, login, profile, products,
-deposit requests, withdrawal requests and general website navigation.
+deposit requests, withdrawal requests and website navigation.
 
-Never ask for passwords, OTPs, API keys, card details or secret tokens.
-Never claim a deposit or withdrawal has been approved unless the system
-actually confirms it. Never claim you have changed a user's account.
+Never ask for passwords, OTPs, API keys, card details
+or secret tokens.
 
-Do not promise guaranteed profit, investment returns or earnings.
-For money, balance, payment approval, account restrictions or other
-private account matters that you cannot verify, ask the user to contact
-a human administrator.
+Never claim a deposit or withdrawal has been approved
+unless the system actually confirms it.
 
-If you cannot confidently solve the problem, or the user asks for a
-human administrator, set needs_human to true.
+Never claim you have changed a user's account.
+
+Do not promise guaranteed profit, investment returns
+or earnings. Do not describe any product as risk-free.
+
+For money, balance, payment approval, account restrictions
+or other private account matters that you cannot verify,
+ask the user to contact a human administrator.
+
+If you cannot confidently solve the problem, or the user
+asks for a human administrator, set needs_human to true.
 
 Return ONLY valid JSON in this exact format:
 {
@@ -891,31 +900,47 @@ Return ONLY valid JSON in this exact format:
   "reason": ""
 }
 
-If human help is required, set needs_human to true and give a short
-reason in the reason field. Keep the reply polite and helpful.
+If human help is required, set needs_human to true
+and give a short reason in the reason field.
+Keep the reply polite and helpful.
 `;
 
-    const inputMessages = historyResult.rows.map(item => ({
-      role: item.role === "assistant" ? "assistant" : "user",
-      content: item.content
+    const contents = historyResult.rows.map(item => ({
+      role: item.role === "assistant" ? "model" : "user",
+      parts: [
+        {
+          text: item.content
+        }
+      ]
     }));
 
-    let aiResponse;
+    let aiResponse = "";
 
     try {
+      const model = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+
       const response = await fetch(
-        "https://api.openai.com/v1/responses",
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+            "x-goog-api-key": geminiApiKey
           },
           body: JSON.stringify({
-            model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-            instructions,
-            input: inputMessages,
-            max_output_tokens: 700
+            systemInstruction: {
+              parts: [
+                {
+                  text: instructions
+                }
+              ]
+            },
+            contents,
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 700,
+              responseMimeType: "application/json"
+            }
           })
         }
       );
@@ -923,38 +948,33 @@ reason in the reason field. Keep the reply polite and helpful.
       const data = await response.json();
 
       if (!response.ok) {
-        console.error("OpenAI API error:", data);
-        throw new Error("AI service request failed.");
+        console.error("Gemini API error:", data);
+        throw new Error(
+          data.error?.message || "Gemini service request failed."
+        );
       }
 
-      aiResponse = data.output_text || "";
-
-      if (!aiResponse && Array.isArray(data.output)) {
-        for (const item of data.output) {
-          for (const part of item.content || []) {
-            if (part.type === "output_text") {
-              aiResponse += part.text || "";
-            }
-          }
-        }
-      }
+      aiResponse =
+        data.candidates?.[0]?.content?.parts
+          ?.map(part => part.text || "")
+          .join("") || "";
 
       if (!aiResponse) {
-        throw new Error("AI returned an empty response.");
+        throw new Error("Gemini returned an empty response.");
       }
 
     } catch (aiError) {
-      console.error("AI chat error:", aiError.message);
+      console.error("Gemini chat error:", aiError.message);
 
       await pool.query(
         `INSERT INTO chat_escalations (user_id,message,reason)
          VALUES ($1,$2,$3)`,
-        [req.userId, message, "AI service error"]
+        [req.userId, message, "Gemini AI service error"]
       );
 
       await sendTelegramMessage(
         "SKYPAY URGENT SUPPORT\n\n" +
-        "AI service could not respond.\n" +
+        "Gemini AI service could not respond.\n" +
         "User: " + user.name + "\n" +
         "UID: " + user.uid + "\n" +
         "Phone: " + user.phone + "\n" +
