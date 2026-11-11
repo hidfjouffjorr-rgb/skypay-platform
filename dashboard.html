@@ -39,7 +39,6 @@
         .section-header h3 { font-size: 16px; color: #fff; font-weight: 700; }
         .section-header span { font-size: 12px; color: #38bdf8; }
 
-        /* Fixed 2-Column Grid for 15 Products */
         .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .product-card { background: #1e293b; border-radius: 16px; padding: 14px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
         .product-icon { width: 45px; height: 45px; margin: 0 auto 8px; background: linear-gradient(135deg, #1d4ed8, #0ebad7); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 22px; }
@@ -70,6 +69,9 @@
         .btn-close { background: #475569; color: white; }
 
         .ai-chat-box { height: 200px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 10px; overflow-y: auto; margin-bottom: 10px; font-size: 13px; color: #cbd5e1; }
+        
+        .payment-info-box { background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; border: 1px solid #334155; }
+        .payment-info-box p { color: #38bdf8; margin-bottom: 4px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -109,7 +111,7 @@
                 <span class="menu-icon">🤖</span>
                 <span class="menu-text">AI চ্যাট</span>
             </div>
-            <div class="menu-item" onclick="alert('রেফারেল লিংক কপি করা হয়েছে!')">
+            <div class="menu-item" onclick="copyReferralLink()">
                 <span class="menu-icon">👥</span>
                 <span class="menu-text">রেফারেল</span>
             </div>
@@ -124,7 +126,6 @@
             <span>১৫ টি সার্ভিস</span>
         </div>
 
-        <!-- Corrected Grid Container -->
         <div class="products-grid" id="productsGrid">
             <!-- Populated via JS -->
         </div>
@@ -132,12 +133,12 @@
         <div class="card">
             <div class="card-title"><span>অফিসিয়াল পেমেন্ট নম্বর</span> 💳</div>
             <div class="info-row">
-                <span>বিকাশ নম্বর (Personal):</span>
-                <span id="bkashNum" style="color: #38bdf8;">লোড হচ্ছে...</span>
+                <span>বিকাশ (Personal):</span>
+                <span style="color: #38bdf8;">+8801763341991</span>
             </div>
             <div class="info-row">
-                <span>নগদ নম্বর (Personal):</span>
-                <span id="nagadNum" style="color: #38bdf8;">লোড হচ্ছে...</span>
+                <span>নগদ (Personal):</span>
+                <span style="color: #38bdf8;">+8801985052780</span>
             </div>
         </div>
 
@@ -145,11 +146,11 @@
             <div class="card-title"><span>নিয়মাবলী ও লিমিট</span> 📊</div>
             <div class="info-row">
                 <span>সর্বনিম্ন ডিপোজিট:</span>
-                <span id="minDep">লোড হচ্ছে...</span>
+                <span>৳ ৩০০</span>
             </div>
             <div class="info-row">
                 <span>সর্বনিম্ন উইথড্র:</span>
-                <span id="minWd">লোড হচ্ছে...</span>
+                <span>৳ ৫০০</span>
             </div>
         </div>
 
@@ -166,7 +167,11 @@
     <div id="depositModal" class="modal">
         <div class="modal-content">
             <h3>ডিপোজিট (Top Up)</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:10px; text-align:center;">উপরের বিকাশ বা নগদ নম্বরে টাকা পাঠিয়ে নিচে তথ্য দিন।</p>
+            <div class="payment-info-box">
+                <p>বিকাশ (Personal): +8801763341991</p>
+                <p>নগদ (Personal): +8801985052780</p>
+                <small style="color:#94a3b8;">সেন্ড মানি করে নিচের ঘরে তথ্য দিন।</small>
+            </div>
             <input type="number" id="depAmount" placeholder="টাকার পরিমাণ লিখুন">
             <input type="text" id="depTrx" placeholder="ট্রানজ্যাকশন আইডি (TrxID) দিন">
             <div class="modal-btns">
@@ -219,6 +224,17 @@
     <script>
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function copyReferralLink() {
+            const userPhone = localStorage.getItem('userPhone') || 'member';
+            const refLink = `${window.location.origin}/?ref=${userPhone}`;
+            
+            navigator.clipboard.writeText(refLink).then(() => {
+                alert('আপনার রেফারেল লিংক সফলভাবে কপি হয়েছে!\n' + refLink + '\nএখন এটি যেকোনো সোশ্যাল মিডিয়া বা ওয়েবসাইটে শেয়ার করতে পারেন।');
+            }).catch(err => {
+                prompt('আপনার রেফারেল লিংকটি কপি করুন:', refLink);
+            });
+        }
 
         async function submitDeposit() {
             const amount = document.getElementById('depAmount').value;
@@ -276,7 +292,7 @@
             chatBox.innerHTML += `<br><b style='color:#38bdf8;'>আপনি:</b> ${input.value}`;
             
             setTimeout(() => {
-                chatBox.innerHTML += `<br><b style='color:#34d399;'>AI Assistant:</b> আপনার মেসেজটি পেয়েছি। অনুগ্রহ করে ট্রানজ্যাকশন সঠিক আছে কিনা চেক করুন।`;
+                chatBox.innerHTML += `<br><b style='color:#34d399;'>AI Assistant:</b> আপনার মেসেজটি পেয়েছি। ট্রানজ্যাকশন সঠিক থাকলে দ্রুত ব্যালেন্স যুক্ত হবে।`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 1000);
 
@@ -302,13 +318,10 @@
             { icon: '👑', name: 'Supreme VIP 15', days: 365, price: 30000, daily: '৳ ২০০০ প্রতিদিন' }
         ];
 
-        function renderProducts(adminPkgName, adminPkgDuration) {
+        function renderProducts() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
             
-            if(adminPkgName) defaultProducts[0].name = adminPkgName;
-            if(adminPkgDuration) defaultProducts[0].days = adminPkgDuration;
-
             defaultProducts.forEach((item) => {
                 const cardHtml = `
                     <div class="product-card">
@@ -328,44 +341,12 @@
             });
         }
 
-        async function loadAdminData() {
-            try {
-                const res = await fetch('/api/settings');
-                const data = await res.json();
-                let adminPkgName = null;
-                let adminPkgDuration = null;
-
-                if(data.success && data.settings) {
-                    const s = data.settings;
-                    document.getElementById('bkashNum').innerText = s.bkash || 'দেওয়া হয়নি';
-                    document.getElementById('nagadNum').innerText = s.nagad || 'দেওয়া হয়নি';
-                    document.getElementById('minDep').innerText = s.min_deposit ? '৳ ' + s.min_deposit : 'নির্ধারিত নয়';
-                    document.getElementById('minWd').innerText = s.min_withdraw ? '৳ ' + s.min_withdraw : 'নির্ধারিত নয়';
-                    
-                    adminPkgName = s.package_name;
-                    adminPkgDuration = s.package_duration;
-
-                    const apkBtn = document.getElementById('apkLink');
-                    if(s.apk_url) {
-                        apkBtn.href = s.apk_url;
-                        apkBtn.innerText = 'অ্যাপ ডাউনলোড করুন';
-                    } else {
-                        apkBtn.href = '#';
-                        apkBtn.innerText = 'অ্যাপ শীঘ্রই আসছে...';
-                    }
-                }
-                renderProducts(adminPkgName, adminPkgDuration);
-            } catch(e) {
-                renderProducts();
-            }
-        }
-
         function handleLogout() {
             localStorage.clear();
             window.location.href = '/index.html';
         }
 
-        loadAdminData();
+        renderProducts();
     </script>
 </body>
 </html>
