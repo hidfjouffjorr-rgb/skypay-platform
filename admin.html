@@ -3,40 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKYPAY - এডমিন কন্ট্রোল প্যানেল</title>
+    <title>SKYPAY - এডমিন কনসোল</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #0b1329; color: #f8fafc; padding: 15px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #e11d48, #be123c); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(225,29,72,0.3); }
-        .header h2 { font-size: 20px; margin-bottom: 5px; }
-        .header p { font-size: 13px; color: #f1f5f9; }
-
-        .card { background: #1e293b; border-radius: 14px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155; }
-        .card h3 { font-size: 16px; color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+        body { background: #071124; color: #f8fafc; padding: 15px; }
+        .admin-container { max-width: 600px; margin: 0 auto; }
         
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 13px; color: #94a3b8; }
-        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 8px; outline: none; font-size: 14px; }
-        input:focus { border-color: #38bdf8; }
+        .admin-header { background: linear-gradient(135deg, #e11d48, #9f1239); padding: 22px; border-radius: 16px; text-align: center; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(225,29,72,0.3); }
+        .admin-header h2 { font-size: 20px; margin-bottom: 5px; color: #fff; }
+        .admin-header p { font-size: 13px; color: #ffe4e6; }
 
-        .save-btn { width: 100%; padding: 12px; background: #2563eb; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 15px; }
+        .card { background: #1e293b; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .card h3 { font-size: 15px; color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: #94a3b8; font-weight: 500; }
+        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 10px; outline: none; font-size: 14px; transition: 0.2s; }
+        input:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,0.15); }
+
+        .save-btn { width: 100%; padding: 14px; background: #2563eb; border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 15px; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
         .save-btn:hover { background: #1d4ed8; }
         
-        .msg { margin-top: 10px; text-align: center; font-size: 13px; font-weight: bold; }
-        .back-link { display: block; text-align: center; margin-top: 15px; color: #38bdf8; text-decoration: none; font-size: 14px; }
+        .msg { margin-top: 12px; text-align: center; font-size: 14px; font-weight: bold; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #38bdf8; text-decoration: none; font-size: 14px; font-weight: 600; }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h2>SKYPAY এডমিন প্যানেল</h2>
-            <p>সিস্টেম সেটিংস এবং লাইভ কন্ট্রোল</p>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h2>SKYPAY এডমিন কন্ট্রোল</h2>
+            <p>রিয়েল-টাইম প্ল্যাটফর্ম কনফিগারেশন প্যানেল</p>
         </div>
 
         <div class="card">
-            <h3>পেমেন্ট গেটওয়ে নম্বর</h3>
+            <h3>💳 পেমেন্ট গেটওয়ে নম্বর</h3>
             <div class="form-group">
                 <label>বিকাশ নম্বর (Personal/Agent)</label>
                 <input type="text" id="bkash" placeholder="যেমন: 01700000000">
@@ -48,7 +50,7 @@
         </div>
 
         <div class="card">
-            <h3>ডিপোজিট ও উইথড্র লিমিট</h3>
+            <h3>📊 ডিপোজিট ও উইথড্র লিমিট</h3>
             <div class="form-group">
                 <label>সর্বনিম্ন ডিপোজিট (টাকা)</label>
                 <input type="number" id="min_deposit" placeholder="যেমন: 300">
@@ -60,7 +62,7 @@
         </div>
 
         <div class="card">
-            <h3>প্যাকেজ সেটিংস</h3>
+            <h3>⭐️ প্যাকেজ সেটিংস</h3>
             <div class="form-group">
                 <label>প্যাকেজের নাম</label>
                 <input type="text" id="package_name" placeholder="যেমন: VIP Gold Plan">
@@ -72,7 +74,7 @@
         </div>
 
         <div class="card">
-            <h3>মোবাইল অ্যাপ লিংক</h3>
+            <h3>📱 মোবাইল অ্যাপ লিংক</h3>
             <div class="form-group">
                 <label>APK ডাউনলোড লিংক (Direct URL)</label>
                 <input type="text" id="apk_url" placeholder="https://example.com/app.apk">
