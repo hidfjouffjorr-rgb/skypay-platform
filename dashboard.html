@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#eaf6e5">
+<title>SKYPAY - User Dashboard</title>
+<style>
+:root{--g:#168438;--dark:#155329;--bg:#edf7e8;--muted:#748474}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:var(--bg);color:#183d24;padding-bottom:90px}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.top{height:70px;padding:12px 17px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:24px;font-weight:900;color:#176b32}
+.brand span{display:inline-grid;place-items:center;background:linear-gradient(140deg,#5bc94c,#08702d);color:white;width:39px;height:39px;border-radius:13px;margin-right:7px}
+.top button{border:0;background:white;color:var(--dark);width:40px;height:40px;border-radius:50%;font-size:20px}
+.wrap{max-width:720px;margin:auto;padding:0 14px}
+.welcome{padding:15px 5px 18px}
+.welcome small{color:var(--muted)}
+.welcome h2{font-size:23px;margin-top:5px}
+.wallet{border-radius:25px;padding:23px;color:white;background:linear-gradient(120deg,#137b35,#58bb4b);box-shadow:0 9px 22px #16843835}
+.wallet small{opacity:.9;font-size:12px}
+.balance{font-size:34px;font-weight:900;margin:8px 0 20px}
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wallet-actions button{border:0;border-radius:14px;padding:13px;background:#ffffffed;color:#176b32;font-weight:bold}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}
+.stat{padding:16px;background:white;border-radius:17px;box-shadow:0 4px 13px #245d2510}
+.stat small{display:block;color:var(--muted);font-size:11px}
+.stat b{display:block;font-size:20px;margin-top:8px;overflow-wrap:anywhere}
+.section{margin:22px 0}
+.heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.heading h3{font-size:19px}
+.heading button{border:0;background:none;color:var(--g);font-weight:bold}
+.card{background:white;border-radius:20px;padding:17px;margin-bottom:13px;box-shadow:0 4px 14px #245d2510}
+.card p{font-size:13px;color:var(--muted);line-height:1.6}
+.card h4{font-size:16px;margin-bottom:9px}
+.product{border-radius:20px;background:white;padding:13px;margin-bottom:14px}
+.product-image{height:125px;border-radius:15px;background:linear-gradient(120deg,#dff4d4,#7fca6c,#27843b);display:grid;place-items:center;color:white;font-size:27px;font-weight:bold;overflow:hidden}
+.product-image img{width:100%;height:100%;object-fit:cover}
+.product h4{margin:12px 2px 6px;font-size:17px}
+.product p{font-size:12px;color:var(--muted)}
+.product-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:12px 0}
+.product-stats div{background:#eff8e9;border-radius:11px;padding:10px 3px;text-align:center;min-width:0}
+.product-stats b{display:block;font-size:11px;overflow-wrap:anywhere}
+.product-stats small{display:block;font-size:9px;color:var(--muted);margin-top:5px}
+.primary{width:100%;padding:14px;border:0;border-radius:28px;background:linear-gradient(90deg,#168438,#5dbb4b);color:white;font-weight:bold}
+.secondary{width:100%;padding:13px;border:0;border-radius:14px;background:#e9f5e3;color:#176b32;font-weight:bold;margin-top:9px}
+.field{margin:13px 0}
+.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:7px}
+.field input,.field select{width:100%;padding:14px;border:1px solid #dce8d9;border-radius:13px;background:white;outline:none}
+.field input:focus,.field select:focus{border:2px solid #39964b}
+.notice{background:#fff7df;color:#795a18;border-radius:14px;padding:12px;font-size:12px;line-height:1.6;margin:12px 0}
+.refbox{background:#eff8e9;border-radius:14px;padding:13px;overflow-wrap:anywhere;font-size:12px;margin:12px 0}
+.refbox button{border:0;color:var(--g);background:transparent;font-weight:bold;margin-top:10px}
+.listrow{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #edf1eb;font-size:13px}
+.listrow:last-child{border:0}
+.status{color:#18833a;font-weight:bold}
+.page{display:none}
+.page.active{display:block}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:5;background:#f5fbea;border-top:1px solid #d8e8d1;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 6px 12px}
+.bottom button{border:0;background:none;color:#70866c;font-size:10px;font-weight:bold;padding:8px 1px;border-radius:15px}
+.bottom button span{display:block;font-size:22px;margin-bottom:4px}
+.bottom button.active{background:linear-gradient(135deg,#55b94b,#08732e);color:white}
+.message{font-size:12px;margin-top:10px;line-height:1.5}
+.empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+@media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr)}.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span>S</span>SKYPAY</div>
+  <button onclick="logout()" title="Logout">↪</button>
+</header>
+
+<main class="wrap">
+
+<section class="page active" id="homePage">
+  <div class="welcome">
+    <small>WELCOME TO SKYPAY</small>
+    <h2>Hello, <span id="userName">User</span> 👋</h2>
+    <small>Your personal dashboard</small>
+  </div>
+
+  <div class="wallet">
+    <small>AVAILABLE WALLET BALANCE</small>
+    <div class="balance" id="balance">৳0.00</div>
+    <div class="wallet-actions">
+      <button onclick="showPage('depositPage')">＋ Deposit</button>
+      <button onclick="showPage('withdrawPage')">↗ Withdraw</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><small>UID</small><b id="uid">—</b></div>
+    <div class="stat"><small>Active Plans</small><b id="activeCount">0</b></div>
+    <div class="stat"><small>Total Deposits</small><b id="totalDeposit">৳0</b></div>
+    <div class="stat"><small>Total Withdrawals</small><b id="totalWithdraw">৳0</b></div>
+  </div>
+
+  <div class="section">
+    <div class="heading"><h3>🌱 Available Products</h3><button onclick="showPage('orderedPage')">My Plans →</button></div>
+    <div id="homeProducts"><div class="empty">Loading products...</div></div>
+  </div>
+  <div class="card">
+    <h4>📢 SKYPAY Support</h4>
+    <p>Need help with your account or transaction? Contact our support team.</p>
+    <button class="secondary" onclick="support()">Contact Support</button>
+  </div>
+</section>
+
+<section class="page" id="depositPage">
+  <div class="welcome"><small>WALLET</small><h2>Deposit Balance</h2></div>
+  <div class="card">
+    <h4>Payment Instructions</h4>
+    <p>bKash Personal: <b>+8801763341991</b></p>
+    <p>Nagad Personal: <b>+8801985052780</b></p>
+    <div class="notice">Send money to the correct number, then submit your transaction ID. Your wallet will be updated only after admin approval.</div>
+    <form id="depositForm">
+      <div class="field"><label>Payment Method</label>
+        <select id="depositMethod"><option value="bkash">bKash</option><option value="nagad">Nagad</option></select>
+      </div>
+      <div class="field"><label>Amount (BDT)</label><input id="depositAmount" type="number" min="1" step="1" placeholder="Enter amount" required></div>
+      <div class="field"><label>Your Sender Number</label><input id="senderNumber" type="tel" placeholder="01XXXXXXXXX" required></div>
+      <div class="field"><label>Transaction ID</label><input id="transactionId" placeholder="Enter transaction ID" required></div>
+      <button class="primary">SUBMIT DEPOSIT REQUEST</button>
+      <div class="message" id="depositMessage"></div>
+    </form>
+  </div>
+</section>
+
+<section class="page" id="withdrawPage">
+  <div class="welcome"><small>WALLET</small><h2>Withdraw Balance</h2></div>
+  <div class="card">
+    <p>Available balance: <b id="withdrawBalance">৳0.00</b></p>
+    <div class="notice">Withdrawal requests are subject to admin review and the platform's published terms. Never submit another person's payment details without permission.</div>
+    <form id="withdrawForm">
+      <div class="field"><label>Payment Method</label>
+        <select id="withdrawMethod"><option value="bkash">bKash</option><option value="nagad">Nagad</option></select>
+      </div>
+      <div class="field"><label>Amount (BDT)</label><input id="withdrawAmount" type="number" min="1" step="1" placeholder="Enter amount" required></div>
+      <div class="field"><label>Your Account Number</label><input id="withdrawNumber" type="tel" placeholder="01XXXXXXXXX" required></div>
+      <button class="primary">SUBMIT WITHDRAW REQUEST</button>
+      <div class="message" id="withdrawMessage"></div>
+    </form>
+  </div>
+</section>
+
+<section class="page" id="orderedPage">
+  <div class="welcome"><small>YOUR ACTIVITY</small><h2>My Orders & Plans</h2></div>
+  <div class="card"><h4>Active Plans</h4><div id="activePlans"><div class="empty">Loading...</div></div></div>
+  <div class="card"><h4>Transaction History</h4><div id="history"><div class="empty">Loading...</div></div></div>
+</section>
+
+<section class="page" id="teamPage">
+  <div class="welcome"><small>INVITATION</small><h2>My Team</h2></div>
+  <div class="card">
+    <h4>Your Referral Link</h4>
+    <p>Share your unique link with friends. Referral benefits apply only if officially enabled in the platform terms.</p>
+    <div class="refbox" id="refLink">Loading referral link...</div>
+    <button class="primary" onclick="copyReferral()">COPY REFERRAL LINK</button>
+    <div class="message" id="refMessage"></div>
+  </div>
+  <div class="card">
+    <h4>Referral Information</h4>
+    <div class="listrow"><span>Your UID</span><b id="teamUid">—</b></div>
+    <div class="listrow"><span>Invited Members</span><b id="teamCount">0</b></div>
+  </div>
+</section>
+
+<section class="page" id="sharePage">
+  <div class="welcome"><small>SHARE SKYPAY</small><h2>Invite Your Friends</h2></div>
+  <div class="card">
+    <h4>Share your referral link</h4>
+    <p>Invite people to visit SKYPAY. Explain the platform honestly and do not promise guaranteed returns.</p>
+    <div class="refbox" id="shareLink">Loading...</div>
+    <button class="primary" onclick="shareReferral()">SHARE NOW</button>
+  </div>
+</section>
+
+<section class="page" id="myPage">
+  <div class="welcome"><small>ACCOUNT</small><h2>My Profile</h2></div>
+  <div class="card">
+    <h4>Personal Information</h4>
+    <div class="listrow"><span>Name</span><b id="profileName">—</b></div>
+    <div class="listrow"><span>Phone</span><b id="profilePhone">—</b></div>
+    <div class="listrow"><span>UID</span><b id="profileUid">—</b></div>
+    <div class="listrow"><span>Account Status</span><b class="status" id="profileStatus">—</b></div>
+    <button class="secondary" onclick="support()">Contact Support</button>
+    <button class="secondary" onclick="logout()">Log Out</button>
+  </div>
+</section>
+
+</main>
+
+<nav class="bottom">
+  <button class="active" data-page="homePage" onclick="showPage('homePage',this)"><span>⌂</span>Home</button>
+  <button data-page="orderedPage" onclick="showPage('orderedPage',this)"><span>▤</span>Ordered</button>
+  <button data-page="teamPage" onclick="showPage('teamPage',this)"><span>♧</span>Team</button>
+  <button data-page="sharePage" onclick="showPage('sharePage',this)"><span>♧</span>Share</button>
+  <button data-page="myPage" onclick="showPage('myPage',this)"><span>♙</span>My</button>
+</nav>
+
+<script>
+const $=id=>document.getElementById(id);
+const token=localStorage.getItem("skypay_token");
+let currentUser=null;
+let referralURL="";
+
+function money(v){return "৳"+Number(v||0).toLocaleString("en-BD",{maximumFractionDigits:2})}
+function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+async function api(path,options={}){
+  const headers={"Content-Type":"application/json","Authorization":"Bearer "+token,...(options.headers||{})};
+  const response=await fetch(path,{...options,headers});
+  const data=await response.json().catch(()=>({error:"Invalid server response"}));
+  if(!response.ok)throw new Error(data.error||"Request failed");
+  return data;
+}
+
+function logout(){
+  localStorage.removeItem("skypay_token");
+  localStorage.removeItem("skypay_user");
+  location.href="index.html";
+}
+
+function showPage(id,button){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  $(id).classList.add("active");
+  document.querySelectorAll(".bottom button").forEach(b=>b.classList.remove("active"));
+  const nav=button||document.querySelector(`[data-page="${id}"]`);
+  if(nav)nav.classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(id==="orderedPage")loadOrders();
+  if(id==="teamPage")loadTeam();
+}
+
+function setMessage(id,message,ok=false){
+  $(id).style.color=ok?"#168438":"#b12b2b";
+  $(id).textContent=message;
+}
+
+async function loadProfile(){
+  const data=await api("/api/me");
+  currentUser=data.user;
+  const u=currentUser;
+  $("userName").textContent=u.name||"User";
+  $("uid").textContent=u.uid||"—";
+  $("teamUid").textContent=u.uid||"—";
+  $("profileUid").textContent=u.uid||"—";
+  $("profileName").textContent=u.name||"—";
+  $("profilePhone").textContent=u.phone||"—";
+  $("profileStatus").textContent=u.status||"Active";
+  $("balance").textContent=money(u.balance);
+  $("withdrawBalance").textContent=money(u.balance);
+  $("totalDeposit").textContent=money(u.total_deposit);
+  $("totalWithdraw").textContent=money(u.total_withdraw);
+  $("activeCount").textContent=Number(u.active_plans||0);
+  referralURL=location.origin+"/?ref="+encodeURIComponent(u.referral_code||u.uid||"");
+  $("refLink").textContent=referralURL;
+  $("shareLink").textContent=referralURL;
+}
+
+async function loadProducts(){
+  try{
+    const data=await api("/api/products");
+    const products=data.products||[];
+    const html=products.map(p=>{
+      const daily=Number(p.daily_estimate||0);
+      const days=Number(p.duration_days||0);
+      const image=p.image_url?`<img src="${safe(p.image_url)}" alt="">`:"SKYPAY";
+      return `<article class="product">
+        <div class="product-image">${image}</div>
+        <h4>${safe(p.name)}</h4>
+        <p>${safe(p.description||"SKYPAY product")}</p>
+        <div class="product-stats">
+          <div><b>${money(p.price)}</b><small>PRICE</small></div>
+          <div><b>${money(daily)}</b><small>DAILY EST.</small></div>
+          <div><b>${days}</b><small>DAYS</small></div>
+          <div><b>${money(daily*days)}</b><small>EST. TOTAL</small></div>
+        </div>
+        <button class="primary" onclick="activateProduct(${Number(p.id)})">ACTIVATE PLAN</button>
+      </article>`;
+    }).join("");
+    $("homeProducts").innerHTML=html||'<div class="empty">No products available.</div>';
+  }catch(e){
+    $("homeProducts").innerHTML='<div class="empty">Could not load products. Please try again.</div>';
+  }
+}
+
+async function activateProduct(id){
+  if(!confirm("Do you want to submit a request to activate this product?"))return;
+  try{
+    const data=await api("/api/activate",{method:"POST",body:JSON.stringify({productId:id})});
+    alert(data.message||"Activation request submitted.");
+    await loadProfile();
+    await loadProducts();
+  }catch(e){alert(e.message)}
+}
+
+$("depositForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  setMessage("depositMessage","Submitting request...");
+  try{
+    const body={
+      method:$("depositMethod").value,
+      amount:Number($("depositAmount").value),
+      senderNumber:$("senderNumber").value.trim(),
+      transactionId:$("transactionId").value.trim()
+    };
+    const data=await api("/api/deposit",{method:"POST",body:JSON.stringify(body)});
+    setMessage("depositMessage",data.message||"Deposit request submitted.",true);
+    $("depositForm").reset();
+    loadOrders();
+  }catch(err){setMessage("depositMessage",err.message)}
+});
+
+$("withdrawForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  setMessage("withdrawMessage","Submitting request...");
+  try{
+    const body={
+      method:$("withdrawMethod").value,
+      amount:Number($("withdrawAmount").value),
+      accountNumber:$("withdrawNumber").value.trim()
+    };
+    const data=await api("/api/withdraw",{method:"POST",body:JSON.stringify(body)});
+    setMessage("withdrawMessage",data.message||"Withdrawal request submitted.",true);
+    $("withdrawForm").reset();
+    loadOrders();
+  }catch(err){setMessage("withdrawMessage",err.message)}
+});
+
+async function loadOrders(){
+  try{
+    const data=await api("/api/my-orders");
+    const plans=data.plans||[];
+    const transactions=data.transactions||[];
+    $("activePlans").innerHTML=plans.length?plans.map(p=>`
+      <div class="listrow"><span>${safe(p.product_name||"Plan")}<br><small>${safe(p.created_at||"")}</small></span><b>${safe(p.status||"Active")}</b></div>
+    `).join(""):'<div class="empty">No active plans yet.</div>';
+    $("history").innerHTML=transactions.length?transactions.map(t=>`
+      <div class="listrow"><span>${safe(t.type)} · ${safe(t.method||"")}<br><small>${safe(t.created_at||"")}</small></span><b>${money(t.amount)}<br><small>${safe(t.status)}</small></b></div>
+    `).join(""):'<div class="empty">No transactions yet.</div>';
+  }catch(e){
+    $("activePlans").innerHTML='<div class="empty">Could not load plans.</div>';
+    $("history").innerHTML='<div class="empty">Could not load history.</div>';
+  }
+}
+
+async function loadTeam(){
+  try{
+    const data=await api("/api/team");
+    $("teamCount").textContent=Number(data.count||0);
+  }catch(e){$("teamCount").textContent="—"}
+}
+
+async function copyReferral(){
+  try{
+    await navigator.clipboard.writeText(referralURL);
+    setMessage("refMessage","Referral link copied!",true);
+  }catch(e){
+    setMessage("refMessage","Please copy the link manually.");
+  }
+}
+
+async function shareReferral(){
+  try{
+    if(navigator.share)await navigator.share({title:"SKYPAY",text:"Join SKYPAY",url:referralURL});
+    else await copyReferral();
+  }catch(e){}
+}
+
+function support(){window.open("https://t.me/skypay_admin_bot","_blank")}
+
+async function start(){
+  if(!token){location.href="index.html";return}
+  try{
+    await loadProfile();
+    await loadProducts();
+  }catch(e){
+    alert("Your session has expired. Please log in again.");
+    logout();
+  }
+}
+start();
+</script>
+</body>
+</html>
