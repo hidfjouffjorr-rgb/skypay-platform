@@ -5,132 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKYPAY - লগইন ও রেজিস্ট্রেশন</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background: linear-gradient(135deg, #1e1e2f, #2a2a40);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: #22223b;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 400px;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #f72585;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #4a4e69;
-            background: #10101d;
-            color: #fff;
-            border-radius: 6px;
-            outline: none;
-        }
-        input:focus {
-            border-color: #f72585;
-        }
-        button {
-            width: 100%;
-            padding: 11px;
-            background: #f72585;
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background: #b5179e;
-        }
-        .toggle-btn {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .toggle-btn span {
-            color: #4cc9f0;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .message {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; }
+        .auth-container { width: 100%; max-width: 400px; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #334155; }
+        h2 { text-align: center; color: #f43f5e; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8; }
+        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 6px; outline: none; }
+        input:focus { border-color: #38bdf8; }
+        .btn { width: 100%; padding: 12px; background: #db2777; border: none; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn:hover { background: #be185d; }
+        .toggle-link { text-align: center; margin-top: 15px; font-size: 14px; color: #94a3b8; }
+        .toggle-link span { color: #38bdf8; cursor: pointer; text-decoration: underline; }
+        .msg { margin-top: 10px; text-align: center; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="auth-container">
         <!-- Login Form -->
         <div id="loginSection">
             <h2>SKYPAY লগইন</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>মোবাইল নম্বর</label>
-                    <input type="text" id="loginMobile" required placeholder="আপনার মোবাইল নম্বর দিন">
-                </div>
-                <div class="form-group">
-                    <label>পাসওয়ার্ড</label>
-                    <input type="password" id="loginPassword" required placeholder="পাসওয়ার্ড দিন">
-                </div>
-                <button type="submit">লগইন করুন</button>
-            </form>
-            <div class="toggle-btn">
-                অ্যাকাউন্ট নেই? <span onclick="toggleForm('register')">রেজিস্ট্রেশন করুন</span>
+            <div class="form-group">
+                <label>মোবাইল নম্বর</label>
+                <input type="text" id="loginPhone" placeholder="আপনার মোবাইল নম্বর দিন">
             </div>
-            <div id="loginMsg" class="message"></div>
+            <div class="form-group">
+                <label>পাসওয়ার্ড</label>
+                <input type="password" id="loginPassword" placeholder="পাসওয়ার্ড দিন">
+            </div>
+            <button class="btn" onclick="handleLogin()">লগইন করুন</button>
+            <div class="toggle-link">অ্যাকাউন্ট নেই? <span onclick="switchForm('register')">রেজিস্ট্রেশন করুন</span></div>
+            <div id="loginMsg" class="msg"></div>
         </div>
 
         <!-- Register Form -->
         <div id="registerSection" style="display: none;">
             <h2>SKYPAY রেজিস্ট্রেশন</h2>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label>মোবাইল নম্বর</label>
-                    <input type="text" id="regMobile" required placeholder="আপনার মোবাইল নম্বর দিন">
-                </div>
-                <div class="form-group">
-                    <label>পাসওয়ার্ড</label>
-                    <input type="password" id="regPassword" required placeholder="নতুন পাসওয়ার্ড দিন">
-                </div>
-                <button type="submit">অ্যাকাউন্ট তৈরি করুন</button>
-            </form>
-            <div class="toggle-btn">
-                ইতিমধ্যে অ্যাকাউন্ট আছে? <span onclick="toggleForm('login')">লগইন করুন</span>
+            <div class="form-group">
+                <label>মোবাইল নম্বর</label>
+                <input type="text" id="regPhone" placeholder="আপনার মোবাইল নম্বর দিন">
             </div>
-            <div id="regMsg" class="message"></div>
+            <div class="form-group">
+                <label>পাসওয়ার্ড</label>
+                <input type="password" id="regPassword" placeholder="পাসওয়ার্ড দিন">
+            </div>
+            <button class="btn" onclick="handleRegister()">অ্যাকাউন্ট তৈরি করুন</button>
+            <div class="toggle-link">ইতিমধ্যে অ্যাকাউন্ট আছে? <span onclick="switchForm('login')">লগইন করুন</span></div>
+            <div id="regMsg" class="msg"></div>
         </div>
     </div>
 
     <script>
-        function toggleForm(type) {
-            if (type === 'register') {
+        function switchForm(type) {
+            if(type === 'register') {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('registerSection').style.display = 'block';
             } else {
@@ -139,58 +67,70 @@
             }
         }
 
-        // Registration API Call
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const mobile = document.getElementById('regMobile').value;
+        async function handleRegister() {
+            const phone = document.getElementById('regPhone').value;
             const password = document.getElementById('regPassword').value;
             const msg = document.getElementById('regMsg');
+
+            if(!phone || !password) {
+                msg.style.color = '#f87171';
+                msg.innerText = 'দ,য়া করে সব ঘর পূরণ করুন।';
+                return;
+            }
 
             try {
                 const res = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ mobile, password })
+                    body: JSON.stringify({ username: phone, password: password })
                 });
                 const data = await res.json();
-                msg.style.color = data.success ? '#4bb543' : '#ff3333';
+                msg.style.color = data.success ? '#4ade80' : '#f87171';
                 msg.innerText = data.message;
-                if (data.success) {
-                    setTimeout(() => toggleForm('login'), 1500);
+                
+                if(data.success) {
+                    setTimeout(() => { switchForm('login'); }, 1500);
                 }
-            } catch (err) {
-                msg.style.color = '#ff3333';
-                msg.innerText = 'সার্ভারে কানেক্ট করতে সমস্যা হচ্ছে।';
+            } catch(e) {
+                msg.style.color = '#f87171';
+                msg.innerText = 'সার্ভারে সমস্যা হয়েছে।';
             }
-        });
+        }
 
-        // Login API Call
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const mobile = document.getElementById('loginMobile').value;
+        async function handleLogin() {
+            const phone = document.getElementById('loginPhone').value;
             const password = document.getElementById('loginPassword').value;
             const msg = document.getElementById('loginMsg');
+
+            if(!phone || !password) {
+                msg.style.color = '#f87171';
+                msg.innerText = 'দয়া করে মোবাইল নম্বর ও পাসওয়ার্ড দিন।';
+                return;
+            }
 
             try {
                 const res = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ mobile, password })
+                    body: JSON.stringify({ username: phone, password: password })
                 });
                 const data = await res.json();
-                msg.style.color = data.success ? '#4bb543' : '#ff3333';
-                msg.innerText = data.message;
-                if (data.success) {
+                
+                if(data.success) {
+                    msg.style.color = '#4ade80';
+                    msg.innerText = 'লগইন সফল হয়েছে! ড্যাশবোর্ডে যাওয়া হচ্ছে...';
                     setTimeout(() => {
-                        alert('লগইন সফল হয়েছে! ড্যাশবোর্ডে স্বাগতম।');
-                        // পরবর্তীতে এখানে ড্যাশবোর্ড রিডায়রেক্ট করা যাবে
+                        window.location.href = '/dashboard.html';
                     }, 1000);
+                } else {
+                    msg.style.color = '#f87171';
+                    msg.innerText = data.message;
                 }
-            } catch (err) {
-                msg.style.color = '#ff3333';
-                msg.innerText = 'সার্ভারে কানেক্ট করতে সমস্যা হচ্ছে।';
+            } catch(e) {
+                msg.style.color = '#f87171';
+                msg.innerText = 'লগইন করতে সমস্যা হয়েছে।';
             }
-        });
+        }
     </script>
 </body>
 </html>
