@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKYPAY - ইউজার ড্যাশবোর্ড</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #1e293b;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+        .header h2 {
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+            margin-bottom: 20px;
+        }
+        .card h3 {
+            color: #f43f5e;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 5px;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #334155;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .label {
+            color: #94a3b8;
+        }
+        .value {
+            font-weight: bold;
+            color: #4ade80;
+        }
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: #ef4444;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>SKYPAY ড্যাশবোর্ড</h2>
+            <p>আপনার অ্যাকাউন্টে স্বাগতম</p>
+        </div>
+
+        <!-- Payment Info Card -->
+        <div class="card">
+            <h3>অফিসিয়াল পেমেন্ট নম্বর</h3>
+            <div class="info-item">
+                <span class="label">বিকাশ নম্বর:</span>
+                <span class="value" id="userBkash">লোড হচ্ছে...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">নগদ নম্বর:</span>
+                <span class="value" id="userNagad">লোড হচ্ছে...</span>
+            </div>
+        </div>
+
+        <!-- Rules & Limits Card -->
+        <div class="card">
+            <h3>ডিপোজিট ও উইথড্র নিয়মাবলী</h3>
+            <div class="info-item">
+                <span class="label">সর্বনিম্ন ডিপোজিট:</span>
+                <span class="value" id="userMinDeposit">লোড হচ্ছে...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">সর্বনিম্ন উইথড্র:</span>
+                <span class="value" id="userMinWithdraw">লোড হচ্ছে...</span>
+            </div>
+        </div>
+
+        <!-- Active Product Card -->
+        <div class="card">
+            <h3>বর্তমান প্যাকেজ ও মেয়াদ</h3>
+            <div class="info-item">
+                <span class="label">প্যাকেজের নাম:</span>
+                <span class="value" id="userProductName">লোড হচ্ছে...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">প্যাকেজের মেয়াদ:</span>
+                <span class="value" id="userProductValidity">লোড হচ্ছে...</span>
+            </div>
+        </div>
+
+        <button class="btn-logout" onclick="logout()">লগআউট করুন</button>
+    </div>
+
+    <script>
+        // এডমিন প্যানেলের লাইভ ডেটা ফেচ করে ইউজার ড্যাশবোর্ডে দেখানো
+        window.onload = async function() {
+            try {
+                const res = await fetch('/api/settings');
+                const data = await res.json();
+                if(data.success && data.settings) {
+                    document.getElementById('userBkash').innerText = data.settings.bkash_number || 'দেওয়া হয়নি';
+                    document.getElementById('userNagad').innerText = data.settings.nagad_number || 'দেওয়া হয়নি';
+                    document.getElementById('userMinDeposit').innerText = data.settings.min_deposit ? data.settings.min_deposit + ' টাকা' : 'নির্ধারিত নয়';
+                    document.getElementById('userMinWithdraw').innerText = data.settings.min_withdraw ? data.settings.min_withdraw + ' টাকা' : 'নির্ধারিত নয়';
+                    document.getElementById('userProductName').innerText = data.settings.product_name || 'কোনো প্যাকেজ নেই';
+                    document.getElementById('userProductValidity').innerText = data.settings.product_validity ? data.settings.product_validity + ' দিন' : 'নির্ধারিত নয়';
+                }
+            } catch(e) {
+                console.error("Error loading user dashboard settings:", e);
+            }
+        };
+
+        function logout() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
