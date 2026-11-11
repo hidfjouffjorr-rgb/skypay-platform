@@ -9,8 +9,8 @@
         body { background: #130b2b; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         
         .auth-container { width: 100%; max-width: 420px; background: #1c1438; border: 1px solid #2d2354; border-radius: 24px; padding: 30px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        .logo-box { width: 70px; height: 70px; background: #fff; border-radius: 16px; margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #130b2b; font-size: 18px; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
-        .auth-title { font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .logo-box { width: 70px; height: 70px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 16px; margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #fff; font-size: 20px; box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
+        .auth-title { font-size: 24px; font-weight: bold; color: #fff; margin-bottom: 5px; }
         .auth-subtitle { font-size: 13px; color: #a5b4fc; margin-bottom: 25px; }
 
         .form-group { text-align: left; margin-bottom: 18px; }
@@ -19,7 +19,7 @@
         .input-box span { color: #94a3b8; font-size: 14px; margin-right: 8px; }
         .input-box input { width: 100%; background: transparent; border: none; outline: none; color: #fff; padding: 10px 0; font-size: 14px; }
         
-        .btn-primary { width: 100%; padding: 14px; background: #065f46; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: 0 4px 15px rgba(6,95,70,0.4); transition: 0.2s; }
+        .btn-primary { width: 100%; padding: 14px; background: #059669; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: 0 4px 15px rgba(5,150,105,0.4); transition: 0.2s; }
         .btn-primary:hover { background: #047857; }
 
         .switch-auth { margin-top: 20px; font-size: 13px; color: #94a3b8; }
@@ -31,7 +31,7 @@
     <div class="auth-container">
         <div class="logo-box">SKY</div>
         <div class="auth-title">SKYPAY</div>
-        <div class="auth-subtitle">আপনাকে স্বাগতম</div>
+        <div class="auth-subtitle">আপনার প্রিমিয়াম ফাইন্যান্সিয়াল প্ল্যাটফর্ম</div>
 
         <!-- Login Form -->
         <div id="loginForm">
@@ -49,10 +49,10 @@
                 </div>
             </div>
             <button class="btn-primary" onclick="handleLogin()">লগ ইন</button>
-            <div class="switch-auth">একাউন্ট নেই? <span onclick="toggleAuth(true)">সাইন আপ</span></div>
+            <div class="switch-auth">একাউন্ট নেই? <span onclick="toggleAuth(true)">সাইন আপ করুন</span></div>
         </div>
 
-        <!-- Register Form (Hidden by default) -->
+        <!-- Register Form -->
         <div id="registerForm" style="display: none;">
             <div class="form-group">
                 <label>ফোন নম্বর</label>
@@ -67,14 +67,8 @@
                     <input type="password" id="regPass" placeholder="পাসওয়ার্ড দিন">
                 </div>
             </div>
-            <div class="form-group">
-                <label>আমন্ত্রণ কোড • ঐচ্ছিক</label>
-                <div class="input-box">
-                    <input type="text" id="regRef" placeholder="রেফারেল কোড">
-                </div>
-            </div>
             <button class="btn-primary" onclick="handleRegister()">সাইন আপ</button>
-            <div class="switch-auth">আগে থেকেই একাউন্ট আছে? <span onclick="toggleAuth(false)">লগ ইন</span></div>
+            <div class="switch-auth">আগে থেকেই একাউন্ট আছে? <span onclick="toggleAuth(false)">লগ ইন করুন</span></div>
         </div>
     </div>
 
