@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKYPAY - প্রিমিয়াম ড্যাশবোর্ড</title>
+    <title>SKYPAY - প্রিমিয়াম ড্যাশবোর্ড ও এআই চ্যাট</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #071124; color: #f8fafc; padding-bottom: 40px; }
@@ -15,13 +15,19 @@
 
         .container { max-width: 480px; margin: 0 auto; padding: 15px; }
 
-        .balance-box { background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ebad7); border-radius: 20px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(29,78,216,0.35); }
+        .balance-box { background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ebad7); border-radius: 20px; padding: 22px; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(29,78,216,0.35); }
         .balance-box small { color: #dbeafe; font-size: 13px; font-weight: 500; }
-        .balance-amount { font-size: 32px; font-weight: 800; margin: 8px 0 16px; color: #fff; }
+        .balance-amount { font-size: 32px; font-weight: 800; margin: 8px 0 14px; color: #fff; }
         .balance-actions { display: flex; gap: 10px; }
         .balance-actions button { flex: 1; border: none; border-radius: 10px; padding: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; }
         .btn-topup { background: #fff; color: #1d4ed8; }
         .btn-withdraw { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+        /* Daily Earnings Banner */
+        .daily-earn-card { background: linear-gradient(135deg, #059669, #10b981); border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 20px rgba(16,185,129,0.3); }
+        .daily-earn-card div small { color: #d1fae5; font-size: 12px; }
+        .daily-earn-card div h4 { font-size: 22px; color: #fff; font-weight: 800; margin-top: 2px; }
+        .collect-btn { background: #fff; color: #065f46; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
         .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
         .menu-item { background: #1e293b; border: 1px solid #334155; padding: 14px 8px; border-radius: 14px; text-align: center; cursor: pointer; transition: 0.2s; }
@@ -30,20 +36,19 @@
         .menu-icon { font-size: 22px; margin-bottom: 6px; }
         .menu-text { font-size: 11px; color: #cbd5e1; font-weight: 600; }
 
-        /* Section Header */
         .section-header { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 12px; }
         .section-header h3 { font-size: 16px; color: #fff; font-weight: 700; }
         .section-header span { font-size: 12px; color: #38bdf8; }
 
-        /* 15 Products Grid Layout */
+        /* 15 Products Grid */
         .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .product-card { background: #1e293b; border-radius: 16px; padding: 14px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-        .product-icon { width: 50px; height: 50px; margin: 0 auto 10px; background: linear-gradient(135deg, #1d4ed8, #0ebad7); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 4px 10px rgba(14,186,215,0.3); }
-        .product-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-        .product-duration { font-size: 11px; color: #94a3b8; margin-bottom: 8px; }
-        .product-price { font-size: 16px; font-weight: 800; color: #38bdf8; margin-bottom: 10px; }
-        .buy-btn { width: 100%; padding: 8px; background: #2563eb; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-        .buy-btn:hover { background: #1d4ed8; }
+        .product-icon { width: 45px; height: 45px; margin: 0 auto 8px; background: linear-gradient(135deg, #1d4ed8, #0ebad7); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 22px; }
+        .product-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .product-duration { font-size: 11px; color: #94a3b8; }
+        .product-income { font-size: 11px; color: #34d399; font-weight: 600; margin: 4px 0; }
+        .product-price { font-size: 15px; font-weight: 800; color: #38bdf8; margin-bottom: 8px; }
+        .buy-btn { width: 100%; padding: 7px; background: #2563eb; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 12px; }
 
         .card { background: #1e293b; border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; }
         .card-title { font-size: 15px; font-weight: 700; color: #f43f5e; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; }
@@ -52,7 +57,7 @@
         .info-row span:last-child { font-weight: 700; color: #fff; }
 
         .download-box { background: linear-gradient(135deg, #0f172a, #1e293b); text-align: center; border: 1px solid #38bdf844; }
-        .apk-btn { display: block; width: 100%; padding: 12px; background: #10b981; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; margin-top: 12px; text-align: center; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .apk-btn { display: block; width: 100%; padding: 12px; background: #10b981; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; margin-top: 12px; text-align: center; }
         
         .logout-btn { width: 100%; padding: 12px; background: #ef4444; border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; }
 
@@ -65,6 +70,9 @@
         .modal-btns button { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-submit { background: #2563eb; color: white; }
         .btn-close { background: #475569; color: white; }
+
+        /* AI Chat Box Styling */
+        .ai-chat-box { height: 200px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 10px; overflow-y: auto; margin-bottom: 10px; font-size: 13px; color: #cbd5e1; }
     </style>
 </head>
 <body>
@@ -74,10 +82,11 @@
             <h3 id="userName">SKYPAY মেম্বার</h3>
             <span>VIP Member</span>
         </div>
-        <div class="notification-bell">🔔</div>
+        <div class="notification-bell" onclick="openModal('aiModal')">🤖</div>
     </div>
 
     <div class="container">
+        <!-- Balance Section -->
         <div class="balance-box">
             <small>অ্যাভেইলেবল ব্যালেন্স</small>
             <div class="balance-amount" id="userBalance">৳ 0.00</div>
@@ -87,16 +96,26 @@
             </div>
         </div>
 
+        <!-- Daily Earning Info Banner -->
+        <div class="daily-earn-card">
+            <div>
+                <small>আজকের সম্ভাব্য আয়</small>
+                <h4>৳ ১২০.০০</h4>
+            </div>
+            <button class="collect-btn" onclick="alert('আয় সফলভাবে মূল ব্যালেন্সে যোগ হয়েছে!')">বিকাশ করুন</button>
+        </div>
+
+        <!-- Quick Menu Grid -->
         <div class="menu-grid">
             <div class="menu-item" onclick="document.getElementById('plansSection').scrollIntoView({behavior: 'smooth'});">
                 <span class="menu-icon">👑</span>
                 <span class="menu-text">VIP প্ল্যান</span>
             </div>
-            <div class="menu-item" onclick="alert('আপনার কোনো সক্রিয় অর্ডার নেই।')">
-                <span class="menu-icon">📦</span>
-                <span class="menu-text">অর্ডারস</span>
+            <div class="menu-item" onclick="openModal('aiModal')">
+                <span class="menu-icon">🤖</span>
+                <span class="menu-text">AI চ্যাট</span>
             </div>
-            <div class="menu-item" onclick="alert('আপনার রেফারেল লিংক কপি করা হয়েছে!')">
+            <div class="menu-item" onclick="alert('রেফারেল লিংক কপি করা হয়েছে!')">
                 <span class="menu-icon">👥</span>
                 <span class="menu-text">রেফারেল</span>
             </div>
@@ -106,28 +125,30 @@
             </div>
         </div>
 
-        <!-- 15 VIP Service Plans Section -->
+        <!-- 15 VIP Service Plans Grid -->
         <div id="plansSection" class="section-header">
             <h3>সার্ভিস প্ল্যান ও প্রোডাক্টস</h3>
-            <span>১৫ টি সার্ভিস রয়েছে</span>
+            <span>১৫ টি সার্ভিস</span>
         </div>
 
         <div class="products-grid" id="productsGrid">
-            <!-- Dynamically populated 15 products via JS -->
+            <!-- Populated via JavaScript -->
         </div>
 
+        <!-- Official Payment Numbers (Live from Admin) -->
         <div class="card">
             <div class="card-title"><span>অফিসিয়াল পেমেন্ট নম্বর</span> 💳</div>
             <div class="info-row">
-                <span>বিকাশ নম্বর:</span>
+                <span>বিকাশ নম্বর (Personal):</span>
                 <span id="bkashNum" style="color: #38bdf8;">লোড হচ্ছে...</span>
             </div>
             <div class="info-row">
-                <span>নগদ নম্বর:</span>
+                <span>নগদ নম্বর (Personal):</span>
                 <span id="nagadNum" style="color: #38bdf8;">লোড হচ্ছে...</span>
             </div>
         </div>
 
+        <!-- Rules & Limits -->
         <div class="card">
             <div class="card-title"><span>নিয়মাবলী ও লিমিট</span> 📊</div>
             <div class="info-row">
@@ -140,6 +161,7 @@
             </div>
         </div>
 
+        <!-- App Download Box -->
         <div class="card download-box">
             <h3 style="font-size: 16px; margin-bottom: 5px; color: #38bdf8;">SKYPAY মোবাইল অ্যাপ</h3>
             <p style="font-size: 12px; color: #94a3b8;">অফিসিয়াল অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন</p>
@@ -150,36 +172,55 @@
     </div>
 
     <!-- Modals -->
+    <!-- Deposit Modal -->
     <div id="depositModal" class="modal">
         <div class="modal-content">
-            <h3>ডিপোজিট (Top Up) করুন</h3>
+            <h3>ডিপোজিট (Top Up)</h3>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:10px; text-align:center;">উপরের বিকাশ বা নগদ নম্বরে টাকা পাঠিয়ে নিচে তথ্য দিন।</p>
             <input type="number" id="depAmount" placeholder="টাকার পরিমাণ লিখুন">
             <input type="text" id="depTrx" placeholder="ট্রানজ্যাকশন আইডি (TrxID) দিন">
             <div class="modal-btns">
-                <button class="btn-submit" onclick="alert('ডিপোজিট রিকোয়েস্ট পাঠানো হয়েছে!'); closeModal('depositModal');">জমা দিন</button>
+                <button class="btn-submit" onclick="alert('ডিপোজিট রিকোয়েস্ট সফলভাবে জমা হয়েছে!'); closeModal('depositModal');">জমা দিন</button>
                 <button class="btn-close" onclick="closeModal('depositModal')">বন্ধ করুন</button>
             </div>
         </div>
     </div>
 
+    <!-- Withdraw Modal -->
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <h3>উইথড্র রিকোয়েস্ট</h3>
             <input type="number" id="wdAmount" placeholder="উইথড্র পরিমাণ লিখুন">
             <input type="text" id="wdNumber" placeholder="আপনার বিকাশ/নগদ নম্বর">
             <div class="modal-btns">
-                <button class="btn-submit" onclick="alert('উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে!'); closeModal('withdrawModal');">রিকোয়েস্ট পাঠান</button>
+                <button class="btn-submit" onclick="alert('উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!'); closeModal('withdrawModal');">রিকোয়েস্ট পাঠান</button>
                 <button class="btn-close" onclick="closeModal('withdrawModal')">বন্ধ করুন</button>
             </div>
         </div>
     </div>
 
+    <!-- AI Live Chat Modal -->
+    <div id="aiModal" class="modal">
+        <div class="modal-content">
+            <h3>🤖 SKYPAY AI অ্যাসিস্ট্যান্ট</h3>
+            <div class="ai-chat-box" id="chatBox">
+                <b>AI Assistant:</b> হ্যালো! SKYPAY এ আপনাকে স্বাগতম। ডিপোজিট, উইথড্র বা প্ল্যান নিয়ে কোনো প্রশ্ন আছে কি?
+            </div>
+            <input type="text" id="chatInput" placeholder="আপনার প্রশ্ন এখানে লিখুন...">
+            <div class="modal-btns">
+                <button class="btn-submit" onclick="sendAiMessage()">পাঠান</button>
+                <button class="btn-close" onclick="closeModal('aiModal')">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
     <div id="supportModal" class="modal">
         <div class="modal-content">
             <h3>২৪/৭ কাস্টমার সাপোর্ট</h3>
-            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">যেকোনো সমস্যায় আমাদের টেলিগ্রাম সাপোর্ট চ্যানেলে জয়েন করুন।</p>
+            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">যেকোনো সমস্যায় আমাদের অফিশিয়াল টেলিগ্রাম বা লাইভ চ্যাট ব্যবহার করুন।</p>
             <div class="modal-btns">
-                <button class="btn-submit" onclick="alert('সাপোর্টে রিডাইরেক্ট করা হচ্ছে...'); closeModal('supportModal');">লাইভ চ্যাট</button>
+                <button class="btn-submit" onclick="openModal('aiModal'); closeModal('supportModal');">এআই লাইভ চ্যাট</button>
                 <button class="btn-close" onclick="closeModal('supportModal')">বন্ধ করুন</button>
             </div>
         </div>
@@ -189,48 +230,61 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // 15 Default Plans Data Setup
+        // AI Chat Functionality
+        function sendAiMessage() {
+            const input = document.getElementById('chatInput');
+            const chatBox = document.getElementById('chatBox');
+            if(!input.value.trim()) return;
+
+            chatBox.innerHTML += `<br><b style='color:#38bdf8;'>আপনি:</b> ${input.value}`;
+            
+            setTimeout(() => {
+                chatBox.innerHTML += `<br><b style='color:#34d399;'>AI Assistant:</b> আপনার মেসেজটি পেয়েছি। অনুগ্রহ করে এডমিনের সাথে যোগাযোগ করুন অথবা পেমেন্ট ট্রানজ্যাকশন আইডি চেক করুন।`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
+
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // 15 Products Data with Daily Income Calculation
         const defaultProducts = [
-            { icon: '◈', name: 'Starter Plan 01', days: 30, price: 500 },
-            { icon: '✦', name: 'Service Plan 02', days: 30, price: 750 },
-            { icon: '💎', name: 'Silver Plan 03', days: 45, price: 1000 },
-            { icon: '👑', name: 'Gold Plan 04', days: 60, price: 1500 },
-            { icon: '🚀', name: 'Rocket Plan 05', days: 60, price: 2000 },
-            { icon: '🔥', name: 'VIP Plan 06', days: 90, price: 2500 },
-            { icon: '⚡', name: 'Speed Plan 07', days: 90, price: 3000 },
-            { icon: '🌟', name: 'Star Plan 08', days: 120, price: 4000 },
-            { icon: '🏆', name: 'Pro Plan 09', days: 120, price: 5000 },
-            { icon: '🔮', name: 'Ultra Plan 10', days: 150, price: 6500 },
-            { icon: '🛡️', name: 'Secure Plan 11', days: 180, price: 8000 },
-            { icon: '🔱', name: 'Master Plan 12', days: 180, price: 10000 },
-            { icon: '💠', name: 'Diamond Plan 13', days: 240, price: 15000 },
-            { icon: '⚜️', name: 'Royal Plan 14', days: 300, price: 20000 },
-            { icon: '👑', name: 'Supreme VIP 15', days: 365, price: 30000 }
+            { icon: '◈', name: 'Starter Plan 01', days: 30, price: 500, daily: '৳ ২০ প্রতিদিন' },
+            { icon: '✦', name: 'Service Plan 02', days: 30, price: 750, daily: '৳ ৩০ প্রতিদিন' },
+            { icon: '💎', name: 'Silver Plan 03', days: 45, price: 1000, daily: '৳ ৪৫ প্রতিদিন' },
+            { icon: '👑', name: 'Gold Plan 04', days: 60, price: 1500, daily: '৳ ৭০ প্রতিদিন' },
+            { icon: '🚀', name: 'Rocket Plan 05', days: 60, price: 2000, daily: '৳ ১০০ প্রতিদিন' },
+            { icon: '🔥', name: 'VIP Plan 06', days: 90, price: 2500, daily: '৳ ১৩০ প্রতিদিন' },
+            { icon: '⚡', name: 'Speed Plan 07', days: 90, price: 3000, daily: '৳ ১৬০ প্রতিদিন' },
+            { icon: '🌟', name: 'Star Plan 08', days: 120, price: 4000, daily: '৳ ২২০ প্রতিদিন' },
+            { icon: '🏆', name: 'Pro Plan 09', days: 120, price: 5000, daily: '৳ ২৮০ প্রতিদিন' },
+            { icon: '🔮', name: 'Ultra Plan 10', days: 150, price: 6500, daily: '৳ ৩৭০ প্রতিদিন' },
+            { icon: '🛡️', name: 'Secure Plan 11', days: 180, price: 8000, daily: '৳ ৪৭০ প্রতিদিন' },
+            { icon: '🔱', name: 'Master Plan 12', days: 180, price: 10000, daily: '৳ ৬০০ প্রতিদিন' },
+            { icon: '💠', name: 'Diamond Plan 13', days: 240, price: 15000, daily: '৳ ৯৫০ প্রতিদিন' },
+            { icon: '⚜️', name: 'Royal Plan 14', days: 300, price: 20000, daily: '৳ ১৩০০ প্রতিদিন' },
+            { icon: '👑', name: 'Supreme VIP 15', days: 365, price: 30000, daily: '৳ ২০০০ প্রতিদিন' }
         ];
 
         function renderProducts(adminPkgName, adminPkgDuration) {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
             
-            // If admin configured a specific package, update first item
-            if(adminPkgName) {
-                defaultProducts[0].name = adminPkgName;
-            }
-            if(adminPkgDuration) {
-                defaultProducts[0].days = adminPkgDuration;
-            }
+            if(adminPkgName) defaultProducts[0].name = adminPkgName;
+            if(adminPkgDuration) defaultProducts[0].days = adminPkgDuration;
 
-            defaultProducts.forEach((item, idx) => {
+            defaultProducts.forEach((item) => {
                 const cardHtml = `
                     <div class="product-card">
                         <div>
                             <div class="product-icon">${item.icon}</div>
                             <div class="product-title">${item.name}</div>
                             <div class="product-duration">মেয়াদ: ${item.days} দিন</div>
+                            <div class="product-income">লাভ: ${item.daily}</div>
                         </div>
                         <div>
                             <div class="product-price">৳ ${item.price}</div>
-                            <button class="buy-btn" onclick="alert('${item.name} ক্রয়ের জন্য আবেদন করা হয়েছে!')">প্ল্যান কিনুন</button>
+                            <button class="buy-btn" onclick="alert('${item.name} ক্রয়ের জন্য টপ আপ করুন!')">প্ল্যান কিনুন</button>
                         </div>
                     </div>
                 `;
@@ -266,7 +320,6 @@
                 }
                 renderProducts(adminPkgName, adminPkgDuration);
             } catch(e) {
-                console.error("ডেটা লোড করতে সমস্যা হয়েছে");
                 renderProducts();
             }
         }
