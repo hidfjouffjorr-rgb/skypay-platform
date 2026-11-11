@@ -3,177 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKYPAY - প্রিমিয়াম ড্যাশবোর্ড</title>
+    <title>SKYPAY - ড্যাশবোর্ড</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #071124; color: #f8fafc; padding-bottom: 40px; }
+        body { background: #130b2b; color: #f8fafc; padding-bottom: 70px; }
         
-        .app-header { background: linear-gradient(135deg, #10234b, #1769e8); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .user-welcome h3 { font-size: 16px; color: #fff; }
-        .user-welcome span { font-size: 12px; color: #38bdf8; background: rgba(56,189,248,0.15); padding: 2px 8px; border-radius: 20px; }
-        .notification-bell { font-size: 20px; background: rgba(255,255,255,0.1); padding: 8px; border-radius: 50%; cursor: pointer; }
+        /* App Header */
+        .app-header { background: #1c1438; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d2354; }
+        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .user-avatar { width: 45px; height: 45px; background: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #130b2b; font-size: 14px; box-shadow: 0 2px 10px rgba(255,255,255,0.2); }
+        .user-info h4 { font-size: 14px; color: #fff; }
+        .user-info p { font-size: 12px; color: #a5b4fc; }
+        .invite-badge { background: #22c55e22; color: #4ade80; border: 1px solid #22c55e44; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
         .container { max-width: 480px; margin: 0 auto; padding: 15px; }
 
-        .balance-box { background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ebad7); border-radius: 20px; padding: 22px; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(29,78,216,0.35); }
-        .balance-box small { color: #dbeafe; font-size: 13px; font-weight: 500; }
-        .balance-amount { font-size: 32px; font-weight: 800; margin: 8px 0 14px; color: #fff; }
-        .balance-actions { display: flex; gap: 10px; }
-        .balance-actions button { flex: 1; border: none; border-radius: 10px; padding: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; }
-        .btn-topup { background: #fff; color: #1d4ed8; }
-        .btn-withdraw { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-
-        .daily-earn-card { background: linear-gradient(135deg, #059669, #10b981); border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 20px rgba(16,185,129,0.3); }
-        .daily-earn-card div small { color: #d1fae5; font-size: 12px; }
-        .daily-earn-card div h4 { font-size: 22px; color: #fff; font-weight: 800; margin-top: 2px; }
-        .collect-btn { background: #fff; color: #065f46; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
-
-        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-        .menu-item { background: #1e293b; border: 1px solid #334155; padding: 14px 8px; border-radius: 14px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .menu-item:hover { border-color: #38bdf8; transform: translateY(-2px); background: #26334d; }
-        .menu-item span { display: block; }
-        .menu-icon { font-size: 22px; margin-bottom: 6px; }
-        .menu-text { font-size: 11px; color: #cbd5e1; font-weight: 600; }
-
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 12px; }
-        .section-header h3 { font-size: 16px; color: #fff; font-weight: 700; }
-        .section-header span { font-size: 12px; color: #38bdf8; }
-
-        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .product-card { background: #1e293b; border-radius: 16px; padding: 14px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-        .product-icon { width: 45px; height: 45px; margin: 0 auto 8px; background: linear-gradient(135deg, #1d4ed8, #0ebad7); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 22px; }
-        .product-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-        .product-duration { font-size: 11px; color: #94a3b8; }
-        .product-income { font-size: 11px; color: #34d399; font-weight: 600; margin: 4px 0; }
-        .product-price { font-size: 15px; font-weight: 800; color: #38bdf8; margin-bottom: 8px; }
-        .buy-btn { width: 100%; padding: 7px; background: #2563eb; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 12px; }
-
-        .card { background: #1e293b; border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; }
-        .card-title { font-size: 15px; font-weight: 700; color: #f43f5e; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+        /* Wallet Card */
+        .wallet-card { background: #1c1438; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #2d2354; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .wallet-box { flex: 1; text-align: center; }
+        .wallet-box:first-child { border-right: 1px solid #2d2354; }
+        .wallet-box small { color: #a5b4fc; font-size: 12px; }
+        .wallet-box h3 { font-size: 20px; font-weight: bold; color: #fff; margin: 5px 0 12px; }
         
-        .info-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; color: #94a3b8; }
-        .info-row span:last-child { font-weight: 700; color: #fff; }
+        .wallet-btn { padding: 8px 20px; border: none; border-radius: 20px; font-weight: bold; font-size: 13px; cursor: pointer; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .btn-deposit { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .btn-withdraw { background: linear-gradient(135deg, #10b981, #059669); }
 
-        .download-box { background: linear-gradient(135deg, #0f172a, #1e293b); text-align: center; border: 1px solid #38bdf844; }
-        .apk-btn { display: block; width: 100%; padding: 12px; background: #10b981; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; margin-top: 12px; text-align: center; }
-        
-        .logout-btn { width: 100%; padding: 12px; background: #ef4444; border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; }
+        /* Quick Action Grid */
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #1c1438; padding: 15px 10px; border-radius: 16px; border: 1px solid #2d2354; margin-bottom: 15px; }
+        .action-item { text-align: center; cursor: pointer; }
+        .action-icon { width: 45px; height: 45px; background: #2d2354; border-radius: 12px; margin: 0 auto 6px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
+        .action-text { font-size: 11px; color: #cbd5e1; }
 
+        /* Menu List Styles */
+        .menu-list { background: #1c1438; border-radius: 16px; border: 1px solid #2d2354; overflow: hidden; margin-bottom: 15px; }
+        .menu-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid #2d2354; cursor: pointer; transition: 0.2s; }
+        .menu-row:last-child { border-bottom: none; }
+        .menu-row:hover { background: #251b4e; }
+        .menu-left { display: flex; align-items: center; gap: 12px; }
+        .menu-row-icon { width: 32px; height: 32px; background: #2d2354; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 16px; }
+        .menu-row span { font-size: 13px; color: #f8fafc; font-weight: 500; }
+        .menu-arrow { color: #64748b; font-size: 14px; }
+
+        /* Logout Button */
+        .logout-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: white; font-weight: bold; border-radius: 16px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1c1438; border-top: 1px solid #2d2354; display: flex; justify-content: space-around; padding: 10px 0; z-index: 50; }
+        .nav-item { text-align: center; cursor: pointer; color: #94a3b8; font-size: 11px; }
+        .nav-item.active { color: #38bdf8; }
+        .nav-icon { font-size: 18px; margin-bottom: 2px; display: block; }
+
+        /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; padding: 20px; }
-        .modal-content { background: #1e293b; padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid #334155; }
+        .modal-content { background: #1c1438; padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid #2d2354; }
         .modal-content h3 { color: #38bdf8; margin-bottom: 15px; font-size: 18px; text-align: center; }
-        .modal-content input { width: 100%; padding: 12px; margin-bottom: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 8px; outline: none; }
+        .modal-content input { width: 100%; padding: 12px; margin-bottom: 12px; background: #130b2b; border: 1px solid #3b2c6e; color: #fff; border-radius: 8px; outline: none; }
         .modal-btns { display: flex; gap: 10px; }
         .modal-btns button { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-submit { background: #2563eb; color: white; }
         .btn-close { background: #475569; color: white; }
-
-        .ai-chat-box { height: 200px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 10px; overflow-y: auto; margin-bottom: 10px; font-size: 13px; color: #cbd5e1; }
-        
-        .payment-info-box { background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; border: 1px solid #334155; }
-        .payment-info-box p { color: #38bdf8; margin-bottom: 4px; font-weight: bold; }
+        .payment-info { background: #130b2b; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 12px; border: 1px solid #3b2c6e; }
+        .payment-info p { color: #38bdf8; margin-bottom: 3px; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <div class="app-header">
-        <div class="user-welcome">
-            <h3 id="userName">SKYPAY মেম্বার</h3>
-            <span>VIP Member</span>
+        <div class="user-profile">
+            <div class="user-avatar">SKY</div>
+            <div class="user-info">
+                <h4 id="userPhoneDisplay">01706169479</h4>
+                <p>ডিজিট: TK0.00</p>
+            </div>
         </div>
-        <div class="notification-bell" onclick="openModal('aiModal')">🤖</div>
+        <div class="invite-badge" onclick="copyReferralLink()">Invite</div>
     </div>
 
     <div class="container">
-        <div class="balance-box">
-            <small>অ্যাভেইলেবল ব্যালেন্স</small>
-            <div class="balance-amount" id="userBalance">৳ 0.00</div>
-            <div class="balance-actions">
-                <button class="btn-topup" onclick="openModal('depositModal')">টপ আপ (Top Up)</button>
-                <button class="btn-withdraw" onclick="openModal('withdrawModal')">উইথড্র</button>
+        <!-- Main Wallet Card -->
+        <div class="wallet-card">
+            <div class="wallet-box">
+                <small>মূল ওয়ালেট</small>
+                <h3 id="userBalance">100.00</h3>
+                <button class="wallet-btn btn-deposit" onclick="openModal('depositModal')">বিনিয়োগ</button>
+            </div>
+            <div class="wallet-box">
+                <small>কমিশন ওয়ালেট</small>
+                <h3>0.00</h3>
+                <button class="wallet-btn btn-withdraw" onclick="openModal('withdrawModal')">উত্তোলন</button>
             </div>
         </div>
 
-        <div class="daily-earn-card">
-            <div>
-                <small>আজকের সম্ভাব্য আয়</small>
-                <h4>৳ ১২০.০০</h4>
+        <!-- Quick Actions Grid -->
+        <div class="action-grid">
+            <div class="action-item" onclick="copyReferralLink()">
+                <div class="action-icon">👥</div>
+                <div class="action-text">ইনভাইট</div>
             </div>
-            <button class="collect-btn" onclick="alert('আয় সফলভাবে মূল ব্যালেন্সে যোগ হয়েছে!')">বিকাশ করুন</button>
-        </div>
-
-        <div class="menu-grid">
-            <div class="menu-item" onclick="document.getElementById('plansSection').scrollIntoView({behavior: 'smooth'});">
-                <span class="menu-icon">👑</span>
-                <span class="menu-text">VIP প্ল্যান</span>
+            <div class="action-item" onclick="alert('আপনার টিম মেম্বার সংখ্যা ০ জন।')">
+                <div class="action-icon">🛡️</div>
+                <div class="action-text">টিম</div>
             </div>
-            <div class="menu-item" onclick="openModal('aiModal')">
-                <span class="menu-icon">🤖</span>
-                <span class="menu-text">AI চ্যাট</span>
+            <div class="action-item" onclick="alert('কোনো কমিশন যোগ হয়নি।')">
+                <div class="action-icon">🏆</div>
+                <div class="action-text">কমিশন</div>
             </div>
-            <div class="menu-item" onclick="copyReferralLink()">
-                <span class="menu-icon">👥</span>
-                <span class="menu-text">রেফারেল</span>
-            </div>
-            <div class="menu-item" onclick="openModal('supportModal')">
-                <span class="menu-icon">🎧</span>
-                <span class="menu-text">সাপোর্ট</span>
+            <div class="action-item" onclick="alert('লেনদেন হিস্টরি খালি।')">
+                <div class="action-icon">🕒</div>
+                <div class="action-text">হিস্টরি</div>
             </div>
         </div>
 
-        <div id="plansSection" class="section-header">
-            <h3>সার্ভিস প্ল্যান ও প্রোডাক্টস</h3>
-            <span>১৫ টি সার্ভিস</span>
-        </div>
-
-        <div class="products-grid" id="productsGrid">
-            <!-- Populated via JS -->
-        </div>
-
-        <div class="card">
-            <div class="card-title"><span>অফিসিয়াল পেমেন্ট নম্বর</span> 💳</div>
-            <div class="info-row">
-                <span>বিকাশ (Personal):</span>
-                <span style="color: #38bdf8;">+8801763341991</span>
+        <!-- Options Menu List -->
+        <div class="menu-list">
+            <div class="menu-row" onclick="alert('আপনার কোনো পণ্য নেই।')">
+                <div class="menu-left">
+                    <div class="menu-row-icon">📦</div>
+                    <span>আমার পণ্য</span>
+                </div>
+                <div class="menu-arrow">›</div>
             </div>
-            <div class="info-row">
-                <span>নগদ (Personal):</span>
-                <span style="color: #38bdf8;">+8801985052780</span>
+            <div class="menu-row" onclick="alert('লেনদেন হিস্টরি দেখতে এখানে ক্লিক করুন।')">
+                <div class="menu-left">
+                    <div class="menu-row-icon">💰</div>
+                    <span>আয় ও লেনদেন</span>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="alert('বিকাশ/নগদ পার্সোনাল নম্বর সেট করা আছে।')">
+                <div class="menu-left">
+                    <div class="menu-row-icon">💳</div>
+                    <span>ব্যাংক কার্ড</span>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="openModal('supportModal')">
+                <div class="menu-left">
+                    <div class="menu-row-icon">🎧</div>
+                    <span>সেবা ও সাপোর্ট</span>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="copyReferralLink()">
+                <div class="menu-left">
+                    <div class="menu-row-icon">🔗</div>
+                    <span>অফিসিয়াল চ্যানেল / লিংক</span>
+                </div>
+                <div class="menu-arrow">›</div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title"><span>নিয়মাবলী ও লিমিট</span> 📊</div>
-            <div class="info-row">
-                <span>সর্বনিম্ন ডিপোজিট:</span>
-                <span>৳ ৩০০</span>
-            </div>
-            <div class="info-row">
-                <span>সর্বনিম্ন উইথড্র:</span>
-                <span>৳ ৫০০</span>
-            </div>
-        </div>
+        <button class="logout-btn" onclick="handleLogout()">লগআউট</button>
+    </div>
 
-        <div class="card download-box">
-            <h3 style="font-size: 16px; margin-bottom: 5px; color: #38bdf8;">SKYPAY মোবাইল অ্যাপ</h3>
-            <p style="font-size: 12px; color: #94a3b8;">অফিসিয়াল অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন</p>
-            <a id="apkLink" href="#" class="apk-btn" target="_blank">অ্যাপ ডাউনলোড করুন</a>
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="location.href='dashboard.html'">
+            <span class="nav-icon">🏠</span>হোম
         </div>
-
-        <button class="logout-btn" onclick="handleLogout()">লগআউট করুন</button>
+        <div class="nav-item" onclick="alert('অর্ডার সেকশন')">
+            <span class="nav-icon">📦</span>অর্ডার
+        </div>
+        <div class="nav-item" onclick="copyReferralLink()">
+            <span class="nav-icon">🔗</span>ইনভাইট
+        </div>
+        <div class="nav-item" onclick="alert('র‍্যাংক বোনাস পেজ')">
+            <span class="nav-icon">🏆</span>র‍্যাংক
+        </div>
+        <div class="nav-item" onclick="alert('প্রোফাইল পেজ')">
+            <span class="nav-icon">👤</span>আমার
+        </div>
     </div>
 
     <!-- Deposit Modal -->
     <div id="depositModal" class="modal">
         <div class="modal-content">
-            <h3>ডিপোজিট (Top Up)</h3>
-            <div class="payment-info-box">
+            <h3>বিনিয়োগ (ডিপোজিট)</h3>
+            <div class="payment-info">
                 <p>বিকাশ (Personal): +8801763341991</p>
                 <p>নগদ (Personal): +8801985052780</p>
-                <small style="color:#94a3b8;">সেন্ড মানি করে নিচের ঘরে তথ্য দিন।</small>
+                <small style="color:#94a3b8;">টাকা পাঠিয়ে ট্রানজ্যাকশন আইডি দিন।</small>
             </div>
             <input type="number" id="depAmount" placeholder="টাকার পরিমাণ লিখুন">
-            <input type="text" id="depTrx" placeholder="ট্রানজ্যাকশন আইডি (TrxID) দিন">
+            <input type="text" id="depTrx" placeholder="ট্রানজ্যাকশন আইডি (TrxID)">
             <div class="modal-btns">
                 <button class="btn-submit" onclick="submitDeposit()">জমা দিন</button>
                 <button class="btn-close" onclick="closeModal('depositModal')">বন্ধ করুন</button>
@@ -184,7 +198,7 @@
     <!-- Withdraw Modal -->
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
-            <h3>উইথড্র রিকোয়েস্ট</h3>
+            <h3>উত্তোলন (উইথড্র)</h3>
             <input type="number" id="wdAmount" placeholder="উইথড্র পরিমাণ লিখুন">
             <input type="text" id="wdNumber" placeholder="আপনার বিকাশ/নগদ নম্বর">
             <div class="modal-btns">
@@ -194,28 +208,13 @@
         </div>
     </div>
 
-    <!-- AI Live Chat Modal -->
-    <div id="aiModal" class="modal">
-        <div class="modal-content">
-            <h3>🤖 SKYPAY AI অ্যাসিস্ট্যান্ট</h3>
-            <div class="ai-chat-box" id="chatBox">
-                <b>AI Assistant:</b> হ্যালো! SKYPAY এ আপনাকে স্বাগতম। ডিপোজিট, উইথড্র বা প্ল্যান নিয়ে কোনো প্রশ্ন আছে কি?
-            </div>
-            <input type="text" id="chatInput" placeholder="আপনার প্রশ্ন এখানে লিখুন...">
-            <div class="modal-btns">
-                <button class="btn-submit" onclick="sendAiMessage()">পাঠান</button>
-                <button class="btn-close" onclick="closeModal('aiModal')">বন্ধ করুন</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Support Modal -->
     <div id="supportModal" class="modal">
         <div class="modal-content">
-            <h3>২৪/৭ কাস্টমার সাপোর্ট</h3>
-            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">যেকোনো সমস্যায় আমাদের অফিশিয়াল টেলিগ্রাম বা লাইভ চ্যাট ব্যবহার করুন।</p>
+            <h3>সাপোর্ট ও সেবা</h3>
+            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">আমাদের টেলিগ্রাম বটের মাধ্যমে যেকোনো সহায়তার জন্য যোগাযোগ করুন।</p>
             <div class="modal-btns">
-                <button class="btn-submit" onclick="openModal('aiModal'); closeModal('supportModal');">এআই লাইভ চ্যাট</button>
+                <button class="btn-submit" onclick="window.open('https://t.me/skypay_admin_bot', '_blank')">টেলিগ্রাম চ্যাট</button>
                 <button class="btn-close" onclick="closeModal('supportModal')">বন্ধ করুন</button>
             </div>
         </div>
@@ -225,21 +224,24 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
+        // Load saved user phone
+        const savedPhone = localStorage.getItem('userPhone');
+        if(savedPhone) {
+            document.getElementById('userPhoneDisplay').innerText = savedPhone;
+        }
+
         function copyReferralLink() {
-            const userPhone = localStorage.getItem('userPhone') || 'member';
-            const refLink = `${window.location.origin}/?ref=${userPhone}`;
-            
+            const phone = savedPhone || 'user123';
+            const refLink = `${window.location.origin}/?ref=${phone}`;
             navigator.clipboard.writeText(refLink).then(() => {
-                alert('আপনার রেফারেল লিংক সফলভাবে কপি হয়েছে!\n' + refLink + '\nএখন এটি যেকোনো সোশ্যাল মিডিয়া বা ওয়েবসাইটে শেয়ার করতে পারেন।');
-            }).catch(err => {
-                prompt('আপনার রেফারেল লিংকটি কপি করুন:', refLink);
+                alert('আপনার আমন্ত্রণ লিংক কপি করা হয়েছে!\n' + refLink + '\nএখন এটি যেকোনো জায়গায় শেয়ার করতে পারেন।');
             });
         }
 
         async function submitDeposit() {
             const amount = document.getElementById('depAmount').value;
             const trxId = document.getElementById('depTrx').value;
-            const phone = localStorage.getItem('userPhone') || 'Member User';
+            const phone = savedPhone || 'Member';
 
             if(!amount || !trxId) {
                 alert('দয়া করে টাকার পরিমাণ এবং TrxID দিন!');
@@ -263,10 +265,10 @@
         async function submitWithdraw() {
             const amount = document.getElementById('wdAmount').value;
             const targetNumber = document.getElementById('wdNumber').value;
-            const phone = localStorage.getItem('userPhone') || 'Member User';
+            const phone = savedPhone || 'Member';
 
             if(!amount || !targetNumber) {
-                alert('দয়া করে উইথড্র পরিমাণ এবং নম্বর দিন!');
+                alert('দয়া করে পরিমাণ এবং নম্বর দিন!');
                 return;
             }
 
@@ -284,69 +286,10 @@
             }
         }
 
-        function sendAiMessage() {
-            const input = document.getElementById('chatInput');
-            const chatBox = document.getElementById('chatBox');
-            if(!input.value.trim()) return;
-
-            chatBox.innerHTML += `<br><b style='color:#38bdf8;'>আপনি:</b> ${input.value}`;
-            
-            setTimeout(() => {
-                chatBox.innerHTML += `<br><b style='color:#34d399;'>AI Assistant:</b> আপনার মেসেজটি পেয়েছি। ট্রানজ্যাকশন সঠিক থাকলে দ্রুত ব্যালেন্স যুক্ত হবে।`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1000);
-
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        const defaultProducts = [
-            { icon: '◈', name: 'Starter Plan 01', days: 30, price: 500, daily: '৳ ২০ প্রতিদিন' },
-            { icon: '✦', name: 'Service Plan 02', days: 30, price: 750, daily: '৳ ৩০ প্রতিদিন' },
-            { icon: '💎', name: 'Silver Plan 03', days: 45, price: 1000, daily: '৳ ৪৫ প্রতিদিন' },
-            { icon: '👑', name: 'Gold Plan 04', days: 60, price: 1500, daily: '৳ ৭০ প্রতিদিন' },
-            { icon: '🚀', name: 'Rocket Plan 05', days: 60, price: 2000, daily: '৳ ১০০ প্রতিদিন' },
-            { icon: '🔥', name: 'VIP Plan 06', days: 90, price: 2500, daily: '৳ ১৩০ প্রতিদিন' },
-            { icon: '⚡', name: 'Speed Plan 07', days: 90, price: 3000, daily: '৳ ১৬০ প্রতিদিন' },
-            { icon: '🌟', name: 'Star Plan 08', days: 120, price: 4000, daily: '৳ ২২০ প্রতিদিন' },
-            { icon: '🏆', name: 'Pro Plan 09', days: 120, price: 5000, daily: '৳ ২৮০ প্রতিদিন' },
-            { icon: '🔮', name: 'Ultra Plan 10', days: 150, price: 6500, daily: '৳ ৩৭০ প্রতিদিন' },
-            { icon: '🛡️', name: 'Secure Plan 11', days: 180, price: 8000, daily: '৳ ৪৭০ প্রতিদিন' },
-            { icon: '🔱', name: 'Master Plan 12', days: 180, price: 10000, daily: '৳ ৬০০ প্রতিদিন' },
-            { icon: '💠', name: 'Diamond Plan 13', days: 240, price: 15000, daily: '৳ ৯৫০ প্রতিদিন' },
-            { icon: '⚜️', name: 'Royal Plan 14', days: 300, price: 20000, daily: '৳ ১৩০০ প্রতিদিন' },
-            { icon: '👑', name: 'Supreme VIP 15', days: 365, price: 30000, daily: '৳ ২০০০ প্রতিদিন' }
-        ];
-
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-            
-            defaultProducts.forEach((item) => {
-                const cardHtml = `
-                    <div class="product-card">
-                        <div>
-                            <div class="product-icon">${item.icon}</div>
-                            <div class="product-title">${item.name}</div>
-                            <div class="product-duration">মেয়াদ: ${item.days} দিন</div>
-                            <div class="product-income">লাভ: ${item.daily}</div>
-                        </div>
-                        <div>
-                            <div class="product-price">৳ ${item.price}</div>
-                            <button class="buy-btn" onclick="openModal('depositModal')">প্ল্যান কিনুন</button>
-                        </div>
-                    </div>
-                `;
-                grid.innerHTML += cardHtml;
-            });
-        }
-
         function handleLogout() {
             localStorage.clear();
-            window.location.href = '/index.html';
+            window.location.href = 'index.html';
         }
-
-        renderProducts();
     </script>
 </body>
 </html>
