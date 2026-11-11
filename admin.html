@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#103d25">
+<title>SKYPAY Admin Panel</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f5ef;color:#193b25}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+header{background:#123f27;color:white;padding:17px;display:flex;justify-content:space-between;align-items:center}
+header h2{font-size:21px}
+header button{background:#ffffff20;color:white;border:1px solid #ffffff55;padding:9px 13px;border-radius:9px}
+main{max-width:1050px;margin:auto;padding:16px}
+.login{max-width:420px;margin:55px auto;background:white;padding:25px;border-radius:20px;box-shadow:0 5px 25px #123f2715}
+.login h2{text-align:center;margin-bottom:8px}
+.sub{text-align:center;color:#718075;font-size:13px;margin-bottom:22px}
+.field{margin:13px 0}
+label{display:block;font-size:12px;font-weight:bold;margin-bottom:7px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #d8e3d7;border-radius:10px;background:white;outline:none}
+input:focus,textarea:focus,select:focus{border:2px solid #268747}
+.primary{background:#16813a;color:white;border:0;border-radius:10px;padding:12px 17px;font-weight:bold}
+.secondary{background:#e8f4e7;color:#176b32;border:0;border-radius:9px;padding:10px 13px;font-weight:bold}
+.danger{background:#ffeded;color:#b42323;border:0;border-radius:9px;padding:10px 13px;font-weight:bold}
+.full{width:100%}
+.tabs{display:flex;gap:8px;overflow:auto;margin:18px 0;padding-bottom:5px}
+.tabs button{white-space:nowrap;background:white;border:1px solid #dce7da;color:#31543a;padding:11px 14px;border-radius:10px}
+.tabs button.active{background:#16813a;color:white;border-color:#16813a}
+.panel{display:none}
+.panel.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}
+.stat{background:white;padding:17px;border-radius:14px}
+.stat small{color:#758277;font-size:12px}
+.stat b{display:block;font-size:23px;margin-top:8px}
+.card{background:white;border-radius:15px;padding:17px;margin:12px 0;box-shadow:0 3px 13px #163d2510}
+.card h3{margin-bottom:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.row{padding:12px 0;border-bottom:1px solid #edf1ec;display:flex;justify-content:space-between;gap:10px;font-size:13px}
+.row:last-child{border:0}
+.muted{color:#718075;font-size:12px;line-height:1.5}
+.tag{font-size:11px;color:#167438;background:#e6f5e8;border-radius:20px;padding:5px 9px}
+.notice{padding:12px;background:#fff6dd;color:#79591c;border-radius:10px;font-size:12px;line-height:1.5;margin:12px 0}
+.message{font-size:12px;margin-top:10px;line-height:1.5}
+.empty{text-align:center;padding:22px;color:#718075;font-size:13px}
+@media(min-width:650px){.stats{grid-template-columns:repeat(4,1fr)}.products{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>🟢 SKYPAY ADMIN</h2>
+  <button onclick="logout()">Log out ↪</button>
+</header>
+
+<main>
+<section id="loginSection" class="login">
+  <h2>Admin Login</h2>
+  <p class="sub">SKYPAY Management Dashboard</p>
+  <form id="loginForm">
+    <div class="field">
+      <label>ADMIN EMAIL</label>
+      <input id="email" type="email" placeholder="Admin email" required>
+    </div>
+    <div class="field">
+      <label>PASSWORD</label>
+      <input id="password" type="password" placeholder="Admin password" required>
+    </div>
+    <button class="primary full">LOGIN TO ADMIN PANEL</button>
+    <div class="message" id="loginMessage"></div>
+  </form>
+</section>
+
+<section id="adminApp" hidden>
+  <div class="card">
+    <h3>Welcome, Administrator 👋</h3>
+    <p class="muted">Manage users, products and payment requests from this panel.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><small>Total Users</small><b id="userCount">0</b></div>
+    <div class="stat"><small>Total Products</small><b id="productCount">0</b></div>
+    <div class="stat"><small>Pending Requests</small><b id="pendingCount">0</b></div>
+    <div class="stat"><small>Approved Requests</small><b id="approvedCount">0</b></div>
+  </div>
+
+  <nav class="tabs">
+    <button class="active" onclick="showTab('overview',this)">Overview</button>
+    <button onclick="showTab('products',this)">Products</button>
+    <button onclick="showTab('requests',this)">Payment Requests</button>
+    <button onclick="showTab('users',this)">Users</button>
+  </nav>
+
+  <section class="panel active" id="overview">
+    <div class="card">
+      <h3>Dashboard Overview</h3>
+      <div class="row"><span>Total registered users</span><b id="overviewUsers">0</b></div>
+      <div class="row"><span>Available products</span><b id="overviewProducts">0</b></div>
+      <div class="row"><span>Pending payment requests</span><b id="overviewPending">0</b></div>
+      <button class="secondary full" style="margin-top:13px" onclick="refreshAll()">Refresh Dashboard</button>
+    </div>
+    <div class="notice">Admin approval is required before deposit or withdrawal requests are completed. Verify each transaction before approving it.</div>
+  </section>
+
+  <section class="panel" id="products">
+    <div class="card">
+      <h3 id="productFormTitle">Add New Product</h3>
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        <div class="field"><label>PRODUCT NAME</label><input id="productName" required placeholder="Product name"></div>
+        <div class="grid">
+          <div class="field"><label>PRICE (BDT)</label><input id="productPrice" type="number" min="0" required></div>
+          <div class="field"><label>DURATION (DAYS)</label><input id="productDays" type="number" min="1" required></div>
+          <div class="field"><label>DAILY ESTIMATE</label><input id="productDaily" type="number" min="0" required></div>
+          <div class="field"><label>STATUS</label><select id="productStatus"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+        </div>
+        <div class="field"><label>IMAGE URL (OPTIONAL)</label><input id="productImage" type="url" placeholder="https://example.com/image.jpg"></div>
+        <div class="field"><label>DESCRIPTION</label><textarea id="productDescription" rows="3" placeholder="Product description"></textarea></div>
+        <button class="primary" id="saveProductButton">SAVE PRODUCT</button>
+        <button class="secondary" type="button" onclick="resetProductForm()">CLEAR</button>
+        <div class="message" id="productMessage"></div>
+      </form>
+    </div>
+    <div class="card">
+      <h3>Product List</h3>
+      <div id="productList"><div class="empty">Loading products...</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="requests">
+    <div class="card">
+      <h3>Deposit & Withdrawal Requests</h3>
+      <div class="muted">Review payment details before approving any request.</div>
+      <div id="requestList"><div class="empty">Loading requests...</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="users">
+    <div class="card">
+      <h3>Registered Users</h3>
+      <div id="userList"><div class="empty">Loading users...</div></div>
+    </div>
+  </section>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+let adminToken=localStorage.getItem("skypay_admin_token");
+let productsCache=[];
+let requestsCache=[];
+
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function money(v){return "৳"+Number(v||0).toLocaleString("en-BD",{maximumFractionDigits:2})}
+function msg(id,text,ok=false){
+ $(id).style.color=ok?"#16813a":"#b42323";
+ $(id).textContent=text;
+}
+async function api(path,options={}){
+ const response=await fetch(path,{
+  ...options,
+  headers:{
+   "Content-Type":"application/json",
+   "Authorization":"Bearer "+adminToken,
+   ...(options.headers||{})
+  }
+ });
+ const data=await response.json().catch(()=>({error:"Invalid server response"}));
+ if(!response.ok)throw new Error(data.error||"Request failed");
+ return data;
+}
+
+function logout(){
+ localStorage.removeItem("skypay_admin_token");
+ adminToken=null;
+ location.reload();
+}
+
+function showTab(id,button){
+ document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+ $(id).classList.add("active");
+ document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+ button.classList.add("active");
+ if(id==="products")loadProducts();
+ if(id==="requests")loadRequests();
+ if(id==="users")loadUsers();
+}
+
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ msg("loginMessage","Checking login...");
+ try{
+  const response=await fetch("/api/admin/login",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    email:$("email").value.trim(),
+    password:$("password").value
+   })
+  });
+  const data=await response.json();
+  if(!response.ok)throw new Error(data.error||"Login failed");
+  adminToken=data.token;
+  if(!adminToken)throw new Error("Admin token was not returned by server");
+  localStorage.setItem("skypay_admin_token",adminToken);
+  showAdmin();
+ }catch(err){msg("loginMessage",err.message)}
+});
+
+function showAdmin(){
+ $("loginSection").hidden=true;
+ $("adminApp").hidden=false;
+ refreshAll();
+}
+
+async function refreshAll(){
+ try{
+  const [u,p,r]=await Promise.all([
+   api("/api/admin/users"),
+   api("/api/admin/products"),
+   api("/api/admin/requests")
+  ]);
+  const users=u.users||[];
+  productsCache=p.products||[];
+  requestsCache=r.requests||[];
+  const pending=requestsCache.filter(x=>x.status==="pending").length;
+  const approved=requestsCache.filter(x=>x.status==="approved").length;
+  $("userCount").textContent=users.length;
+  $("productCount").textContent=productsCache.length;
+  $("pendingCount").textContent=pending;
+  $("approvedCount").textContent=approved;
+  $("overviewUsers").textContent=users.length;
+  $("overviewProducts").textContent=productsCache.length;
+  $("overviewPending").textContent=pending;
+ }catch(err){
+  alert("Dashboard loading error: "+err.message);
+ }
+}
+
+async function loadProducts(){
+ try{
+  const data=await api("/api/admin/products");
+  productsCache=data.products||[];
+  $("productCount").textContent=productsCache.length;
+  $("productList").innerHTML=productsCache.length?productsCache.map(p=>`
+   <div class="card">
+    <div class="row"><b>${esc(p.name)}</b><span class="tag">${p.active?"Active":"Inactive"}</span></div>
+    <div class="row"><span>Price</span><b>${money(p.price)}</b></div>
+    <div class="row"><span>Duration</span><b>${esc(p.duration_days)} days</b></div>
+    <div class="row"><span>Daily estimate</span><b>${money(p.daily_estimate)}</b></div>
+    <div class="actions">
+     <button class="secondary" onclick="editProduct(${Number(p.id)})">Edit</button>
+     <button class="danger" onclick="deleteProduct(${Number(p.id)})">Delete</button>
+    </div>
+   </div>
+  `).join(""):'<div class="empty">No products added.</div>';
+ }catch(e){$("productList").innerHTML='<div class="empty">'+esc(e.message)+'</div>'}
+}
+
+$("productForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const id=$("productId").value;
+ const body={
+  name:$("productName").value.trim(),
+  price:Number($("productPrice").value),
+  duration_days:Number($("productDays").value),
+  daily_estimate:Number($("productDaily").value),
+  active:$("productStatus").value==="true",
+  image_url:$("productImage").value.trim(),
+  description:$("productDescription").value.trim()
+ };
+ try{
+  await api(id?"/api/admin/products/"+id:"/api/admin/products",{
+   method:id?"PUT":"POST",
+   body:JSON.stringify(body)
+  });
+  msg("productMessage","Product saved successfully.",true);
+  resetProductForm();
+  loadProducts();
+  refreshAll();
+ }catch(err){msg("productMessage",err.message)}
+});
+
+function editProduct(id){
+ const p=productsCache.find(x=>Number(x.id)===id);
+ if(!p)return;
+ $("productId").value=p.id;
+ $("productName").value=p.name||"";
+ $("productPrice").value=p.price||0;
+ $("productDays").value=p.duration_days||1;
+ $("productDaily").value=p.daily_estimate||0;
+ $("productStatus").value=String(!!p.active);
+ $("productImage").value=p.image_url||"";
+ $("productDescription").value=p.description||"";
+ $("productFormTitle").textContent="Edit Product";
+ $("saveProductButton").textContent="UPDATE PRODUCT";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function resetProductForm(){
+ $("productForm").reset();
+ $("productId").value="";
+ $("productFormTitle").textContent="Add New Product";
+ $("saveProductButton").textContent="SAVE PRODUCT";
+}
+
+async function deleteProduct(id){
+ if(!confirm("Delete this product?"))return;
+ try{
+  await api("/api/admin/products/"+id,{method:"DELETE"});
+  loadProducts();
+  refreshAll();
+ }catch(e){alert(e.message)}
+}
+
+async function loadRequests(){
+ try{
+  const data=await api("/api/admin/requests");
+  requestsCache=data.requests||[];
+  const pending=requestsCache.filter(x=>x.status==="pending").length;
+  $("pendingCount").textContent=pending;
+  $("requestList").innerHTML=requestsCache.length?requestsCache.map(r=>`
+   <div class="card">
+    <div class="row"><b>${esc(r.type||"Request").toUpperCase()}</b><span class="tag">${esc(r.status)}</span></div>
+    <div class="row"><span>User</span><b>${esc(r.user_name||r.user_id||"—")}</b></div>
+    <div class="row"><span>Amount</span><b>${money(r.amount)}</b></div>
+    <div class="row"><span>Method</span><b>${esc(r.method||"—")}</b></div>
+    <div class="row"><span>Account / Sender</span><b>${esc(r.account_number||r.sender_number||"—")}</b></div>
+    <div class="row"><span>Transaction ID</span><b>${esc(r.transaction_id||"—")}</b></div>
+    <div class="row"><span>Date</span><span>${esc(r.created_at||"—")}</span></div>
+    ${r.status==="pending"?`<div class="actions">
+      <button class="primary" onclick="reviewRequest(${Number(r.id)} ,'approved')">Approve</button>
+      <button class="danger" onclick="reviewRequest(${Number(r.id)},'rejected')">Reject</button>
+    </div>`:""}
+   </div>
+  `).join(""):'<div class="empty">No payment requests found.</div>';
+ }catch(e){$("requestList").innerHTML='<div class="empty">'+esc(e.message)+'</div>'}
+}
+
+async function reviewRequest(id,status){
+ const action=status==="approved"?"approve":"reject";
+ if(!confirm("Are you sure you want to "+action+" this request?"))return;
+ try{
+  await api("/api/admin/requests/"+id,{
+   method:"PATCH",
+   body:JSON.stringify({status})
+  });
+  alert("Request updated.");
+  loadRequests();
+  refreshAll();
+ }catch(e){alert(e.message)}
+}
+
+async function loadUsers(){
+ try{
+  const data=await api("/api/admin/users");
+  const users=data.users||[];
+  $("userList").innerHTML=users.length?users.map(u=>`
+   <div class="card">
+    <div class="row"><b>${esc(u.name||"User")}</b><span class="tag">${esc(u.status||"Active")}</span></div>
+    <div class="row"><span>UID</span><b>${esc(u.uid||u.id)}</b></div>
+    <div class="row"><span>Phone</span><b>${esc(u.phone||"—")}</b></div>
+    <div class="row"><span>Balance</span><b>${money(u.balance)}</b></div>
+    <div class="row"><span>Joined</span><span>${esc(u.created_at||"—")}</span></div>
+   </div>
+  `).join(""):'<div class="empty">No users found.</div>';
+ }catch(e){$("userList").innerHTML='<div class="empty">'+esc(e.message)+'</div>'}
+}
+
+async function start(){
+ if(!adminToken)return;
+ try{
+  const response=await api("/api/admin/users");
+  if(response)showAdmin();
+ }catch(e){
+  localStorage.removeItem("skypay_admin_token");
+  adminToken=null;
+ }
+}
+start();
+</script>
+</body>
+</html>
