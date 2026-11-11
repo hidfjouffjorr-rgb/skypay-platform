@@ -3,144 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKYPAY - এডমিন কনসোল</title>
+    <title>SKYPAY - এডমিন কন্ট্রোল প্যানেল</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #071124; color: #f8fafc; padding: 15px; }
-        .admin-container { max-width: 600px; margin: 0 auto; }
-        
-        .admin-header { background: linear-gradient(135deg, #e11d48, #9f1239); padding: 22px; border-radius: 16px; text-align: center; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(225,29,72,0.3); }
-        .admin-header h2 { font-size: 20px; margin-bottom: 5px; color: #fff; }
-        .admin-header p { font-size: 13px; color: #ffe4e6; }
-
-        .card { background: #1e293b; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .card h3 { font-size: 15px; color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        
-        .form-group { margin-bottom: 14px; }
-        label { display: block; margin-bottom: 6px; font-size: 13px; color: #94a3b8; font-weight: 500; }
-        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 10px; outline: none; font-size: 14px; transition: 0.2s; }
-        input:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,0.15); }
-
-        .save-btn { width: 100%; padding: 14px; background: #2563eb; border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 15px; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        body { background: #071124; color: #f8fafc; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: #1e293b; padding: 20px; border-radius: 16px; border: 1px solid #334155; }
+        h2 { color: #38bdf8; text-align: center; margin-bottom: 20px; font-size: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 8px; outline: none; font-size: 14px; }
+        .save-btn { width: 100%; padding: 12px; background: #2563eb; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; font-size: 15px; }
         .save-btn:hover { background: #1d4ed8; }
-        
-        .msg { margin-top: 12px; text-align: center; font-size: 14px; font-weight: bold; }
-        .back-link { display: block; text-align: center; margin-top: 20px; color: #38bdf8; text-decoration: none; font-size: 14px; font-weight: 600; }
-        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div class="admin-container">
-        <div class="admin-header">
-            <h2>SKYPAY এডমিন কন্ট্রোল</h2>
-            <p>রিয়েল-টাইম প্ল্যাটফর্ম কনফিগারেশন প্যানেল</p>
+    <div class="container">
+        <h2>🛠️ SKYPAY এডমিন প্যানেল</h2>
+        
+        <div class="form-group">
+            <label>বিকাশ নম্বর (Personal)</label>
+            <input type="text" id="adminBkash" placeholder="যেমন: 01700000000">
         </div>
 
-        <div class="card">
-            <h3>💳 পেমেন্ট গেটওয়ে নম্বর</h3>
-            <div class="form-group">
-                <label>বিকাশ নম্বর (Personal/Agent)</label>
-                <input type="text" id="bkash" placeholder="যেমন: 01700000000">
-            </div>
-            <div class="form-group">
-                <label>নগদ নম্বর (Personal/Agent)</label>
-                <input type="text" id="nagad" placeholder="যেমন: 01800000000">
-            </div>
+        <div class="form-group">
+            <label>নগদ নম্বর (Personal)</label>
+            <input type="text" id="adminNagad" placeholder="যেমন: 01800000000">
         </div>
 
-        <div class="card">
-            <h3>📊 ডিপোজিট ও উইথড্র লিমিট</h3>
-            <div class="form-group">
-                <label>সর্বনিম্ন ডিপোজিট (টাকা)</label>
-                <input type="number" id="min_deposit" placeholder="যেমন: 300">
-            </div>
-            <div class="form-group">
-                <label>সর্বনিম্ন উইথড্র (টাকা)</label>
-                <input type="number" id="min_withdraw" placeholder="যেমন: 500">
-            </div>
+        <div class="form-group">
+            <label>সর্বনিম্ন ডিপোজিট (টাকা)</label>
+            <input type="number" id="adminMinDep" placeholder="যেমন: 300">
         </div>
 
-        <div class="card">
-            <h3>⭐️ প্যাকেজ সেটিংস</h3>
-            <div class="form-group">
-                <label>প্যাকেজের নাম</label>
-                <input type="text" id="package_name" placeholder="যেমন: VIP Gold Plan">
-            </div>
-            <div class="form-group">
-                <label>প্যাকেজের মেয়াদ (দিন)</label>
-                <input type="number" id="package_duration" placeholder="যেমন: 30">
-            </div>
+        <div class="form-group">
+            <label>সর্বনিম্ন উইথড্র (টাকা)</label>
+            <input type="number" id="adminMinWd" placeholder="যেমন: 500">
         </div>
 
-        <div class="card">
-            <h3>📱 মোবাইল অ্যাপ লিংক</h3>
-            <div class="form-group">
-                <label>APK ডাউনলোড লিংক (Direct URL)</label>
-                <input type="text" id="apk_url" placeholder="https://example.com/app.apk">
-            </div>
-            <button class="save-btn" onclick="saveSettings()">সব পরিবর্তন সেভ করুন</button>
-            <div id="statusMsg" class="msg"></div>
+        <div class="form-group">
+            <label>ভিআইপি প্যাকেজের নাম</label>
+            <input type="text" id="adminPkgName" placeholder="যেমন: VIP Starter">
         </div>
 
-        <a href="/dashboard.html" class="back-link">← ইউজার ড্যাশবোর্ডে ফিরে যান</a>
+        <div class="form-group">
+            <label>প্যাকেজের মেয়াদ (দিন)</label>
+            <input type="number" id="adminPkgDuration" placeholder="যেমন: 30">
+        </div>
+
+        <button class="save-btn" onclick="saveAdminSettings()">সব পরিবর্তন সেভ করুন</button>
     </div>
 
     <script>
-        async function fetchSettings() {
+        async function loadSettings() {
             try {
                 const res = await fetch('/api/settings');
                 const data = await res.json();
                 if(data.success && data.settings) {
                     const s = data.settings;
-                    document.getElementById('bkash').value = s.bkash || '';
-                    document.getElementById('nagad').value = s.nagad || '';
-                    document.getElementById('min_deposit').value = s.min_deposit || '';
-                    document.getElementById('min_withdraw').value = s.min_withdraw || '';
-                    document.getElementById('package_name').value = s.package_name || '';
-                    document.getElementById('package_duration').value = s.package_duration || '';
-                    document.getElementById('apk_url').value = s.apk_url || '';
+                    document.getElementById('adminBkash').value = s.bkash || '';
+                    document.getElementById('adminNagad').value = s.nagad || '';
+                    document.getElementById('adminMinDep').value = s.min_deposit || '';
+                    document.getElementById('adminMinWd').value = s.min_withdraw || '';
+                    document.getElementById('adminPkgName').value = s.package_name || '';
+                    document.getElementById('adminPkgDuration').value = s.package_duration || '';
                 }
             } catch(e) {
-                console.error("সেটিংস লোড করতে সমস্যা হয়েছে");
+                console.error("ডেটা লোড করতে সমস্যা হয়েছে");
             }
         }
 
-        async function saveSettings() {
-            const settingsData = {
-                bkash: document.getElementById('bkash').value,
-                nagad: document.getElementById('nagad').value,
-                min_deposit: document.getElementById('min_deposit').value,
-                min_withdraw: document.getElementById('min_withdraw').value,
-                package_name: document.getElementById('package_name').value,
-                package_duration: document.getElementById('package_duration').value,
-                apk_url: document.getElementById('apk_url').value
+        async function saveAdminSettings() {
+            const settings = {
+                bkash: document.getElementById('adminBkash').value,
+                nagad: document.getElementById('adminNagad').value,
+                min_deposit: document.getElementById('adminMinDep').value,
+                min_withdraw: document.getElementById('adminMinWd').value,
+                package_name: document.getElementById('adminPkgName').value,
+                package_duration: document.getElementById('adminPkgDuration').value
             };
-
-            const msg = document.getElementById('statusMsg');
 
             try {
                 const res = await fetch('/api/settings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(settingsData)
+                    body: JSON.stringify(settings)
                 });
                 const data = await res.json();
-                
-                if(data.success) {
-                    msg.style.color = '#4ade80';
-                    msg.innerText = 'সফলভাবে আপডেট করা হয়েছে!';
-                } else {
-                    msg.style.color = '#f87171';
-                    msg.innerText = 'সেভ করতে সমস্যা হয়েছে।';
-                }
+                alert(data.message || 'সফলভাবে সেভ হয়েছে!');
             } catch(e) {
-                msg.style.color = '#f87171';
-                msg.innerText = 'সার্ভার এরর হয়েছে।';
+                alert('সেভ করতে সমস্যা হয়েছে।');
             }
         }
 
-        fetchSettings();
+        loadSettings();
     </script>
 </body>
 </html>
