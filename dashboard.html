@@ -65,9 +65,49 @@ button{cursor:pointer}
 .message{font-size:12px;margin-top:10px;line-height:1.5}
 .empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
 @media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr)}.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
+
+/* SKYPAY AI LIVE CHAT */
+#skypayChatButton{
+ position:fixed;right:18px;bottom:85px;z-index:99;
+ border:0;border-radius:50px;padding:15px 20px;
+ background:linear-gradient(120deg,#168438,#58bb4b);
+ color:white;font-weight:bold;box-shadow:0 5px 18px #16843855;
+}
+#skypayChatBox{
+ display:none;position:fixed;right:12px;bottom:145px;
+ width:min(350px,calc(100vw - 24px));height:430px;
+ background:white;border-radius:20px;box-shadow:0 8px 35px #0003;
+ z-index:100;overflow:hidden;
+}
+#skypayChatHeader{
+ background:#168438;color:white;padding:15px;font-weight:bold;
+ display:flex;justify-content:space-between;align-items:center;
+}
+#skypayChatHeader button{background:transparent;color:white;border:0;font-size:23px}
+#skypayChatMessages{
+ height:310px;overflow-y:auto;padding:12px;background:#f5faf2;
+}
+.chatBubble{
+ padding:10px 12px;border-radius:14px;margin:8px 0;
+ max-width:85%;font-size:13px;line-height:1.5;overflow-wrap:anywhere;
+ white-space:pre-wrap;
+}
+.chatUser{background:#d9f4d4;margin-left:auto}
+.chatAI{background:white;border:1px solid #e5eee1}
+#skypayChatForm{display:flex;gap:6px;padding:9px}
+#skypayChatInput{
+ flex:1;min-width:0;border:1px solid #dce8d9;
+ border-radius:20px;padding:11px;outline:none;
+}
+#skypayChatForm button{
+ border:0;border-radius:20px;padding:0 15px;
+ background:#168438;color:white;font-weight:bold;
+}
+#skypayChatForm button:disabled{opacity:.5}
 </style>
 </head>
 <body>
+
 <header class="top">
   <div class="brand"><span>S</span>SKYPAY</div>
   <button onclick="logout()" title="Logout">↪</button>
@@ -81,7 +121,6 @@ button{cursor:pointer}
     <h2>Hello, <span id="userName">User</span> 👋</h2>
     <small>Your personal dashboard</small>
   </div>
-
   <div class="wallet">
     <small>AVAILABLE WALLET BALANCE</small>
     <div class="balance" id="balance">৳0.00</div>
@@ -90,14 +129,12 @@ button{cursor:pointer}
       <button onclick="showPage('withdrawPage')">↗ Withdraw</button>
     </div>
   </div>
-
   <div class="stats">
     <div class="stat"><small>UID</small><b id="uid">—</b></div>
     <div class="stat"><small>Active Plans</small><b id="activeCount">0</b></div>
     <div class="stat"><small>Total Deposits</small><b id="totalDeposit">৳0</b></div>
     <div class="stat"><small>Total Withdrawals</small><b id="totalWithdraw">৳0</b></div>
   </div>
-
   <div class="section">
     <div class="heading"><h3>🌱 Available Products</h3><button onclick="showPage('orderedPage')">My Plans →</button></div>
     <div id="homeProducts"><div class="empty">Loading products...</div></div>
@@ -200,6 +237,23 @@ button{cursor:pointer}
   <button data-page="sharePage" onclick="showPage('sharePage',this)"><span>♧</span>Share</button>
   <button data-page="myPage" onclick="showPage('myPage',this)"><span>♙</span>My</button>
 </nav>
+
+<!-- AI CHAT BUTTON AND WINDOW -->
+<button id="skypayChatButton" onclick="toggleChat()">💬 AI Help</button>
+
+<div id="skypayChatBox">
+  <div id="skypayChatHeader">
+    <span>🤖 SKYPAY AI Assistant</span>
+    <button onclick="toggleChat()" aria-label="Close chat">×</button>
+  </div>
+  <div id="skypayChatMessages">
+    <div class="chatBubble chatAI">Hello! 👋 Welcome to SKYPAY. How can I help you today?</div>
+  </div>
+  <form id="skypayChatForm">
+    <input id="skypayChatInput" type="text" maxlength="2000" placeholder="Type your message..." autocomplete="off" required>
+    <button id="skypayChatSend" type="submit">Send</button>
+  </form>
+</div>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -372,6 +426,77 @@ async function shareReferral(){
 }
 
 function support(){window.open("https://t.me/skypay_admin_bot","_blank")}
+
+/* AI LIVE CHAT FUNCTIONS */
+function toggleChat(){
+  const box=$("skypayChatBox");
+  const isOpen=box.style.display==="block";
+  box.style.display=isOpen?"none":"block";
+  if(!isOpen){
+    $("skypayChatInput").focus();
+    loadChatHistory();
+  }
+}
+
+function addChatMessage(message,role){
+  const div=document.createElement("div");
+  div.className="chatBubble "+(role==="user"?"chatUser":"chatAI");
+  div.textContent=message;
+  $("skypayChatMessages").appendChild(div);
+  $("skypayChatMessages").scrollTop=$("skypayChatMessages").scrollHeight;
+}
+
+let chatHistoryLoaded=false;
+
+async function loadChatHistory(){
+  if(chatHistoryLoaded)return;
+  try{
+    const data=await api("/api/chat/history");
+    const box=$("skypayChatMessages");
+    box.innerHTML="";
+    (data.messages||[]).forEach(m=>{
+      addChatMessage(m.content,m.role);
+    });
+    if(!data.messages||data.messages.length===0){
+      addChatMessage("Hello! 👋 Welcome to SKYPAY. How can I help you today?","assistant");
+    }
+    chatHistoryLoaded=true;
+  }catch(e){
+    addChatMessage("Could not load previous messages. You can still try sending a message.","assistant");
+  }
+}
+
+$("skypayChatForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const input=$("skypayChatInput");
+  const button=$("skypayChatSend");
+  const message=input.value.trim();
+  if(!message)return;
+
+  addChatMessage(message,"user");
+  input.value="";
+  button.disabled=true;
+  button.textContent="...";
+
+  try{
+    const data=await api("/api/chat",{
+      method:"POST",
+      body:JSON.stringify({message})
+    });
+
+    addChatMessage(data.reply||"Sorry, I could not prepare a reply.","assistant");
+
+    if(data.needsHuman||data.supportSent){
+      addChatMessage("Your issue has been forwarded to SKYPAY support. Our team will review it.","assistant");
+    }
+  }catch(err){
+    addChatMessage(err.message||"Chat service is temporarily unavailable. Please try again later.","assistant");
+  }finally{
+    button.disabled=false;
+    button.textContent="Send";
+    input.focus();
+  }
+});
 
 async function start(){
   if(!token){location.href="index.html";return}
