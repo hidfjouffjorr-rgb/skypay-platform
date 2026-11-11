@@ -3,96 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKYPAY - ইউজার ড্যাশবোর্ড</title>
+    <title>SKYPAY - প্রিমিয়াম ড্যাশবোর্ড</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #0b1329; color: #f8fafc; padding-bottom: 30px; }
-        .header { background: linear-gradient(135deg, #1e293b, #0f172a); padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
-        .user-info h3 { font-size: 18px; color: #38bdf8; }
-        .user-info p { font-size: 13px; color: #94a3b8; }
+        body { background: #071124; color: #f8fafc; padding-bottom: 40px; }
         
-        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
+        /* Top App Bar */
+        .app-header { background: linear-gradient(135deg, #10234b, #1769e8); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .user-welcome h3 { font-size: 16px; color: #fff; }
+        .user-welcome span { font-size: 12px; color: #38bdf8; background: rgba(56,189,248,0.15); padding: 2px 8px; border-radius: 20px; }
+        .notification-bell { font-size: 20px; background: rgba(255,255,255,0.1); padding: 8px; border-radius: 50%; cursor: pointer; }
+
+        .container { max-width: 480px; margin: 0 auto; padding: 15px; }
+
+        /* Premium Balance Card */
+        .balance-box { background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ebad7); border-radius: 20px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(29,78,216,0.35); position: relative; overflow: hidden; }
+        .balance-box small { color: #dbeafe; font-size: 13px; font-weight: 500; }
+        .balance-amount { font-size: 32px; font-weight: 800; margin: 8px 0 16px; color: #fff; }
+        .balance-actions { display: flex; gap: 10px; }
+        .balance-actions button { flex: 1; border: none; border-radius: 10px; padding: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .btn-topup { background: #fff; color: #1d4ed8; }
+        .btn-withdraw { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+        /* Quick Menu Grid */
+        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .menu-item { background: #1e293b; border: 1px solid #334155; padding: 14px 8px; border-radius: 14px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .menu-item:hover { border-color: #38bdf8; transform: translateY(-2px); background: #26334d; }
+        .menu-item span { display: block; }
+        .menu-icon { font-size: 22px; margin-bottom: 6px; }
+        .menu-text { font-size: 11px; color: #cbd5e1; font-weight: 600; }
+
+        /* Modern Cards */
+        .card { background: #1e293b; border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .card-title { font-size: 15px; font-weight: 700; color: #f43f5e; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; }
         
-        /* Balance Card */
-        .balance-card { background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(37,99,235,0.3); }
-        .balance-card h4 { font-size: 14px; color: #bfdbfe; font-weight: 400; }
-        .balance-card h2 { font-size: 32px; margin: 8px 0; font-weight: 700; }
-        
-        /* Quick Actions Grid */
-        .actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .action-btn { background: #1e293b; border: 1px solid #334155; padding: 15px 10px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .action-btn:hover { background: #334155; border-color: #38bdf8; }
-        .action-btn i { font-size: 20px; display: block; margin-bottom: 5px; }
-        .action-btn span { font-size: 12px; color: #cbd5e1; }
+        .info-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; color: #94a3b8; }
+        .info-row span:last-child { font-weight: 700; color: #fff; }
 
-        /* Section Cards */
-        .card { background: #1e293b; border-radius: 14px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }
-        .card h3 { font-size: 15px; color: #f43f5e; margin-bottom: 12px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
-        .info-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: #cbd5e1; }
-        .info-row span:last-child { font-weight: 600; color: #fff; }
+        /* Download Section */
+        .download-box { background: linear-gradient(135deg, #0f172a, #1e293b); text-align: center; border: 1px solid #38bdf844; }
+        .apk-btn { display: block; width: 100%; padding: 12px; background: #10b981; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; margin-top: 12px; text-align: center; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .apk-btn:hover { background: #059669; }
 
-        /* App Download Button */
-        .app-box { background: linear-gradient(135deg, #334155, #1e293b); text-align: center; }
-        .download-btn { display: inline-block; width: 100%; padding: 12px; background: #10b981; color: white; font-weight: bold; border-radius: 8px; text-decoration: none; margin-top: 10px; text-align: center; }
-        .download-btn:hover { background: #059669; }
-
-        .logout-btn { width: 100%; padding: 12px; background: #e11d48; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
-        .logout-btn:hover { background: #be123c; }
+        .logout-btn { width: 100%; padding: 12px; background: #ef4444; border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+        .logout-btn:hover { background: #dc2626; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="user-info">
-            <h3 id="userName">SKYPAY ইউজার</h3>
-            <p>স্বাগতম আপনার অ্যাকাউন্টে!</p>
+    <div class="app-header">
+        <div class="user-welcome">
+            <h3 id="userName">SKYPAY মেম্বার</h3>
+            <span>VIP Member</span>
         </div>
-        <div>🔔</div>
+        <div class="notification-bell">🔔</div>
     </div>
 
     <div class="container">
-        <!-- Balance Section -->
-        <div class="balance-card">
-            <h4>আপনার মূল ব্যালেন্স</h4>
-            <h2 id="userBalance">৳ 0.00</h2>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="actions-grid">
-            <div class="action-btn" onclick="alert('ডিপোজিট অপশন')">
-                <span>📥</span>
-                <span>ডিপোজিট</span>
-            </div>
-            <div class="action-btn" onclick="alert('উইথড্র অপশন')">
-                <span>📤</span>
-                <span>উইথড্র</span>
-            </div>
-            <div class="action-btn" onclick="alert('রেফারেল অপশন')">
-                <span>👥</span>
-                <span>রেফারেল</span>
-            </div>
-            <div class="action-btn" onclick="alert('সাপোর্ট')">
-                <span>🎧</span>
-                <span>সাপোর্ট</span>
+        <!-- Balance Card -->
+        <div class="balance-box">
+            <small>অ্যাভেইলেবল ব্যালেন্স</small>
+            <div class="balance-amount" id="userBalance">৳ 0.00</div>
+            <div class="balance-actions">
+                <button class="btn-topup" onclick="alert('ডিপোজিট অপশন')">টপ আপ (Top Up)</button>
+                <button class="btn-withdraw" onclick="alert('উইথড্র অপশন')">উইথড্র</button>
             </div>
         </div>
 
-        <!-- Official Payment Numbers (Dynamic from Admin) -->
+        <!-- Quick Menu Grid -->
+        <div class="menu-grid">
+            <div class="menu-item" onclick="alert('VIP Plans')">
+                <span class="menu-icon">👑</span>
+                <span class="menu-text">VIP প্ল্যান</span>
+            </div>
+            <div class="menu-item" onclick="alert('Orders')">
+                <span class="menu-icon">📦</span>
+                <span class="menu-text">অর্ডারস</span>
+            </div>
+            <div class="menu-item" onclick="alert('Network')">
+                <span class="menu-icon">👥</span>
+                <span class="menu-text">রেফারেল</span>
+            </div>
+            <div class="menu-item" onclick="alert('Support')">
+                <span class="menu-icon">🎧</span>
+                <span class="menu-text">সাপোর্ট</span>
+            </div>
+        </div>
+
+        <!-- Official Payment Numbers -->
         <div class="card">
-            <h3>অফিসিয়াল পেমেন্ট নম্বর</h3>
+            <div class="card-title"><span>অফিসিয়াল পেমেন্ট নম্বর</span> 💳</div>
             <div class="info-row">
                 <span>বিকাশ নম্বর:</span>
-                <span id="bkashNum">লোড হচ্ছে...</span>
+                <span id="bkashNum" style="color: #38bdf8;">লোড হচ্ছে...</span>
             </div>
             <div class="info-row">
                 <span>নগদ নম্বর:</span>
-                <span id="nagadNum">লোড হচ্ছে...</span>
+                <span id="nagadNum" style="color: #38bdf8;">লোড হচ্ছে...</span>
             </div>
         </div>
 
         <!-- Rules & Limits -->
         <div class="card">
-            <h3>ডিপোজিট ও উইথড্র নিয়মাবলী</h3>
+            <div class="card-title"><span>নিয়মাবলী ও লিমিট</span> 📊</div>
             <div class="info-row">
                 <span>সর্বনিম্ন ডিপোজিট:</span>
                 <span id="minDep">লোড হচ্ছে...</span>
@@ -103,24 +116,24 @@
             </div>
         </div>
 
-        <!-- Package Details -->
+        <!-- Active Package -->
         <div class="card">
-            <h3>বর্তমান প্যাকেজ ও মেয়াদ</h3>
+            <div class="card-title"><span>বর্তমান প্যাকেজ</span> ⭐️</div>
             <div class="info-row">
                 <span>প্যাকেজের নাম:</span>
                 <span id="pkgName">কোনো প্যাকেজ নেই</span>
             </div>
             <div class="info-row">
-                <span>প্যাকেজের মেয়াদ:</span>
+                <span>মেয়াদ:</span>
                 <span id="pkgDuration">নির্ধারিত নয়</span>
             </div>
         </div>
 
         <!-- Mobile App Download Box -->
-        <div class="card app-box">
-            <h3>SKYPAY মোবাইল অ্যাপ</h3>
-            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 5px;">মোবাইলে সহজে চালাতে অফিশিয়াল অ্যাপস ডাউনলোড করুন</p>
-            <a id="apkLink" href="#" class="download-btn" target="_blank">অ্যাপ ডাউনলোড করুন</a>
+        <div class="card download-box">
+            <h3 style="font-size: 16px; margin-bottom: 5px; color: #38bdf8;">SKYPAY মোবাইল অ্যাপ</h3>
+            <p style="font-size: 12px; color: #94a3b8;">অফিসিয়াল অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন</p>
+            <a id="apkLink" href="#" class="apk-btn" target="_blank">অ্যাপ ডাউনলোড করুন</a>
         </div>
 
         <button class="logout-btn" onclick="handleLogout()">লগআউট করুন</button>
@@ -146,11 +159,11 @@
                         apkBtn.innerText = 'অ্যাপ ডাউনলোড করুন';
                     } else {
                         apkBtn.href = '#';
-                        apkBtn.innerText = 'অ্যাপ শীঘ্র আসছে...';
+                        apkBtn.innerText = 'অ্যাপ শীঘ্রই আসছে...';
                     }
                 }
             } catch(e) {
-                console.error("데이터 লোড করতে সমস্যা হয়েছে");
+                console.error("ডেটা লোড করতে সমস্যা হয়েছে");
             }
         }
 
