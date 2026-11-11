@@ -30,7 +30,22 @@
         .menu-icon { font-size: 22px; margin-bottom: 6px; }
         .menu-text { font-size: 11px; color: #cbd5e1; font-weight: 600; }
 
-        .card { background: #1e293b; border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        /* Section Header */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 12px; }
+        .section-header h3 { font-size: 16px; color: #fff; font-weight: 700; }
+        .section-header span { font-size: 12px; color: #38bdf8; }
+
+        /* 15 Products Grid Layout */
+        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .product-card { background: #1e293b; border-radius: 16px; padding: 14px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-icon { width: 50px; height: 50px; margin: 0 auto 10px; background: linear-gradient(135deg, #1d4ed8, #0ebad7); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 4px 10px rgba(14,186,215,0.3); }
+        .product-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .product-duration { font-size: 11px; color: #94a3b8; margin-bottom: 8px; }
+        .product-price { font-size: 16px; font-weight: 800; color: #38bdf8; margin-bottom: 10px; }
+        .buy-btn { width: 100%; padding: 8px; background: #2563eb; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .buy-btn:hover { background: #1d4ed8; }
+
+        .card { background: #1e293b; border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; }
         .card-title { font-size: 15px; font-weight: 700; color: #f43f5e; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; }
         
         .info-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; color: #94a3b8; }
@@ -45,7 +60,7 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; padding: 20px; }
         .modal-content { background: #1e293b; padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid #334155; }
         .modal-content h3 { color: #38bdf8; margin-bottom: 15px; font-size: 18px; text-align: center; }
-        .modal-content input, .modal-content select { width: 100%; padding: 12px; margin-bottom: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 8px; outline: none; }
+        .modal-content input { width: 100%; padding: 12px; margin-bottom: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 8px; outline: none; }
         .modal-btns { display: flex; gap: 10px; }
         .modal-btns button { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-submit { background: #2563eb; color: white; }
@@ -73,15 +88,15 @@
         </div>
 
         <div class="menu-grid">
-            <div class="menu-item" onclick="openModal('vipModal')">
+            <div class="menu-item" onclick="document.getElementById('plansSection').scrollIntoView({behavior: 'smooth'});">
                 <span class="menu-icon">👑</span>
                 <span class="menu-text">VIP প্ল্যান</span>
             </div>
-            <div class="menu-item" onclick="alert('আপনার কোনো অর্ডার নেই।')">
+            <div class="menu-item" onclick="alert('আপনার কোনো সক্রিয় অর্ডার নেই।')">
                 <span class="menu-icon">📦</span>
                 <span class="menu-text">অর্ডারস</span>
             </div>
-            <div class="menu-item" onclick="alert('আপনার রেফারেল লিংক: https://skypay.onrender.com/?ref=user')">
+            <div class="menu-item" onclick="alert('আপনার রেফারেল লিংক কপি করা হয়েছে!')">
                 <span class="menu-icon">👥</span>
                 <span class="menu-text">রেফারেল</span>
             </div>
@@ -89,6 +104,16 @@
                 <span class="menu-icon">🎧</span>
                 <span class="menu-text">সাপোর্ট</span>
             </div>
+        </div>
+
+        <!-- 15 VIP Service Plans Section -->
+        <div id="plansSection" class="section-header">
+            <h3>সার্ভিস প্ল্যান ও প্রোডাক্টস</h3>
+            <span>১৫ টি সার্ভিস রয়েছে</span>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <!-- Dynamically populated 15 products via JS -->
         </div>
 
         <div class="card">
@@ -115,18 +140,6 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title"><span>বর্তমান প্যাকেজ</span> ⭐️</div>
-            <div class="info-row">
-                <span>প্যাকেজের নাম:</span>
-                <span id="pkgName">কোনো প্যাকেজ নেই</span>
-            </div>
-            <div class="info-row">
-                <span>মেয়াদ:</span>
-                <span id="pkgDuration">নির্ধারিত নয়</span>
-            </div>
-        </div>
-
         <div class="card download-box">
             <h3 style="font-size: 16px; margin-bottom: 5px; color: #38bdf8;">SKYPAY মোবাইল অ্যাপ</h3>
             <p style="font-size: 12px; color: #94a3b8;">অফিসিয়াল অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন</p>
@@ -137,51 +150,36 @@
     </div>
 
     <!-- Modals -->
-    <!-- Deposit Modal -->
     <div id="depositModal" class="modal">
         <div class="modal-content">
             <h3>ডিপোজিট (Top Up) করুন</h3>
             <input type="number" id="depAmount" placeholder="টাকার পরিমাণ লিখুন">
             <input type="text" id="depTrx" placeholder="ট্রানজ্যাকশন আইডি (TrxID) দিন">
             <div class="modal-btns">
-                <button class="btn-submit" onclick="alert('ডিপোজিট রিকোয়েস্ট সফল হয়েছে!'); closeModal('depositModal');">জমা দিন</button>
+                <button class="btn-submit" onclick="alert('ডিপোজিট রিকোয়েস্ট পাঠানো হয়েছে!'); closeModal('depositModal');">জমা দিন</button>
                 <button class="btn-close" onclick="closeModal('depositModal')">বন্ধ করুন</button>
             </div>
         </div>
     </div>
 
-    <!-- Withdraw Modal -->
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <h3>উইথড্র রিকোয়েস্ট</h3>
             <input type="number" id="wdAmount" placeholder="উইথড্র পরিমাণ লিখুন">
             <input type="text" id="wdNumber" placeholder="আপনার বিকাশ/নগদ নম্বর">
             <div class="modal-btns">
-                <button class="btn-submit" onclick="alert('উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!'); closeModal('withdrawModal');">রিকোয়েস্ট পাঠান</button>
+                <button class="btn-submit" onclick="alert('উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে!'); closeModal('withdrawModal');">রিকোয়েস্ট পাঠান</button>
                 <button class="btn-close" onclick="closeModal('withdrawModal')">বন্ধ করুন</button>
             </div>
         </div>
     </div>
 
-    <!-- VIP Plans Modal -->
-    <div id="vipModal" class="modal">
-        <div class="modal-content">
-            <h3>VIP মেম্বারশিপ প্ল্যান</h3>
-            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 10px; text-align: center;">অ্যাডমিন প্যানেল থেকে সেট করা বর্তমান প্ল্যানটি উপভোগ করুন।</p>
-            <div class="modal-btns">
-                <button class="btn-submit" onclick="alert('প্ল্যান সাবস্ক্রাইব করা হয়েছে!'); closeModal('vipModal');">প্ল্যান কিনুন</button>
-                <button class="btn-close" onclick="closeModal('vipModal')">বন্ধ করুন</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Support Modal -->
     <div id="supportModal" class="modal">
         <div class="modal-content">
             <h3>২৪/৭ কাস্টমার সাপোর্ট</h3>
-            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">যেকোনো সমস্যায় আমাদের টেলিগ্রাম বা লাইভ চ্যাটে যোগাযোগ করুন।</p>
+            <p style="font-size: 13px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">যেকোনো সমস্যায় আমাদের টেলিগ্রাম সাপোর্ট চ্যানেলে জয়েন করুন।</p>
             <div class="modal-btns">
-                <button class="btn-submit" onclick="alert('সাপোর্ট টিমের সাথে যুক্ত হচ্ছেন...'); closeModal('supportModal');">লাইভ চ্যাট</button>
+                <button class="btn-submit" onclick="alert('সাপোর্টে রিডাইরেক্ট করা হচ্ছে...'); closeModal('supportModal');">লাইভ চ্যাট</button>
                 <button class="btn-close" onclick="closeModal('supportModal')">বন্ধ করুন</button>
             </div>
         </div>
@@ -191,19 +189,72 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
+        // 15 Default Plans Data Setup
+        const defaultProducts = [
+            { icon: '◈', name: 'Starter Plan 01', days: 30, price: 500 },
+            { icon: '✦', name: 'Service Plan 02', days: 30, price: 750 },
+            { icon: '💎', name: 'Silver Plan 03', days: 45, price: 1000 },
+            { icon: '👑', name: 'Gold Plan 04', days: 60, price: 1500 },
+            { icon: '🚀', name: 'Rocket Plan 05', days: 60, price: 2000 },
+            { icon: '🔥', name: 'VIP Plan 06', days: 90, price: 2500 },
+            { icon: '⚡', name: 'Speed Plan 07', days: 90, price: 3000 },
+            { icon: '🌟', name: 'Star Plan 08', days: 120, price: 4000 },
+            { icon: '🏆', name: 'Pro Plan 09', days: 120, price: 5000 },
+            { icon: '🔮', name: 'Ultra Plan 10', days: 150, price: 6500 },
+            { icon: '🛡️', name: 'Secure Plan 11', days: 180, price: 8000 },
+            { icon: '🔱', name: 'Master Plan 12', days: 180, price: 10000 },
+            { icon: '💠', name: 'Diamond Plan 13', days: 240, price: 15000 },
+            { icon: '⚜️', name: 'Royal Plan 14', days: 300, price: 20000 },
+            { icon: '👑', name: 'Supreme VIP 15', days: 365, price: 30000 }
+        ];
+
+        function renderProducts(adminPkgName, adminPkgDuration) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+            
+            // If admin configured a specific package, update first item
+            if(adminPkgName) {
+                defaultProducts[0].name = adminPkgName;
+            }
+            if(adminPkgDuration) {
+                defaultProducts[0].days = adminPkgDuration;
+            }
+
+            defaultProducts.forEach((item, idx) => {
+                const cardHtml = `
+                    <div class="product-card">
+                        <div>
+                            <div class="product-icon">${item.icon}</div>
+                            <div class="product-title">${item.name}</div>
+                            <div class="product-duration">মেয়াদ: ${item.days} দিন</div>
+                        </div>
+                        <div>
+                            <div class="product-price">৳ ${item.price}</div>
+                            <button class="buy-btn" onclick="alert('${item.name} ক্রয়ের জন্য আবেদন করা হয়েছে!')">প্ল্যান কিনুন</button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHtml;
+            });
+        }
+
         async function loadAdminData() {
             try {
                 const res = await fetch('/api/settings');
                 const data = await res.json();
+                let adminPkgName = null;
+                let adminPkgDuration = null;
+
                 if(data.success && data.settings) {
                     const s = data.settings;
                     document.getElementById('bkashNum').innerText = s.bkash || 'দেওয়া হয়নি';
                     document.getElementById('nagadNum').innerText = s.nagad || 'দেওয়া হয়নি';
                     document.getElementById('minDep').innerText = s.min_deposit ? '৳ ' + s.min_deposit : 'নির্ধারিত নয়';
                     document.getElementById('minWd').innerText = s.min_withdraw ? '৳ ' + s.min_withdraw : 'নির্ধারিত নয়';
-                    document.getElementById('pkgName').innerText = s.package_name || 'কোনো প্যাকেজ নেই';
-                    document.getElementById('pkgDuration').innerText = s.package_duration ? s.package_duration + ' দিন' : 'নির্ধারিত নয়';
                     
+                    adminPkgName = s.package_name;
+                    adminPkgDuration = s.package_duration;
+
                     const apkBtn = document.getElementById('apkLink');
                     if(s.apk_url) {
                         apkBtn.href = s.apk_url;
@@ -213,8 +264,10 @@
                         apkBtn.innerText = 'অ্যাপ শীঘ্রই আসছে...';
                     }
                 }
+                renderProducts(adminPkgName, adminPkgDuration);
             } catch(e) {
                 console.error("ডেটা লোড করতে সমস্যা হয়েছে");
+                renderProducts();
             }
         }
 
