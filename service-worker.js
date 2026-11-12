@@ -1,41 +1,40 @@
 const CACHE_NAME = "skypay-v1";
 
+const FILES_TO_CACHE = [
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "/icon-512.png"
+];
+
 self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
-
-      await Promise.all(
+    caches.keys().then(keys =>
+      Promise.all(
         keys
           .filter(key => key !== CACHE_NAME)
           .map(key => caches.delete(key))
-      );
-
-      await self.clients.claim();
-    })()
+      )
+    )
   );
+  self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    fetch(event.request).catch(async () => {
-      if (event.request.mode === "navigate") {
-        return (
-          await caches.match("/") ||
-          new Response("Internet connection required.", {
-            status: 503,
-            headers: { "Content-Type": "text/plain" }
-          })
-        );
-      }
-
-      return new Response("", { status: 503 });
-    })
+    fetch(event.request).catch(() =>
+      caches.match(event.request).then(response =>
+        response || caches.match("/index.html")
+      )
+    )
   );
 });
