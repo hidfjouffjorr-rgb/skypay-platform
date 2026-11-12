@@ -1,3 +1,8 @@
+// ======================================
+// SKYPAY SERVER - PART 1/5
+// SETUP, SECURITY, DATABASE
+// ======================================
+
 const express = require("express");
 const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
@@ -11,21 +16,22 @@ app.set("trust proxy", 1);
 
 const PORT = process.env.PORT || 3000;
 
+// Required environment variables
 const requiredEnv = [
   "DATABASE_URL",
   "JWT_SECRET",
   "ADMIN_EMAIL",
-  "ADMIN_PASSWORD_HASH",
-  "GEMINI_API_KEY"
+  "ADMIN_PASSWORD_HASH"
 ];
 
 for (const key of requiredEnv) {
   if (!process.env[key]) {
-    console.error(`Missing required environment variable: ${key}`);
+    console.error(`Missing environment variable: ${key}`);
     process.exit(1);
   }
 }
 
+// Database connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.DATABASE_URL.includes("localhost")
@@ -33,8 +39,14 @@ const pool = new Pool({
     : { rejectUnauthorized: false }
 });
 
+pool.on("error", (error) => {
+  console.error("Unexpected database error:", error);
+});
+
+// Security and middleware
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname)));
 
 const authLimiter = rateLimit({
@@ -51,17 +63,17 @@ const adminLimiter = rateLimit({
 
 const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 10,
-  standardHeaders: "draft-7",
-  legacyHeaders: false
+  limit: 10
 });
 
+// JWT token
 function makeToken(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "7d"
   });
 }
 
+// User authentication
 function userAuth(req, res, next) {
   try {
     const header = req.headers.authorization || "";
@@ -72,18 +84,19 @@ function userAuth(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (decoded.role !== "user" || !decoded.id) {
-      throw new Error("Invalid role");
+      throw new Error("Invalid user token");
     }
 
     req.userId = decoded.id;
     next();
-  } catch {
-    res.status(401).json({
+  } catch (error) {
+    return res.status(401).json({
       error: "Please log in again."
     });
   }
 }
 
+// Admin authentication
 function adminAuth(req, res, next) {
   try {
     const header = req.headers.authorization || "";
@@ -94,17 +107,19 @@ function adminAuth(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (decoded.role !== "admin") {
-      throw new Error("Invalid role");
+      throw new Error("Invalid admin token");
     }
 
+    req.admin = decoded;
     next();
-  } catch {
-    res.status(401).json({
+  } catch (error) {
+    return res.status(401).json({
       error: "Admin login required."
     });
   }
 }
 
+// Helpers
 function normalizePhone(value) {
   return String(value || "").replace(/[\s\-()]/g, "");
 }
@@ -117,13 +132,12 @@ function validAmountOrZero(value) {
   return Number.isFinite(Number(value)) && Number(value) >= 0;
 }
 
-// TELEGRAM NOTIFICATION
+// Telegram notification
 async function sendTelegramMessage(message) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
 
   if (!botToken || !chatId) {
-    console.error("Telegram configuration is missing.");
     return false;
   }
 
@@ -143,20 +157,14 @@ async function sendTelegramMessage(message) {
     );
 
     const result = await response.json();
-
-    if (!response.ok || !result.ok) {
-      console.error("Telegram error:", result);
-      return false;
-    }
-
-    return true;
+    return response.ok && result.ok === true;
   } catch (error) {
-    console.error("Telegram notification failed:", error.message);
+    console.error("Telegram notification error:", error.message);
     return false;
   }
 }
 
-// DATABASE INITIALIZATION
+// Database initialization
 async function initDatabase() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -188,23 +196,8 @@ async function initDatabase() {
     ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'active';
     ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
-    ALTER TABLE users ALTER COLUMN username DROP NOT NULL;
-
-    DO $$
-    BEGIN
-      IF EXISTS (
-        SELECT 1
-        FROM information_schema.columns
-        WHERE table_schema = current_schema()
-          AND table_name = 'users'
-          AND column_name = 'password'
-      ) THEN
-        ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
-      END IF;
-    END $$;
-
     CREATE UNIQUE INDEX IF NOT EXISTS users_phone_unique
-      ON users(phone) WHERE phone IS NOT NULL;
+    ON users(phone) WHERE phone IS NOT NULL;
   `);
 
   await pool.query(`
@@ -252,6 +245,18 @@ async function initDatabase() {
   `);
 
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS transactions (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      type VARCHAR(30) NOT NULL,
+      amount NUMERIC(14,2) NOT NULL,
+      status VARCHAR(20) NOT NULL DEFAULT 'pending',
+      description TEXT DEFAULT '',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS chat_messages (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -275,9 +280,22 @@ async function initDatabase() {
     );
   `);
 
-  const products = await pool.query("SELECT COUNT(*) FROM products");
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS managed_apps (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      version TEXT NOT NULL,
+      size TEXT DEFAULT '',
+      download_url TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
 
-  if (Number(products.rows[0].count) === 0) {
+  const productCount = await pool.query(
+    "SELECT COUNT(*) FROM products"
+  );
+
+  if (Number(productCount.rows[0].count) === 0) {
     const names = [
       "Starter Service",
       "Basic Service",
@@ -301,254 +319,365 @@ async function initDatabase() {
         `INSERT INTO products
          (name, price, duration_days, daily_estimate, description)
          VALUES ($1, 0, 1, 0, $2)`,
-        [name, "Please ask the administrator for product details."]
+        [
+          name,
+          "Please ask the administrator for product details."
+        ]
       );
     }
   }
 
   console.log("SKYPAY database ready.");
-}// HEALTH CHECK
+            }// ======================================
+// PART 2/5 - USER REGISTRATION & LOGIN
+// ======================================
+
+// Health check
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", app: "SKYPAY" });
+  res.json({
+    success: true,
+    status: "online",
+    service: "SKYPAY"
+  });
 });
 
-// REGISTRATION
+// User registration
 app.post("/api/register", authLimiter, async (req, res) => {
   try {
     const name = String(req.body.name || "").trim();
     const phone = normalizePhone(req.body.phone);
     const password = String(req.body.password || "");
-    const referralCode = String(req.body.referralCode || "").trim();
+    const referralCode = String(req.body.referral_code || "").trim();
 
     if (name.length < 2 || name.length > 100) {
       return res.status(400).json({ error: "Enter a valid name." });
     }
 
-    if (!/^\+?[0-9]{8,16}$/.test(phone)) {
+    if (phone.length < 7 || phone.length > 30) {
       return res.status(400).json({ error: "Enter a valid phone number." });
     }
 
     if (password.length < 6 || password.length > 100) {
-      return res.status(400).json({ error: "Password must be at least 6 characters." });
+      return res.status(400).json({
+        error: "Password must be 6 to 100 characters."
+      });
     }
 
-    const duplicate = await pool.query(
-      "SELECT id FROM users WHERE phone=$1", [phone]
+    const existing = await pool.query(
+      "SELECT id FROM users WHERE phone=$1",
+      [phone]
     );
 
-    if (duplicate.rows.length) {
-      return res.status(409).json({ error: "This phone number is already registered." });
+    if (existing.rowCount) {
+      return res.status(409).json({
+        error: "This phone number is already registered."
+      });
     }
 
-    let referrer = null;
+    let referredBy = null;
 
     if (referralCode) {
-      const found = await pool.query(
-        "SELECT id FROM users WHERE referral_code=$1", [referralCode]
+      const referrer = await pool.query(
+        "SELECT id FROM users WHERE referral_code=$1",
+        [referralCode]
       );
-      if (found.rows.length) referrer = found.rows[0].id;
+
+      if (!referrer.rowCount) {
+        return res.status(400).json({
+          error: "Invalid referral code."
+        });
+      }
+
+      referredBy = referrer.rows[0].id;
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-    const uid = "SKY" + Date.now().toString().slice(-8) +
-      Math.floor(Math.random() * 90 + 10);
-    const code = "SKY" + Math.random().toString(36).slice(2, 9).toUpperCase();
+    const uid = "SKY" + Date.now().toString(36).toUpperCase();
+    const newReferralCode =
+      "SKY" + Math.random().toString(36).slice(2, 9).toUpperCase();
 
     const result = await pool.query(
       `INSERT INTO users
-       (uid,username,name,phone,password_hash,referral_code,referred_by)
-       VALUES ($1,$2,$3,$4,$5,$6,$7)
-       RETURNING id,uid,username,name,phone,referral_code,balance,status`,
-      [uid, phone, name, phone, passwordHash, code, referrer]
+       (uid, username, name, phone, password_hash, referral_code, referred_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, uid, name, phone, referral_code, balance`,
+      [
+        uid,
+        phone,
+        name,
+        phone,
+        passwordHash,
+        newReferralCode,
+        referredBy
+      ]
     );
 
     const user = result.rows[0];
-    const token = makeToken({ id: user.id, role: "user" });
+    const token = makeToken({
+      id: user.id,
+      role: "user"
+    });
 
     res.status(201).json({
-      message: "Registration successful.",
+      success: true,
       token,
       user
     });
   } catch (error) {
-    console.error("Registration:", error);
-    if (error.code === "23505") {
-      return res.status(409).json({ error: "This phone number or account is already registered." });
-    }
-    res.status(500).json({ error: "Registration failed. Please try again." });
+    console.error("Registration error:", error);
+    res.status(500).json({
+      error: "Registration failed."
+    });
   }
 });
 
-// USER LOGIN
+// User login
 app.post("/api/login", authLimiter, async (req, res) => {
   try {
     const phone = normalizePhone(req.body.phone);
     const password = String(req.body.password || "");
 
+    if (!phone || !password) {
+      return res.status(400).json({
+        error: "Phone and password are required."
+      });
+    }
+
     const result = await pool.query(
-      "SELECT * FROM users WHERE phone=$1", [phone]
+      "SELECT * FROM users WHERE phone=$1",
+      [phone]
     );
+
+    if (!result.rowCount) {
+      return res.status(401).json({
+        error: "Invalid phone number or password."
+      });
+    }
+
     const user = result.rows[0];
 
-    if (!user || !user.password_hash ||
-        !(await bcrypt.compare(password, user.password_hash))) {
-      return res.status(401).json({ error: "Incorrect phone number or password." });
+    if (user.status && user.status !== "active") {
+      return res.status(403).json({
+        error: "Your account is not active."
+      });
     }
 
-    if (user.status !== "active") {
-      return res.status(403).json({ error: "This account is not active." });
+    const passwordMatch = await bcrypt.compare(
+      password,
+      user.password_hash
+    );
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        error: "Invalid phone number or password."
+      });
     }
 
-    const token = makeToken({ id: user.id, role: "user" });
-    delete user.password_hash;
-    delete user.password;
+    const token = makeToken({
+      id: user.id,
+      role: "user"
+    });
 
-    res.json({ message: "Login successful.", token, user });
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        uid: user.uid,
+        name: user.name,
+        phone: user.phone,
+        balance: user.balance,
+        referral_code: user.referral_code
+      }
+    });
   } catch (error) {
-    console.error("Login:", error);
-    res.status(500).json({ error: "Login failed." });
+    console.error("Login error:", error);
+    res.status(500).json({
+      error: "Login failed."
+    });
   }
 });
 
-// PUBLIC PRODUCTS
+// Public products
 app.get("/api/products", async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id,name,price,duration_days,daily_estimate,image_url,description
-       FROM products WHERE active=TRUE ORDER BY id`
+      `SELECT id, name, price, duration_days,
+              daily_estimate, image_url, description
+       FROM products
+       WHERE active=true
+       ORDER BY id ASC`
     );
-    res.json({ products: result.rows });
+
+    res.json(result.rows);
   } catch (error) {
-    console.error("Products:", error);
-    res.status(500).json({ error: "Could not load products." });
+    console.error("Products error:", error);
+    res.status(500).json({
+      error: "Could not load products."
+    });
   }
 });
 
-// USER PROFILE
-app.get("/api/me", userAuth, async (req, res) => {
+// User profile
+app.get("/api/profile", userAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT u.id,u.uid,u.username,u.name,u.phone,u.referral_code,
-       u.balance,u.total_deposit,u.total_withdraw,u.status,
-       (SELECT COUNT(*) FROM plans p
-        WHERE p.user_id=u.id AND p.status='active') AS active_plans
-       FROM users u WHERE u.id=$1`,
+      `SELECT id, uid, username, name, phone,
+              balance, total_deposit, total_withdraw,
+              referral_code, created_at
+       FROM users WHERE id=$1`,
       [req.userId]
     );
 
-    if (!result.rows.length) {
-      return res.status(404).json({ error: "User not found." });
+    if (!result.rowCount) {
+      return res.status(404).json({
+        error: "User not found."
+      });
     }
 
-    res.json({ user: result.rows[0] });
+    res.json(result.rows[0]);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Could not load profile." });
+    console.error("Profile error:", error);
+    res.status(500).json({
+      error: "Could not load profile."
+    });
   }
 });
 
-// DEPOSIT REQUEST
+// Deposit request
 app.post("/api/deposit", userAuth, async (req, res) => {
   try {
-    const method = String(req.body.method || "").toLowerCase();
     const amount = Number(req.body.amount);
-    const sender = normalizePhone(req.body.senderNumber);
-    const transactionId = String(req.body.transactionId || "").trim();
+    const method = String(req.body.method || "").toLowerCase();
+    const senderNumber = normalizePhone(req.body.sender_number);
+    const transactionId = String(req.body.transaction_id || "").trim();
+
+    if (!validAmount(amount)) {
+      return res.status(400).json({ error: "Invalid amount." });
+    }
 
     if (!["bkash", "nagad"].includes(method)) {
-      return res.status(400).json({ error: "Choose bKash or Nagad." });
-    }
-    if (!validAmount(amount) || amount > 1000000) {
-      return res.status(400).json({ error: "Enter a valid amount." });
-    }
-    if (!/^\+?[0-9]{8,16}$/.test(sender)) {
-      return res.status(400).json({ error: "Enter a valid sender number." });
-    }
-    if (transactionId.length < 4 || transactionId.length > 120) {
-      return res.status(400).json({ error: "Enter a valid transaction ID." });
+      return res.status(400).json({ error: "Invalid payment method." });
     }
 
-    await pool.query(
+    if (!senderNumber || !transactionId) {
+      return res.status(400).json({
+        error: "Sender number and transaction ID are required."
+      });
+    }
+
+    const result = await pool.query(
       `INSERT INTO payment_requests
-       (user_id,type,method,amount,sender_number,transaction_id)
-       VALUES ($1,'deposit',$2,$3,$4,$5)`,
-      [req.userId, method, amount, sender, transactionId]
+       (user_id, type, method, amount, sender_number, transaction_id)
+       VALUES ($1, 'deposit', $2, $3, $4, $5)
+       RETURNING id, status, amount, created_at`,
+      [
+        req.userId,
+        method,
+        amount,
+        senderNumber,
+        transactionId
+      ]
+    );
+
+    await pool.query(
+      `INSERT INTO transactions
+       (user_id, type, amount, status, description)
+       VALUES ($1, 'deposit', $2, 'pending', $3)`,
+      [req.userId, amount, `${method} deposit request`]
+    );
+
+    await sendTelegramMessage(
+      `SKYPAY Deposit Request\nAmount: ${amount}\nMethod: ${method}\nSender: ${senderNumber}\nTransaction: ${transactionId}`
     );
 
     res.status(201).json({
-      message: "Deposit request submitted for admin review."
+      success: true,
+      request: result.rows[0]
     });
   } catch (error) {
-    console.error("Deposit:", error);
-    res.status(500).json({ error: "Could not submit deposit request." });
+    console.error("Deposit error:", error);
+    res.status(500).json({
+      error: "Could not submit deposit request."
+    });
   }
 });
 
-// WITHDRAWAL REQUEST
+// Withdrawal request
 app.post("/api/withdraw", userAuth, async (req, res) => {
-  const client = await pool.connect();
-  let started = false;
-
   try {
-    const method = String(req.body.method || "").toLowerCase();
     const amount = Number(req.body.amount);
-    const account = normalizePhone(req.body.accountNumber);
+    const method = String(req.body.method || "").toLowerCase();
+    const accountNumber = normalizePhone(req.body.account_number);
+
+    if (!validAmount(amount)) {
+      return res.status(400).json({ error: "Invalid amount." });
+    }
 
     if (!["bkash", "nagad"].includes(method)) {
-      return res.status(400).json({ error: "Choose bKash or Nagad." });
-    }
-    if (!validAmount(amount) || amount > 1000000) {
-      return res.status(400).json({ error: "Enter a valid amount." });
-    }
-    if (!/^\+?[0-9]{8,16}$/.test(account)) {
-      return res.status(400).json({ error: "Enter a valid account number." });
+      return res.status(400).json({ error: "Invalid payment method." });
     }
 
-    await client.query("BEGIN");
-    started = true;
+    if (!accountNumber) {
+      return res.status(400).json({
+        error: "Account number is required."
+      });
+    }
 
-    const user = await client.query(
-      "SELECT balance FROM users WHERE id=$1 FOR UPDATE", [req.userId]
+    const userResult = await pool.query(
+      "SELECT balance FROM users WHERE id=$1",
+      [req.userId]
     );
 
-    if (!user.rows.length) throw new Error("User not found.");
-    if (Number(user.rows[0].balance) < amount) {
-      throw new Error("Insufficient wallet balance.");
+    if (!userResult.rowCount ||
+        Number(userResult.rows[0].balance) < amount) {
+      return res.status(400).json({
+        error: "Insufficient balance."
+      });
     }
 
-    await client.query(
+    const result = await pool.query(
       `INSERT INTO payment_requests
-       (user_id,type,method,amount,account_number)
-       VALUES ($1,'withdraw',$2,$3,$4)`,
-      [req.userId, method, amount, account]
+       (user_id, type, method, amount, account_number)
+       VALUES ($1, 'withdraw', $2, $3, $4)
+       RETURNING id, status, amount, created_at`,
+      [req.userId, method, amount, accountNumber]
     );
 
-    await client.query("COMMIT");
-    started = false;
+    await pool.query(
+      `INSERT INTO transactions
+       (user_id, type, amount, status, description)
+       VALUES ($1, 'withdraw', $2, 'pending', $3)`,
+      [req.userId, amount, `${method} withdrawal request`]
+    );
+
+    await sendTelegramMessage(
+      `SKYPAY Withdrawal Request\nAmount: ${amount}\nMethod: ${method}\nAccount: ${accountNumber}`
+    );
 
     res.status(201).json({
-      message: "Withdrawal request submitted for review."
+      success: true,
+      request: result.rows[0]
     });
   } catch (error) {
-    if (started) await client.query("ROLLBACK");
-    res.status(400).json({ error: error.message || "Could not submit request." });
-  } finally {
-    client.release();
+    console.error("Withdrawal error:", error);
+    res.status(500).json({
+      error: "Could not submit withdrawal request."
+    });
   }
-});// ===============================
-// PART 3/5 - ACTIVATION, ORDERS, TEAM & CHAT
-// ===============================
+});// ======================================
+// PART 3/5 - ACTIVATION, ORDERS, TEAM
+// ======================================
 
-// Activate product plan
-app.post("/api/activate", auth, async (req, res) => {
+// Activate product
+app.post("/api/activate", userAuth, async (req, res) => {
   const client = await pool.connect();
 
   try {
-    const userId = req.user.id;
     const productId = Number(req.body.product_id);
 
     if (!Number.isInteger(productId) || productId <= 0) {
-      return res.status(400).json({ error: "Invalid product" });
+      return res.status(400).json({ error: "Invalid product." });
     }
 
     await client.query("BEGIN");
@@ -560,77 +689,92 @@ app.post("/api/activate", auth, async (req, res) => {
 
     if (!productResult.rowCount) {
       await client.query("ROLLBACK");
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({ error: "Product not found." });
     }
 
     const product = productResult.rows[0];
 
-    const userResult = await client.query(
-      "SELECT * FROM users WHERE id=$1 FOR UPDATE",
-      [userId]
-    );
-
-    if (!userResult.rowCount) {
+    if (!validAmount(product.price)) {
       await client.query("ROLLBACK");
-      return res.status(404).json({ error: "User not found" });
+      return res.status(400).json({
+        error: "This product is not available for purchase."
+      });
     }
 
-    const price = Number(product.price);
+    const userResult = await client.query(
+      "SELECT balance FROM users WHERE id=$1 FOR UPDATE",
+      [req.userId]
+    );
 
-    if (Number(userResult.rows[0].balance) < price) {
+    if (!userResult.rowCount ||
+        Number(userResult.rows[0].balance) < Number(product.price)) {
       await client.query("ROLLBACK");
-      return res.status(400).json({ error: "Insufficient balance" });
+      return res.status(400).json({
+        error: "Insufficient balance."
+      });
     }
 
     await client.query(
       "UPDATE users SET balance=balance-$1 WHERE id=$2",
-      [price, userId]
+      [product.price, req.userId]
     );
 
     const planResult = await client.query(
-      `INSERT INTO plans (user_id, product_id, product_name, amount, status)
-       VALUES ($1, $2, $3, $4, 'active')
+      `INSERT INTO plans
+       (user_id, product_id, product_name, price,
+        daily_estimate, duration_days, status)
+       VALUES ($1, $2, $3, $4, $5, $6, 'active')
        RETURNING *`,
-      [userId, product.id, product.name, price]
+      [
+        req.userId,
+        product.id,
+        product.name,
+        product.price,
+        product.daily_estimate,
+        product.duration_days
+      ]
     );
 
     await client.query(
-      `INSERT INTO transactions (user_id, type, amount, status, description)
+      `INSERT INTO transactions
+       (user_id, type, amount, status, description)
        VALUES ($1, 'purchase', $2, 'approved', $3)`,
-      [userId, price, `Purchased ${product.name}`]
+      [req.userId, product.price, `Purchased ${product.name}`]
     );
 
     await client.query("COMMIT");
 
     res.json({
       success: true,
-      message: "Product activated successfully",
+      message: "Product activated successfully.",
       plan: planResult.rows[0]
     });
   } catch (error) {
     await client.query("ROLLBACK").catch(() => {});
-    console.error("Activate error:", error);
-    res.status(500).json({ error: "Could not activate product" });
+    console.error("Activation error:", error);
+    res.status(500).json({
+      error: "Could not activate product."
+    });
   } finally {
     client.release();
   }
 });
 
-// My orders and transactions
-app.get("/api/my-orders", auth, async (req, res) => {
+// My orders
+app.get("/api/my-orders", userAuth, async (req, res) => {
   try {
     const plans = await pool.query(
       `SELECT * FROM plans
        WHERE user_id=$1
        ORDER BY created_at DESC`,
-      [req.user.id]
+      [req.userId]
     );
 
     const transactions = await pool.query(
       `SELECT * FROM transactions
        WHERE user_id=$1
        ORDER BY created_at DESC`,
-      [req.user.id]
+      [req.userId]
     );
 
     res.json({
@@ -638,69 +782,76 @@ app.get("/api/my-orders", auth, async (req, res) => {
       transactions: transactions.rows
     });
   } catch (error) {
-    console.error("My orders error:", error);
-    res.status(500).json({ error: "Could not load orders" });
+    console.error("Orders error:", error);
+    res.status(500).json({
+      error: "Could not load orders."
+    });
   }
 });
 
 // Team members
-app.get("/api/team", auth, async (req, res) => {
+app.get("/api/team", userAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, name, phone, created_at
+      `SELECT id, uid, name, phone, created_at
        FROM users
        WHERE referred_by=$1
        ORDER BY created_at DESC`,
-      [req.user.id]
+      [req.userId]
     );
 
     res.json(result.rows);
   } catch (error) {
     console.error("Team error:", error);
-    res.status(500).json({ error: "Could not load team" });
+    res.status(500).json({
+      error: "Could not load team."
+    });
   }
 });
 
 // Chat history
-app.get("/api/chat/history", auth, async (req, res) => {
+app.get("/api/chat/history", userAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, message, reply, created_at
+      `SELECT id, role, content, created_at
        FROM chat_messages
        WHERE user_id=$1
-       ORDER BY created_at DESC
-       LIMIT 50`,
-      [req.user.id]
+       ORDER BY created_at ASC
+       LIMIT 100`,
+      [req.userId]
     );
 
-    res.json(result.rows.reverse());
+    res.json(result.rows);
   } catch (error) {
     console.error("Chat history error:", error);
-    res.status(500).json({ error: "Could not load chat history" });
+    res.status(500).json({
+      error: "Could not load chat history."
+    });
   }
-});
+});// ======================================
+// PART 4/5 - AI CHAT & ADMIN API
+// ======================================
 
-// AI chat
-app.post("/api/chat", auth, async (req, res) => {
+// AI Chat
+app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
   try {
     const message = String(req.body.message || "").trim();
 
-    if (!message) {
-      return res.status(400).json({ error: "Message is required" });
+    if (!message || message.length > 2000) {
+      return res.status(400).json({
+        error: "Message must be between 1 and 2000 characters."
+      });
     }
 
-    if (message.length > 2000) {
-      return res.status(400).json({ error: "Message is too long" });
-    }
-
-    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return res.status(503).json({
-        error: "AI service is not configured"
+        error: "AI service is not configured."
       });
     }
+
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
     const endpoint =
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
@@ -728,48 +879,61 @@ app.post("/api/chat", auth, async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Gemini API error:", data);
+      console.error("Gemini error:", data);
       return res.status(502).json({
-        error: "AI service is temporarily unavailable"
+        error: "AI service is temporarily unavailable."
       });
     }
 
-    const reply =
-      data.candidates?.[0]?.content?.parts
-        ?.map(part => part.text || "")
-        .join("\n")
-        .trim() || "দুঃখিত, এখন উত্তর দিতে পারছি না।";
+    const reply = data.candidates?.[0]?.content?.parts
+      ?.map(part => part.text || "")
+      .join("\n")
+      .trim();
+
+    if (!reply) {
+      return res.status(502).json({
+        error: "AI returned an empty response."
+      });
+    }
 
     await pool.query(
-      `INSERT INTO chat_messages (user_id, message, reply)
-       VALUES ($1, $2, $3)`,
-      [req.user.id, message, reply]
+      `INSERT INTO chat_messages (user_id, role, content)
+       VALUES ($1, 'user', $2), ($1, 'assistant', $3)`,
+      [req.userId, message, reply]
     );
 
-    res.json({ reply });
+    res.json({ success: true, reply });
   } catch (error) {
     console.error("Chat error:", error);
-    res.status(500).json({ error: "Chat service failed" });
+    res.status(500).json({
+      error: "Chat service failed."
+    });
   }
-});// ===============================
-// PART 4/5 - ADMIN PANEL API
-// ===============================
+});
 
 // Admin login
-app.post("/api/admin/login", adminLoginLimiter, async (req, res) => {
+app.post("/api/admin/login", adminLimiter, async (req, res) => {
   try {
     const email = String(req.body.email || "").trim().toLowerCase();
     const password = String(req.body.password || "");
 
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password required" });
+    const adminEmail =
+      String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+
+    const passwordHash = process.env.ADMIN_PASSWORD_HASH;
+
+    if (!email || !password || email !== adminEmail || !passwordHash) {
+      return res.status(401).json({
+        error: "Invalid admin credentials."
+      });
     }
 
-    if (
-      email !== String(process.env.ADMIN_EMAIL || "").toLowerCase() ||
-      password !== process.env.ADMIN_PASSWORD
-    ) {
-      return res.status(401).json({ error: "Invalid admin credentials" });
+    const validPassword = await bcrypt.compare(password, passwordHash);
+
+    if (!validPassword) {
+      return res.status(401).json({
+        error: "Invalid admin credentials."
+      });
     }
 
     const token = jwt.sign(
@@ -778,10 +942,49 @@ app.post("/api/admin/login", adminLoginLimiter, async (req, res) => {
       { expiresIn: "12h" }
     );
 
-    res.json({ token, role: "admin" });
+    res.json({
+      success: true,
+      token,
+      role: "admin"
+    });
   } catch (error) {
     console.error("Admin login error:", error);
-    res.status(500).json({ error: "Admin login failed" });
+    res.status(500).json({
+      error: "Admin login failed."
+    });
+  }
+});
+
+// Admin dashboard summary
+app.get("/api/admin/stats", adminAuth, async (req, res) => {
+  try {
+    const users = await pool.query(
+      "SELECT COUNT(*) FROM users"
+    );
+
+    const deposits = await pool.query(
+      "SELECT COALESCE(SUM(amount), 0) AS total FROM payment_requests WHERE type='deposit' AND status='approved'"
+    );
+
+    const withdrawals = await pool.query(
+      "SELECT COALESCE(SUM(amount), 0) AS total FROM payment_requests WHERE type='withdraw' AND status='approved'"
+    );
+
+    const pending = await pool.query(
+      "SELECT COUNT(*) FROM payment_requests WHERE status='pending'"
+    );
+
+    res.json({
+      users: Number(users.rows[0].count),
+      deposits: Number(deposits.rows[0].total),
+      withdrawals: Number(withdrawals.rows[0].total),
+      pending_requests: Number(pending.rows[0].count)
+    });
+  } catch (error) {
+    console.error("Admin stats error:", error);
+    res.status(500).json({
+      error: "Could not load dashboard statistics."
+    });
   }
 });
 
@@ -789,18 +992,21 @@ app.post("/api/admin/login", adminLoginLimiter, async (req, res) => {
 app.get("/api/admin/users", adminAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, name, email, phone, balance, created_at
-       FROM users ORDER BY created_at DESC`
+      `SELECT id, uid, name, phone, balance, status, created_at
+       FROM users
+       ORDER BY created_at DESC`
     );
 
     res.json(result.rows);
   } catch (error) {
     console.error("Admin users error:", error);
-    res.status(500).json({ error: "Could not load users" });
+    res.status(500).json({
+      error: "Could not load users."
+    });
   }
 });
 
-// Admin products list
+// Admin products
 app.get("/api/admin/products", adminAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -810,111 +1016,176 @@ app.get("/api/admin/products", adminAuth, async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Admin products error:", error);
-    res.status(500).json({ error: "Could not load products" });
+    res.status(500).json({
+      error: "Could not load products."
+    });
   }
 });
 
 // Add product
 app.post("/api/admin/products", adminAuth, async (req, res) => {
   try {
-    const { name, description, price, daily_income, duration, image } = req.body;
+    const name = String(req.body.name || "").trim();
+    const price = Number(req.body.price);
+    const duration = Number(req.body.duration_days);
+    const daily = Number(req.body.daily_estimate);
 
-    if (!name || !validAmount(price)) {
-      return res.status(400).json({ error: "Valid name and price required" });
+    if (!name || name.length > 120 || !validAmount(price)) {
+      return res.status(400).json({
+        error: "Enter a valid product name and price."
+      });
+    }
+
+    if (
+      !Number.isInteger(duration) ||
+      duration < 1 ||
+      !validAmountOrZero(daily)
+    ) {
+      return res.status(400).json({
+        error: "Invalid duration or daily estimate."
+      });
     }
 
     const result = await pool.query(
       `INSERT INTO products
-       (name, description, price, daily_income, duration, image, active)
+       (name, price, duration_days, daily_estimate,
+        image_url, description, active)
        VALUES ($1, $2, $3, $4, $5, $6, true)
        RETURNING *`,
       [
         name,
-        description || "",
-        Number(price),
-        Number(daily_income) || 0,
-        Number(duration) || 0,
-        image || ""
+        price,
+        duration,
+        daily,
+        String(req.body.image_url || ""),
+        String(req.body.description || "")
       ]
     );
 
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({
+      success: true,
+      product: result.rows[0]
+    });
   } catch (error) {
     console.error("Add product error:", error);
-    res.status(500).json({ error: "Could not add product" });
+    res.status(500).json({
+      error: "Could not add product."
+    });
   }
 });
 
-// Update product
+// Edit product
 app.put("/api/admin/products/:id", adminAuth, async (req, res) => {
   try {
-    const { name, description, price, daily_income, duration, image, active } = req.body;
+    const id = Number(req.params.id);
+    const name = String(req.body.name || "").trim();
+    const price = Number(req.body.price);
+    const duration = Number(req.body.duration_days);
+    const daily = Number(req.body.daily_estimate);
 
-    if (!name || !validAmount(price)) {
-      return res.status(400).json({ error: "Valid name and price required" });
+    if (
+      !Number.isInteger(id) ||
+      id <= 0 ||
+      !name ||
+      name.length > 120 ||
+      !validAmount(price) ||
+      !Number.isInteger(duration) ||
+      duration < 1 ||
+      !validAmountOrZero(daily)
+    ) {
+      return res.status(400).json({
+        error: "Invalid product information."
+      });
     }
 
     const result = await pool.query(
       `UPDATE products SET
-       name=$1, description=$2, price=$3, daily_income=$4,
-       duration=$5, image=$6, active=$7
-       WHERE id=$8 RETURNING *`,
+       name=$1,
+       price=$2,
+       duration_days=$3,
+       daily_estimate=$4,
+       image_url=$5,
+       description=$6,
+       active=$7
+       WHERE id=$8
+       RETURNING *`,
       [
         name,
-        description || "",
-        Number(price),
-        Number(daily_income) || 0,
-        Number(duration) || 0,
-        image || "",
-        active !== false,
-        req.params.id
+        price,
+        duration,
+        daily,
+        String(req.body.image_url || ""),
+        String(req.body.description || ""),
+        req.body.active !== false,
+        id
       ]
     );
 
     if (!result.rowCount) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({
+        error: "Product not found."
+      });
     }
 
-    res.json(result.rows[0]);
+    res.json({
+      success: true,
+      product: result.rows[0]
+    });
   } catch (error) {
-    console.error("Update product error:", error);
-    res.status(500).json({ error: "Could not update product" });
+    console.error("Edit product error:", error);
+    res.status(500).json({
+      error: "Could not update product."
+    });
   }
 });
 
 // Delete product
 app.delete("/api/admin/products/:id", adminAuth, async (req, res) => {
   try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({
+        error: "Invalid product ID."
+      });
+    }
+
     const result = await pool.query(
       "DELETE FROM products WHERE id=$1 RETURNING id",
-      [req.params.id]
+      [id]
     );
 
     if (!result.rowCount) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({
+        error: "Product not found."
+      });
     }
 
     res.json({ success: true });
   } catch (error) {
     console.error("Delete product error:", error);
-    res.status(500).json({ error: "Could not delete product" });
+    res.status(500).json({
+      error: "Could not delete product."
+    });
   }
 });
 
-// Payment requests
+// Admin payment requests
 app.get("/api/admin/payment-requests", adminAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT pr.*, u.name AS user_name, u.phone AS user_phone
-       FROM payment_requests pr
-       JOIN users u ON u.id=pr.user_id
-       ORDER BY pr.created_at DESC`
+      `SELECT p.*, u.name AS user_name, u.phone AS user_phone
+       FROM payment_requests p
+       JOIN users u ON u.id=p.user_id
+       ORDER BY p.created_at DESC`
     );
 
     res.json(result.rows);
   } catch (error) {
-    console.error("Admin payment requests error:", error);
-    res.status(500).json({ error: "Could not load payment requests" });
+    console.error("Payment requests error:", error);
+    res.status(500).json({
+      error: "Could not load payment requests."
+    });
   }
 });
 
@@ -923,81 +1194,119 @@ app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
   const client = await pool.connect();
 
   try {
+    const id = Number(req.params.id);
     const status = String(req.body.status || "").toLowerCase();
 
-    if (!["approved", "rejected"].includes(status)) {
-      return res.status(400).json({ error: "Invalid status" });
+    if (
+      !Number.isInteger(id) ||
+      id <= 0 ||
+      !["approved", "rejected"].includes(status)
+    ) {
+      return res.status(400).json({
+        error: "Invalid request."
+      });
     }
 
     await client.query("BEGIN");
 
     const requestResult = await client.query(
       "SELECT * FROM payment_requests WHERE id=$1 FOR UPDATE",
-      [req.params.id]
+      [id]
     );
 
     if (!requestResult.rowCount) {
       await client.query("ROLLBACK");
-      return res.status(404).json({ error: "Request not found" });
+      return res.status(404).json({
+        error: "Request not found."
+      });
     }
 
     const request = requestResult.rows[0];
 
     if (request.status !== "pending") {
       await client.query("ROLLBACK");
-      return res.status(400).json({ error: "Request already processed" });
+      return res.status(409).json({
+        error: "Request has already been processed."
+      });
     }
 
-    await client.query(
-      "UPDATE payment_requests SET status=$1 WHERE id=$2",
-      [status, request.id]
-    );
-
     if (status === "approved") {
+      const userResult = await client.query(
+        "SELECT balance FROM users WHERE id=$1 FOR UPDATE",
+        [request.user_id]
+      );
+
+      if (!userResult.rowCount) {
+        await client.query("ROLLBACK");
+        return res.status(404).json({
+          error: "User not found."
+        });
+      }
+
       if (request.type === "deposit") {
         await client.query(
-          "UPDATE users SET balance=balance+$1 WHERE id=$2",
+          `UPDATE users
+           SET balance=balance+$1,
+               total_deposit=total_deposit+$1
+           WHERE id=$2`,
           [request.amount, request.user_id]
         );
       } else if (request.type === "withdraw") {
-        const userResult = await client.query(
-          "SELECT balance FROM users WHERE id=$1 FOR UPDATE",
-          [request.user_id]
-        );
-
-        if (
-          !userResult.rowCount ||
-          Number(userResult.rows[0].balance) < Number(request.amount)
-        ) {
+        if (Number(userResult.rows[0].balance) < Number(request.amount)) {
           await client.query("ROLLBACK");
-          return res.status(400).json({ error: "Insufficient user balance" });
+          return res.status(400).json({
+            error: "Insufficient user balance."
+          });
         }
 
         await client.query(
-          "UPDATE users SET balance=balance-$1 WHERE id=$2",
+          `UPDATE users
+           SET balance=balance-$1,
+               total_withdraw=total_withdraw+$1
+           WHERE id=$2`,
           [request.amount, request.user_id]
         );
       }
-
-      await client.query(
-        `INSERT INTO transactions (user_id, type, amount, status, description)
-         VALUES ($1, $2, $3, 'approved', $4)`,
-        [
-          request.user_id,
-          request.type,
-          request.amount,
-          `${request.type} request approved`
-        ]
-      );
     }
+
+    await client.query(
+      `UPDATE payment_requests
+       SET status=$1, reviewed_at=NOW()
+       WHERE id=$2`,
+      [status, id]
+    );
+
+    await client.query(
+      `UPDATE transactions
+       SET status=$1
+       WHERE id=(
+         SELECT id FROM transactions
+         WHERE user_id=$2
+           AND type=$3
+           AND amount=$4
+           AND status='pending'
+         ORDER BY created_at DESC
+         LIMIT 1
+       )`,
+      [status, request.user_id, request.type, request.amount]
+    );
 
     await client.query("COMMIT");
 
-    res.json({ success: true, status });
+    await sendTelegramMessage(
+      `SKYPAY payment request ${status.toUpperCase()}\nRequest ID: ${id}\nAmount: ${request.amount}`
+    );
+
+    res.json({
+      success: true,
+      status
+    });
   } catch (error) {
     await client.query("ROLLBACK").catch(() => {});
-    console.error("Payment approval error:", error);
-    res.status(500).json({ error: "Could not process payment request" });
+    console.error("Payment processing error:", error);
+    res.status(500).json({
+      error: "Could not process payment request."
+    });
   } finally {
     client.release();
   }
@@ -1008,25 +1317,181 @@ app.get("/api/admin/chat-escalations", adminAuth, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT * FROM chat_escalations
-       ORDER BY created_at DESC LIMIT 100`
+       ORDER BY created_at DESC
+       LIMIT 100`
     );
 
     res.json(result.rows);
   } catch (error) {
-    console.error("Chat escalations error:", error);
-    res.status(500).json({ error: "Could not load escalations" });
+    console.error("Escalations error:", error);
+    res.status(500).json({
+      error: "Could not load escalations."
+    });
+  }
+});// ======================================
+// PART 5/5 - APP MANAGEMENT & SERVER START
+// ======================================
+
+// Public app list
+app.get("/api/apps", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, version, size, download_url, created_at
+       FROM managed_apps
+       ORDER BY id DESC`
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Apps list error:", error);
+    res.status(500).json({
+      error: "Could not load apps."
+    });
   }
 });
 
-// App management API
-app.use("/api", require("./app-management"));// ===============================
-// PART 5/5 - ERROR HANDLING & START
-// ===============================
+// Add app
+app.post("/api/admin/apps", adminAuth, async (req, res) => {
+  try {
+    const name = String(req.body.name || "").trim();
+    const version = String(req.body.version || "").trim();
+    const size = String(req.body.size || "").trim();
+    const downloadUrl = String(req.body.download_url || "").trim();
 
-// Not found
-app.use((req, res) => {
+    if (!name || !version || !downloadUrl) {
+      return res.status(400).json({
+        error: "App name, version and download URL are required."
+      });
+    }
+
+    let parsedUrl;
+
+    try {
+      parsedUrl = new URL(downloadUrl);
+    } catch {
+      return res.status(400).json({
+        error: "Invalid download URL."
+      });
+    }
+
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+      return res.status(400).json({
+        error: "Only HTTP and HTTPS download links are allowed."
+      });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO managed_apps
+       (name, version, size, download_url)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [name, version, size, downloadUrl]
+    );
+
+    res.status(201).json({
+      success: true,
+      app: result.rows[0]
+    });
+  } catch (error) {
+    console.error("Add app error:", error);
+    res.status(500).json({
+      error: "Could not add app."
+    });
+  }
+});
+
+// Edit app
+app.put("/api/admin/apps/:id", adminAuth, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const name = String(req.body.name || "").trim();
+    const version = String(req.body.version || "").trim();
+    const size = String(req.body.size || "").trim();
+    const downloadUrl = String(req.body.download_url || "").trim();
+
+    if (!Number.isInteger(id) || id <= 0 || !name || !version || !downloadUrl) {
+      return res.status(400).json({
+        error: "Invalid app information."
+      });
+    }
+
+    let parsedUrl;
+
+    try {
+      parsedUrl = new URL(downloadUrl);
+    } catch {
+      return res.status(400).json({
+        error: "Invalid download URL."
+      });
+    }
+
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+      return res.status(400).json({
+        error: "Only HTTP and HTTPS download links are allowed."
+      });
+    }
+
+    const result = await pool.query(
+      `UPDATE managed_apps
+       SET name=$1, version=$2, size=$3, download_url=$4
+       WHERE id=$5
+       RETURNING *`,
+      [name, version, size, downloadUrl, id]
+    );
+
+    if (!result.rowCount) {
+      return res.status(404).json({
+        error: "App not found."
+      });
+    }
+
+    res.json({
+      success: true,
+      app: result.rows[0]
+    });
+  } catch (error) {
+    console.error("Edit app error:", error);
+    res.status(500).json({
+      error: "Could not update app."
+    });
+  }
+});
+
+// Delete app
+app.delete("/api/admin/apps/:id", adminAuth, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({
+        error: "Invalid app ID."
+      });
+    }
+
+    const result = await pool.query(
+      "DELETE FROM managed_apps WHERE id=$1 RETURNING id",
+      [id]
+    );
+
+    if (!result.rowCount) {
+      return res.status(404).json({
+        error: "App not found."
+      });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Delete app error:", error);
+    res.status(500).json({
+      error: "Could not delete app."
+    });
+  }
+});
+
+// API not found
+app.use("/api", (req, res) => {
   res.status(404).json({
-    error: "API endpoint not found"
+    error: "API endpoint not found."
   });
 });
 
@@ -1039,7 +1504,7 @@ app.use((error, req, res, next) => {
   }
 
   res.status(500).json({
-    error: "Internal server error"
+    error: "Internal server error."
   });
 });
 
