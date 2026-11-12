@@ -629,27 +629,62 @@ document.getElementById("productForm").addEventListener("submit", async function
   e.preventDefault();
 
   const id = document.getElementById("productId").value;
-  const product = {
-    name:document.getElementById("productName").value.trim(),
-    price:Number(document.getElementById("productPrice").value),
-    duration_days:Number(document.getElementById("productDuration").value || 0),
-    daily_estimate:Number(document.getElementById("productDaily").value || 0),
-    image_url:document.getElementById("productImage").value.trim(),
-    description:document.getElementById("productDescription").value.trim(),
-    active:document.getElementById("productActive").value === "true"
-  };
+  const fileInput = document.getElementById("productImageFile");
+  const file = fileInput.files[0];
+
+  const saveButton = this.querySelector('button[type="submit"]');
+  const originalText = saveButton.textContent;
+
+  saveButton.disabled = true;
 
   try {
+    let imageUrl = document.getElementById("productImage").value.trim();
+
+    // Upload selected image first
+    if (file) {
+      saveButton.textContent = "Uploading image...";
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const uploadResult = await api("/api/admin/upload-image", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!uploadResult.url) {
+        throw new Error("Image URL was not returned.");
+      }
+
+      imageUrl = uploadResult.url;
+    }
+
+    const product = {
+      name: document.getElementById("productName").value.trim(),
+      price: Number(document.getElementById("productPrice").value),
+      duration_days: Number(document.getElementById("productDuration").value || 0),
+      daily_estimate: Number(document.getElementById("productDaily").value || 0),
+      image_url: imageUrl,
+      description: document.getElementById("productDescription").value.trim(),
+      active: document.getElementById("productActive").value === "true"
+    };
+
+    saveButton.textContent = "Saving product...";
+
     await api("/api/admin/products" + (id ? "/" + encodeURIComponent(id) : ""), {
-      method:id ? "PUT" : "POST",
-      body:JSON.stringify(product)
+      method: id ? "PUT" : "POST",
+      body: JSON.stringify(product)
     });
 
     hideProductForm();
     await loadProducts();
     showNotice("Product saved successfully.");
+
   } catch(error) {
     showNotice(error.message, true);
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = originalText;
   }
 });
 
@@ -905,4 +940,4 @@ checkSession();
 </script>
 
 </body>
-</html>
+  </html>
