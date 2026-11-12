@@ -402,7 +402,12 @@ async function api(url, options={}) {
     "Content-Type":"application/json",
     ...(options.headers || {})
   };
-
+const headers = {
+  ...(options.body instanceof FormData
+    ? {}
+    : { "Content-Type": "application/json" }),
+  ...(options.headers || {})
+};
   if (adminToken) {
     headers.Authorization = "Bearer " + adminToken;
   }
