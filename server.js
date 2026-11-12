@@ -156,7 +156,7 @@ async function sendTelegramMessage(message) {
   }
 }
 
-// DATABASE INITIALIZATION AND MIGRATION
+// DATABASE INITIALIZATION
 async function initDatabase() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -251,7 +251,6 @@ async function initDatabase() {
     );
   `);
 
-  // AI CHAT HISTORY
   await pool.query(`
     CREATE TABLE IF NOT EXISTS chat_messages (
       id SERIAL PRIMARY KEY,
@@ -265,7 +264,6 @@ async function initDatabase() {
     ON chat_messages(user_id, created_at);
   `);
 
-  // AI SUPPORT ESCALATIONS
   await pool.query(`
     CREATE TABLE IF NOT EXISTS chat_escalations (
       id SERIAL PRIMARY KEY,
@@ -277,7 +275,6 @@ async function initDatabase() {
     );
   `);
 
-  // DEMO PRODUCTS
   const products = await pool.query("SELECT COUNT(*) FROM products");
 
   if (Number(products.rows[0].count) === 0) {
@@ -845,14 +842,12 @@ app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
 
     const user = userResult.rows[0];
 
-    // Save user message
     await pool.query(
       `INSERT INTO chat_messages (user_id,role,content)
        VALUES ($1,'user',$2)`,
       [req.userId, message]
     );
 
-    // Get recent conversation
     const historyResult = await pool.query(
       `SELECT role,content
        FROM (
@@ -872,7 +867,7 @@ You are SKYPAY's helpful customer support AI.
 Reply in the same language as the user.
 If the user writes Bengali, reply in simple Bengali.
 
-Help with SKYPAY registration, login, profile, products,
+Help with registration, login, profile, products,
 deposit requests, withdrawal requests and website navigation.
 
 Never ask for passwords, OTPs, API keys, card details
@@ -886,8 +881,7 @@ Never claim you have changed a user's account.
 Do not promise guaranteed profit, investment returns
 or earnings. Do not describe any product as risk-free.
 
-For money, balance, payment approval, account restrictions
-or other private account matters that you cannot verify,
+For private account matters that you cannot verify,
 ask the user to contact a human administrator.
 
 If you cannot confidently solve the problem, or the user
@@ -907,17 +901,13 @@ Keep the reply polite and helpful.
 
     const contents = historyResult.rows.map(item => ({
       role: item.role === "assistant" ? "model" : "user",
-      parts: [
-        {
-          text: item.content
-        }
-      ]
+      parts: [{ text: item.content }]
     }));
 
     let aiResponse = "";
 
     try {
-      const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+      const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
@@ -929,15 +919,10 @@ Keep the reply polite and helpful.
           },
           body: JSON.stringify({
             systemInstruction: {
-              parts: [
-                {
-                  text: instructions
-                }
-              ]
+              parts: [{ text: instructions }]
             },
             contents,
             generationConfig: {
-              temperature: 0.3,
               maxOutputTokens: 700,
               responseMimeType: "application/json"
             }
@@ -1009,17 +994,16 @@ Keep the reply polite and helpful.
     ).slice(0, 5000);
 
     const needsHuman = parsed.needs_human === true;
-    const reason = String(parsed.reason || "Human support requested.")
-      .slice(0, 500);
+    const reason = String(
+      parsed.reason || "Human support requested."
+    ).slice(0, 500);
 
-    // Save AI response
     await pool.query(
       `INSERT INTO chat_messages (user_id,role,content)
        VALUES ($1,'assistant',$2)`,
       [req.userId, reply]
     );
 
-    // Send escalation to Telegram
     let supportSent = false;
 
     if (needsHuman) {
@@ -1443,7 +1427,7 @@ app.use((error, req, res, next) => {
   });
 });
 
-// START SERVER AFTER DATABASE IS READY
+// START SERVER
 initDatabase()
   .then(() => {
     app.listen(PORT, "0.0.0.0", () => {
