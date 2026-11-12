@@ -1,14 +1,13 @@
 {
-  "id": "/",
-  "name": "SKYPAY",
+  "name": "SKYPAY Smart Platform",
   "short_name": "SKYPAY",
-  "description": "SKYPAY Android App",
+  "description": "SKYPAY Smart Payment Platform",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#064e3b",
-  "theme_color": "#00c853",
+  "background_color": "#eaf5e5",
+  "theme_color": "#168438",
   "icons": [
     {
       "src": "/icon-512.png",
