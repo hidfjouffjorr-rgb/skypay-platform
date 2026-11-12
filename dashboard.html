@@ -64,9 +64,36 @@ button{cursor:pointer}
 .bottom button.active{background:linear-gradient(135deg,#55b94b,#08732e);color:white}
 .message{font-size:12px;margin-top:10px;line-height:1.5}
 .empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
-@media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr)}.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
 
-/* SKYPAY AI LIVE CHAT */
+/* APP DOWNLOAD */
+.download-card{
+ background:linear-gradient(135deg,#ffffff,#e2f5dc);
+ border:1px solid #cce8c5;
+ border-radius:22px;
+ padding:20px;
+ margin:18px 0;
+ text-align:center;
+ box-shadow:0 5px 18px #16843818;
+}
+.download-logo{
+ width:70px;height:70px;margin:0 auto 12px;
+ border-radius:20px;
+ background:linear-gradient(140deg,#5bc94c,#08702d);
+ color:white;display:grid;place-items:center;
+ font-size:38px;font-weight:900;
+}
+.download-card h3{font-size:20px;color:#176b32;margin-bottom:8px}
+.download-card p{font-size:13px;color:#748474;line-height:1.6;margin-bottom:15px}
+.download-btn{
+ display:block;width:100%;padding:15px;
+ background:linear-gradient(90deg,#168438,#5dbb4b);
+ color:white;text-decoration:none;border-radius:30px;
+ font-weight:bold;font-size:15px;
+}
+@media(min-width:600px){
+ .stats{grid-template-columns:repeat(4,1fr)}
+ .products-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+}/* SKYPAY AI LIVE CHAT */
 #skypayChatButton{
  position:fixed;right:18px;bottom:85px;z-index:99;
  border:0;border-radius:50px;padding:15px 20px;
@@ -121,6 +148,7 @@ button{cursor:pointer}
     <h2>Hello, <span id="userName">User</span> 👋</h2>
     <small>Your personal dashboard</small>
   </div>
+
   <div class="wallet">
     <small>AVAILABLE WALLET BALANCE</small>
     <div class="balance" id="balance">৳0.00</div>
@@ -129,16 +157,35 @@ button{cursor:pointer}
       <button onclick="showPage('withdrawPage')">↗ Withdraw</button>
     </div>
   </div>
+
   <div class="stats">
     <div class="stat"><small>UID</small><b id="uid">—</b></div>
     <div class="stat"><small>Active Plans</small><b id="activeCount">0</b></div>
     <div class="stat"><small>Total Deposits</small><b id="totalDeposit">৳0</b></div>
     <div class="stat"><small>Total Withdrawals</small><b id="totalWithdraw">৳0</b></div>
   </div>
+
+  <!-- DOWNLOAD APP CARD -->
+  <div class="download-card">
+    <div class="download-logo">S</div>
+    <h3>DOWNLOAD SKYPAY APP</h3>
+    <p>Install the official SKYPAY Android app on your phone and access your dashboard easily.</p>
+    <a class="download-btn"
+       href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk"
+       download>
+       📲 DOWNLOAD SKYPAY APP
+    </a>
+    <p style="margin:12px 0 0">Android App · Version 1.0.0</p>
+  </div>
+
   <div class="section">
-    <div class="heading"><h3>🌱 Available Products</h3><button onclick="showPage('orderedPage')">My Plans →</button></div>
+    <div class="heading">
+      <h3>🌱 Available Products</h3>
+      <button onclick="showPage('orderedPage')">My Plans →</button>
+    </div>
     <div id="homeProducts"><div class="empty">Loading products...</div></div>
   </div>
+
   <div class="card">
     <h4>📢 SKYPAY Support</h4>
     <p>Need help with your account or transaction? Contact our support team.</p>
@@ -187,9 +234,7 @@ button{cursor:pointer}
   <div class="welcome"><small>YOUR ACTIVITY</small><h2>My Orders & Plans</h2></div>
   <div class="card"><h4>Active Plans</h4><div id="activePlans"><div class="empty">Loading...</div></div></div>
   <div class="card"><h4>Transaction History</h4><div id="history"><div class="empty">Loading...</div></div></div>
-</section>
-
-<section class="page" id="teamPage">
+</section><section class="page" id="teamPage">
   <div class="welcome"><small>INVITATION</small><h2>My Team</h2></div>
   <div class="card">
     <h4>Your Referral Link</h4>
@@ -209,7 +254,7 @@ button{cursor:pointer}
   <div class="welcome"><small>SHARE SKYPAY</small><h2>Invite Your Friends</h2></div>
   <div class="card">
     <h4>Share your referral link</h4>
-    <p>Invite people to visit SKYPAY. Explain the platform honestly and do not promise guaranteed returns.</p>
+    <p>Invite people to visit SKYPAY. Do not promise guaranteed returns.</p>
     <div class="refbox" id="shareLink">Loading...</div>
     <button class="primary" onclick="shareReferral()">SHARE NOW</button>
   </div>
@@ -238,7 +283,6 @@ button{cursor:pointer}
   <button data-page="myPage" onclick="showPage('myPage',this)"><span>♙</span>My</button>
 </nav>
 
-<!-- AI CHAT BUTTON AND WINDOW -->
 <button id="skypayChatButton" onclick="toggleChat()">💬 AI Help</button>
 
 <div id="skypayChatBox">
@@ -253,9 +297,7 @@ button{cursor:pointer}
     <input id="skypayChatInput" type="text" maxlength="2000" placeholder="Type your message..." autocomplete="off" required>
     <button id="skypayChatSend" type="submit">Send</button>
   </form>
-</div>
-
-<script>
+</div><script>
 const $=id=>document.getElementById(id);
 const token=localStorage.getItem("skypay_token");
 let currentUser=null;
@@ -383,9 +425,7 @@ $("withdrawForm").addEventListener("submit",async e=>{
     $("withdrawForm").reset();
     loadOrders();
   }catch(err){setMessage("withdrawMessage",err.message)}
-});
-
-async function loadOrders(){
+});async function loadOrders(){
   try{
     const data=await api("/api/my-orders");
     const plans=data.plans||[];
@@ -425,9 +465,11 @@ async function shareReferral(){
   }catch(e){}
 }
 
-function support(){window.open("https://t.me/skypay_admin_bot","_blank")}
+function support(){
+  window.open("https://t.me/skypay_admin_bot","_blank");
+}
 
-/* AI LIVE CHAT FUNCTIONS */
+/* AI LIVE CHAT */
 function toggleChat(){
   const box=$("skypayChatBox");
   const isOpen=box.style.display==="block";
@@ -499,7 +541,10 @@ $("skypayChatForm").addEventListener("submit",async e=>{
 });
 
 async function start(){
-  if(!token){location.href="index.html";return}
+  if(!token){
+    location.href="index.html";
+    return;
+  }
   try{
     await loadProfile();
     await loadProducts();
@@ -508,6 +553,7 @@ async function start(){
     logout();
   }
 }
+
 start();
 </script>
 </body>
