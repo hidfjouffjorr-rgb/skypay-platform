@@ -990,7 +990,72 @@ app.get("/api/admin/me", adminAuth, (req, res) => {
     email: req.admin.email
   });
 });
+// Upload image to Cloudinary
+function uploadImageToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "skypay/products",
+        resource_type: "image"
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
 
+    stream.end(buffer);
+  });
+}
+
+// Admin image upload API
+app.post(
+  "/api/admin/upload-image",
+  adminAuth,
+  (req, res, next) => {
+    upload.single("image")(req, res, (error) => {
+      if (error) {
+        return res.status(400).json({
+          error: error.message || "Image upload error."
+        });
+      }
+      next();
+    });
+  },
+  async (req, res) => {
+    try {
+      if (
+        !process.env.CLOUDINARY_CLOUD_NAME ||
+        !process.env.CLOUDINARY_API_KEY ||
+        !process.env.CLOUDINARY_API_SECRET
+      ) {
+        return res.status(503).json({
+          error: "Image storage is not configured."
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          error: "Please choose an image."
+        });
+      }
+
+      const result = await uploadImageToCloudinary(req.file.buffer);
+
+      return res.status(201).json({
+        success: true,
+        url: result.secure_url,
+        public_id: result.public_id
+      });
+    } catch (error) {
+      console.error("Image upload error:", error.message);
+
+      return res.status(500).json({
+        error: "Could not upload image."
+      });
+    }
+  }
+);
 // Admin dashboard summary
 app.get("/api/admin/stats", adminAuth, async (req, res) => {
   try {
