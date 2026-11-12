@@ -66,8 +66,14 @@ button,input,select{font:inherit}button{cursor:pointer}
 .download-card p{font-size:13px;color:#748474;line-height:1.6;margin-bottom:15px}
 .download-btn{display:block;width:100%;padding:15px;background:linear-gradient(90deg,#168438,#5dbb4b);color:white;text-decoration:none;border-radius:30px;font-weight:bold;font-size:15px}
 .payment-card{background:white;border-radius:18px;padding:15px;margin:12px 0;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px #245d2510}
-.payment-logo{width:58px;height:58px;flex-shrink:0;border-radius:17px;display:grid;place-items:center;color:white;font-size:17px;font-weight:900}
-.bkash-logo{background:#d91c5c}.nagad-logo{background:#f07824}
+.payment-logo{
+  width:58px;
+  height:58px;
+  flex-shrink:0;
+  border-radius:14px;
+  object-fit:contain;
+  background:white;
+}
 .payment-info{flex:1;min-width:0}
 .payment-info b{display:block;font-size:15px;margin-bottom:5px}
 .payment-info small{color:var(--muted);font-size:11px}
@@ -135,7 +141,7 @@ button,input,select{font:inherit}button{cursor:pointer}
 
   <h3 class="payment-title">💳 SKYPAY Payment Methods</h3>
   <div class="payment-card">
-    <div class="payment-logo bkash-logo">bK</div>
+    <img class="payment-logo" src="https://raw.githubusercontent.com/hidfjouffjorr-rgb/skypay-platform/main/bkash-logo.png" alt="bKash">
     <div class="payment-info">
       <b>bKash Personal</b>
       <small>Send Money</small>
@@ -146,7 +152,7 @@ button,input,select{font:inherit}button{cursor:pointer}
   <div class="message" id="copyHomeBkash"></div>
 
   <div class="payment-card">
-    <div class="payment-logo nagad-logo">নগদ</div>
+    <img class="payment-logo" src="https://raw.githubusercontent.com/hidfjouffjorr-rgb/skypay-platform/main/nagad-logo.png" alt="Nagad">
     <div class="payment-info">
       <b>Nagad Personal</b>
       <small>Send Money</small>
@@ -161,12 +167,14 @@ button,input,select{font:inherit}button{cursor:pointer}
     <p>Need help with your account or transaction? Contact our support team.</p>
     <button class="secondary" onclick="support()">Contact Support</button>
   </div>
-</section><section class="page" id="depositPage">
+</section>
+
+<section class="page" id="depositPage">
   <div class="welcome"><small>WALLET</small><h2>Deposit Balance</h2></div>
   <div class="card">
     <h4>Payment Instructions</h4>
     <div class="payment-card">
-      <div class="payment-logo bkash-logo">bK</div>
+      <img class="payment-logo" src="https://raw.githubusercontent.com/hidfjouffjorr-rgb/skypay-platform/main/bkash-logo.png" alt="bKash">
       <div class="payment-info">
         <b>bKash Personal</b>
         <div class="payment-number">+8801763341991</div>
@@ -176,7 +184,7 @@ button,input,select{font:inherit}button{cursor:pointer}
     <div class="message" id="depositBkashCopy"></div>
 
     <div class="payment-card">
-      <div class="payment-logo nagad-logo">নগদ</div>
+      <img class="payment-logo" src="https://raw.githubusercontent.com/hidfjouffjorr-rgb/skypay-platform/main/nagad-logo.png" alt="Nagad">
       <div class="payment-info">
         <b>Nagad Personal</b>
         <div class="payment-number">+8801985052780</div>
@@ -283,7 +291,9 @@ button,input,select{font:inherit}button{cursor:pointer}
     <input id="skypayChatInput" type="text" maxlength="2000" placeholder="Type your message..." autocomplete="off" required>
     <button id="skypayChatSend" type="submit">Send</button>
   </form>
-</div><script>
+</div>
+
+<script>
 const $=id=>document.getElementById(id);
 const token=localStorage.getItem("skypay_token");
 let currentUser=null;
