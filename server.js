@@ -1,6 +1,5 @@
 // ======================================
-// SKYPAY SERVER - PART 1/5
-// SETUP, SECURITY, DATABASE
+// SKYPAY SERVER - FULL CODE (COMBINED)
 // ======================================
 
 const express = require("express");
@@ -328,9 +327,7 @@ async function initDatabase() {
   }
 
   console.log("SKYPAY database ready.");
-            }// ======================================
-// PART 2/5 - USER REGISTRATION & LOGIN
-// ======================================
+}
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -665,9 +662,7 @@ app.post("/api/withdraw", userAuth, async (req, res) => {
       error: "Could not submit withdrawal request."
     });
   }
-});// ======================================
-// PART 3/5 - ACTIVATION, ORDERS, TEAM
-// ======================================
+});
 
 // Activate product
 app.post("/api/activate", userAuth, async (req, res) => {
@@ -828,9 +823,7 @@ app.get("/api/chat/history", userAuth, async (req, res) => {
       error: "Could not load chat history."
     });
   }
-});// ======================================
-// PART 4/5 - AI CHAT & ADMIN API
-// ======================================
+});
 
 // AI Chat
 app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
@@ -953,6 +946,15 @@ app.post("/api/admin/login", adminLimiter, async (req, res) => {
       error: "Admin login failed."
     });
   }
+});
+
+// Verify admin session
+app.get("/api/admin/me", adminAuth, (req, res) => {
+  res.json({
+    success: true,
+    role: "admin",
+    email: req.admin.email
+  });
 });
 
 // Admin dashboard summary
@@ -1328,9 +1330,7 @@ app.get("/api/admin/chat-escalations", adminAuth, async (req, res) => {
       error: "Could not load escalations."
     });
   }
-});// ======================================
-// PART 5/5 - APP MANAGEMENT & SERVER START
-// ======================================
+});
 
 // Public app list
 app.get("/api/apps", async (req, res) => {
