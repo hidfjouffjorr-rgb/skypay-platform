@@ -7,9 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SKYPAY">
-
 <link rel="manifest" href="/manifest.json">
-
 <title>SKYPAY - Smart Platform</title>
 
 <style>
@@ -29,8 +27,14 @@ button{cursor:pointer}
 .hero h1{font-family:Georgia,serif;font-size:35px;line-height:1.08;max-width:255px;margin:13px 0;color:#164d25}
 .hero p{font-size:13px;line-height:1.5;max-width:235px;color:#315e38}
 .hero .pill{display:inline-block;margin-top:18px;background:#ffffffc9;border-radius:20px;padding:9px 13px;font-size:11px;font-weight:bold;color:#246b32}
+.download-btn{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:9px;width:100%;max-width:270px;margin-top:17px;padding:15px 17px;border:0;border-radius:30px;background:linear-gradient(90deg,#08752d,#168438);color:white;text-decoration:none;font-weight:bold;font-size:14px;box-shadow:0 6px 15px #15532935}
+.download-btn:active{transform:scale(.98)}
+.download-section{margin:15px;background:#fff;border-radius:23px;padding:19px;box-shadow:0 7px 20px #245d2512;text-align:center}
+.download-section h2{font-size:20px;color:#17552a;margin-bottom:7px}
+.download-section p{font-size:12px;line-height:1.6;color:#71836f}
+.download-section .download-btn{margin:15px auto 0;max-width:100%}
 .quick{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:0 12px 22px}
-.quick-item{background:#fff;border-radius:19px;padding:11px 3px 13px;text-align:center;box-shadow:0 5px 16px #245d2515;min-width:0}
+.quick-item{background:#fff;border-radius:19px;padding:11px 3px 13px;text-align:center;box-shadow:0 5px 16px #245d2515;min-width:0;cursor:pointer}
 .quick-icon{width:48px;height:48px;border-radius:16px;margin:0 auto 8px;display:grid;place-items:center;color:white;font-size:24px;font-weight:bold;box-shadow:0 5px 12px #0002}
 .q-green{background:linear-gradient(135deg,#61c64d,#08752d)}
 .q-orange{background:linear-gradient(135deg,#ffc24b,#ed8d00)}
@@ -78,7 +82,7 @@ input:focus{border:2px solid #39964b}
 .switch{text-align:center;margin-top:17px;font-size:13px;color:#617264}
 .switch a{color:#16883b;font-weight:bold;text-decoration:none}
 .message{font-size:13px;margin-top:12px;color:#b12b2b;line-height:1.5}
-@media(min-width:650px){.hero,.notice{max-width:650px;margin-left:auto;margin-right:auto}.quick{max-width:650px;margin-left:auto;margin-right:auto}.products{grid-template-columns:1fr 1fr;max-width:900px;margin:auto}.section{max-width:900px;margin:22px auto}.hero{min-height:300px}}
+@media(min-width:650px){.hero,.notice,.download-section{max-width:650px;margin-left:auto;margin-right:auto}.quick{max-width:650px;margin-left:auto;margin-right:auto}.products{grid-template-columns:1fr 1fr;max-width:900px;margin:auto}.section{max-width:900px;margin:22px auto}.hero{min-height:300px}}
 </style>
 </head>
 
@@ -97,6 +101,9 @@ input:focus{border:2px solid #39964b}
   <h1>Build Your Brighter Tomorrow</h1>
   <p>Welcome to SKYPAY. Explore products and manage your account in one place.</p>
   <span class="pill">🌱 GROW WITH CONFIDENCE</span>
+  <a class="download-btn" href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk">
+    ⬇ DOWNLOAD SKYPAY APP
+  </a>
 </section>
 
 <section class="quick">
@@ -105,6 +112,15 @@ input:focus{border:2px solid #39964b}
   <div class="quick-item" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})"><div class="quick-icon q-purple">✓</div><b>Products</b><small>Explore</small></div>
   <div class="quick-item" onclick="contactSupport()"><div class="quick-icon q-teal">▢</div><b>Service</b><small>Support</small></div>
   <div class="quick-item" onclick="joinTelegram()"><div class="quick-icon q-blue">➤</div><b>Channel</b><small>Join Now</small></div>
+</section>
+
+<section class="download-section">
+  <h2>📱 SKYPAY Android App</h2>
+  <p>Download the SKYPAY Android application and access the platform from your phone.</p>
+  <a class="download-btn" href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk">
+    ⬇ Download APK
+  </a>
+  <p style="margin-top:10px">Version 1.0.0 · Android APK</p>
 </section>
 
 <section class="notice">
@@ -297,7 +313,6 @@ async function shareSite(){
   }catch(e){}
 }
 
-// Register service worker for PWA support
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("/service-worker.js")
