@@ -134,9 +134,14 @@ function validAmountOrZero(value) {
 // Telegram notification
 async function sendTelegramMessage(message) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
 
-  if (!botToken || !chatId) {
+  const chatId =
+    process.env.TELEGRAM_CHAT_ID ||
+    process.env.TELEGRAM_ADMIN_CHAT_ID ||
+    "6804193991";
+
+  if (!botToken) {
+    console.error("Telegram Bot Token is missing.");
     return false;
   }
 
@@ -156,7 +161,14 @@ async function sendTelegramMessage(message) {
     );
 
     const result = await response.json();
-    return response.ok && result.ok === true;
+
+    if (!response.ok || !result.ok) {
+      console.error("Telegram error:", result);
+      return false;
+    }
+
+    console.log("Telegram notification sent.");
+    return true;
   } catch (error) {
     console.error("Telegram notification error:", error.message);
     return false;
