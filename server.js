@@ -1016,41 +1016,7 @@ app.get("/api/admin/chat-escalations", adminAuth, async (req, res) => {
     console.error("Chat escalations error:", error);
     res.status(500).json({ error: "Could not load escalations" });
   }
-});// ===============================
-// PART 5/5 - ERROR HANDLING & START
-// ===============================
-
-// Not found
-app.use((req, res) => {
-  res.status(404).json({
-    error: "API endpoint not found"
-  });
 });
-
-// General error handler
-app.use((error, req, res, next) => {
-  console.error("Server error:", error);
-
-  if (res.headersSent) {
-    return next(error);
-  }
-
-  res.status(500).json({
-    error: "Internal server error"
-  });
-});
-
-// Start server
-initDatabase()
-  .then(() => {
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`SKYPAY server running on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error("Database initialization failed:", error);
-    process.exit(1);
-  });
 
 // App management API
 app.use("/api", require("./app-management"));// ===============================
