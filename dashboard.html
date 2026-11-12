@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,8 +9,7 @@
 :root{--g:#168438;--dark:#155329;--bg:#edf7e8;--muted:#748474}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:var(--bg);color:#183d24;padding-bottom:90px}
-button,input,select{font:inherit}
-button{cursor:pointer}
+button,input,select{font:inherit}button{cursor:pointer}
 .top{height:70px;padding:12px 17px;display:flex;align-items:center;justify-content:space-between}
 .brand{font-size:24px;font-weight:900;color:#176b32}
 .brand span{display:inline-grid;place-items:center;background:linear-gradient(140deg,#5bc94c,#08702d);color:white;width:39px;height:39px;border-radius:13px;margin-right:7px}
@@ -35,113 +34,66 @@ button{cursor:pointer}
 .card{background:white;border-radius:20px;padding:17px;margin-bottom:13px;box-shadow:0 4px 14px #245d2510}
 .card p{font-size:13px;color:var(--muted);line-height:1.6}
 .card h4{font-size:16px;margin-bottom:9px}
-.product{border-radius:20px;background:white;padding:13px;margin-bottom:14px}
-.product-image{height:125px;border-radius:15px;background:linear-gradient(120deg,#dff4d4,#7fca6c,#27843b);display:grid;place-items:center;color:white;font-size:27px;font-weight:bold;overflow:hidden}
+.product{border-radius:20px;background:white;padding:13px;margin-bottom:14px;box-shadow:0 4px 14px #245d2510}
+.product-image{height:180px;border-radius:15px;background:linear-gradient(120deg,#dff4d4,#7fca6c,#27843b);display:grid;place-items:center;color:white;font-size:27px;font-weight:bold;overflow:hidden}
 .product-image img{width:100%;height:100%;object-fit:cover}
-.product h4{margin:12px 2px 6px;font-size:17px}
-.product p{font-size:12px;color:var(--muted)}
-.product-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:12px 0}
-.product-stats div{background:#eff8e9;border-radius:11px;padding:10px 3px;text-align:center;min-width:0}
-.product-stats b{display:block;font-size:11px;overflow-wrap:anywhere}
-.product-stats small{display:block;font-size:9px;color:var(--muted);margin-top:5px}
+.product h4{margin:12px 2px 6px;font-size:18px}
+.product p{font-size:13px;color:var(--muted);line-height:1.5}
+.product-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
+.product-stats div{background:#eff8e9;border-radius:11px;padding:12px 8px;text-align:center;min-width:0}
+.product-stats b{display:block;font-size:14px;overflow-wrap:anywhere}
+.product-stats small{display:block;font-size:10px;color:var(--muted);margin-top:5px}
 .primary{width:100%;padding:14px;border:0;border-radius:28px;background:linear-gradient(90deg,#168438,#5dbb4b);color:white;font-weight:bold}
 .secondary{width:100%;padding:13px;border:0;border-radius:14px;background:#e9f5e3;color:#176b32;font-weight:bold;margin-top:9px}
 .field{margin:13px 0}
 .field label{display:block;font-size:12px;font-weight:bold;margin-bottom:7px}
 .field input,.field select{width:100%;padding:14px;border:1px solid #dce8d9;border-radius:13px;background:white;outline:none}
-.field input:focus,.field select:focus{border:2px solid #39964b}
 .notice{background:#fff7df;color:#795a18;border-radius:14px;padding:12px;font-size:12px;line-height:1.6;margin:12px 0}
 .refbox{background:#eff8e9;border-radius:14px;padding:13px;overflow-wrap:anywhere;font-size:12px;margin:12px 0}
-.refbox button{border:0;color:var(--g);background:transparent;font-weight:bold;margin-top:10px}
 .listrow{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #edf1eb;font-size:13px}
 .listrow:last-child{border:0}
 .status{color:#18833a;font-weight:bold}
-.page{display:none}
-.page.active{display:block}
+.page{display:none}.page.active{display:block}
 .bottom{position:fixed;bottom:0;left:0;right:0;z-index:5;background:#f5fbea;border-top:1px solid #d8e8d1;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 6px 12px}
 .bottom button{border:0;background:none;color:#70866c;font-size:10px;font-weight:bold;padding:8px 1px;border-radius:15px}
 .bottom button span{display:block;font-size:22px;margin-bottom:4px}
 .bottom button.active{background:linear-gradient(135deg,#55b94b,#08732e);color:white}
 .message{font-size:12px;margin-top:10px;line-height:1.5}
 .empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
-
-/* APP DOWNLOAD */
-.download-card{
- background:linear-gradient(135deg,#ffffff,#e2f5dc);
- border:1px solid #cce8c5;
- border-radius:22px;
- padding:20px;
- margin:18px 0;
- text-align:center;
- box-shadow:0 5px 18px #16843818;
-}
-.download-logo{
- width:70px;height:70px;margin:0 auto 12px;
- border-radius:20px;
- background:linear-gradient(140deg,#5bc94c,#08702d);
- color:white;display:grid;place-items:center;
- font-size:38px;font-weight:900;
-}
+.download-card{background:linear-gradient(135deg,#fff,#e2f5dc);border:1px solid #cce8c5;border-radius:22px;padding:20px;margin:18px 0;text-align:center;box-shadow:0 5px 18px #16843818}
+.download-logo{width:70px;height:70px;margin:0 auto 12px;border-radius:20px;background:linear-gradient(140deg,#5bc94c,#08702d);color:white;display:grid;place-items:center;font-size:38px;font-weight:900}
 .download-card h3{font-size:20px;color:#176b32;margin-bottom:8px}
 .download-card p{font-size:13px;color:#748474;line-height:1.6;margin-bottom:15px}
-.download-btn{
- display:block;width:100%;padding:15px;
- background:linear-gradient(90deg,#168438,#5dbb4b);
- color:white;text-decoration:none;border-radius:30px;
- font-weight:bold;font-size:15px;
-}
-@media(min-width:600px){
- .stats{grid-template-columns:repeat(4,1fr)}
- .products-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-}/* SKYPAY AI LIVE CHAT */
-#skypayChatButton{
- position:fixed;right:18px;bottom:85px;z-index:99;
- border:0;border-radius:50px;padding:15px 20px;
- background:linear-gradient(120deg,#168438,#58bb4b);
- color:white;font-weight:bold;box-shadow:0 5px 18px #16843855;
-}
-#skypayChatBox{
- display:none;position:fixed;right:12px;bottom:145px;
- width:min(350px,calc(100vw - 24px));height:430px;
- background:white;border-radius:20px;box-shadow:0 8px 35px #0003;
- z-index:100;overflow:hidden;
-}
-#skypayChatHeader{
- background:#168438;color:white;padding:15px;font-weight:bold;
- display:flex;justify-content:space-between;align-items:center;
-}
+.download-btn{display:block;width:100%;padding:15px;background:linear-gradient(90deg,#168438,#5dbb4b);color:white;text-decoration:none;border-radius:30px;font-weight:bold;font-size:15px}
+.payment-card{background:white;border-radius:18px;padding:15px;margin:12px 0;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px #245d2510}
+.payment-logo{width:58px;height:58px;flex-shrink:0;border-radius:17px;display:grid;place-items:center;color:white;font-size:17px;font-weight:900}
+.bkash-logo{background:#d91c5c}.nagad-logo{background:#f07824}
+.payment-info{flex:1;min-width:0}
+.payment-info b{display:block;font-size:15px;margin-bottom:5px}
+.payment-info small{color:var(--muted);font-size:11px}
+.payment-number{font-size:15px;font-weight:bold;letter-spacing:.3px;margin-top:5px}
+.copy-btn{border:0;border-radius:12px;background:#e9f5e3;color:#176b32;padding:11px 13px;font-weight:bold;font-size:12px}
+.payment-title{margin:20px 0 8px;font-size:18px}
+#skypayChatButton{position:fixed;right:18px;bottom:85px;z-index:99;border:0;border-radius:50px;padding:15px 20px;background:linear-gradient(120deg,#168438,#58bb4b);color:white;font-weight:bold;box-shadow:0 5px 18px #16843855}
+#skypayChatBox{display:none;position:fixed;right:12px;bottom:145px;width:min(350px,calc(100vw - 24px));height:430px;background:white;border-radius:20px;box-shadow:0 8px 35px #0003;z-index:100;overflow:hidden}
+#skypayChatHeader{background:#168438;color:white;padding:15px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
 #skypayChatHeader button{background:transparent;color:white;border:0;font-size:23px}
-#skypayChatMessages{
- height:310px;overflow-y:auto;padding:12px;background:#f5faf2;
-}
-.chatBubble{
- padding:10px 12px;border-radius:14px;margin:8px 0;
- max-width:85%;font-size:13px;line-height:1.5;overflow-wrap:anywhere;
- white-space:pre-wrap;
-}
-.chatUser{background:#d9f4d4;margin-left:auto}
-.chatAI{background:white;border:1px solid #e5eee1}
+#skypayChatMessages{height:310px;overflow-y:auto;padding:12px;background:#f5faf2}
+.chatBubble{padding:10px 12px;border-radius:14px;margin:8px 0;max-width:85%;font-size:13px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
+.chatUser{background:#d9f4d4;margin-left:auto}.chatAI{background:white;border:1px solid #e5eee1}
 #skypayChatForm{display:flex;gap:6px;padding:9px}
-#skypayChatInput{
- flex:1;min-width:0;border:1px solid #dce8d9;
- border-radius:20px;padding:11px;outline:none;
-}
-#skypayChatForm button{
- border:0;border-radius:20px;padding:0 15px;
- background:#168438;color:white;font-weight:bold;
-}
-#skypayChatForm button:disabled{opacity:.5}
+#skypayChatInput{flex:1;min-width:0;border:1px solid #dce8d9;border-radius:20px;padding:11px;outline:none}
+#skypayChatForm button{border:0;border-radius:20px;padding:0 15px;background:#168438;color:white;font-weight:bold}
+@media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr)}.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
 </style>
 </head>
 <body>
-
 <header class="top">
   <div class="brand"><span>S</span>SKYPAY</div>
   <button onclick="logout()" title="Logout">↪</button>
 </header>
 
 <main class="wrap">
-
 <section class="page active" id="homePage">
   <div class="welcome">
     <small>WELCOME TO SKYPAY</small>
@@ -165,16 +117,11 @@ button{cursor:pointer}
     <div class="stat"><small>Total Withdrawals</small><b id="totalWithdraw">৳0</b></div>
   </div>
 
-  <!-- DOWNLOAD APP CARD -->
   <div class="download-card">
     <div class="download-logo">S</div>
     <h3>DOWNLOAD SKYPAY APP</h3>
-    <p>Install the official SKYPAY Android app on your phone and access your dashboard easily.</p>
-    <a class="download-btn"
-       href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk"
-       download>
-       📲 DOWNLOAD SKYPAY APP
-    </a>
+    <p>Install the official SKYPAY Android app on your phone.</p>
+    <a class="download-btn" href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk" download>📲 DOWNLOAD SKYPAY APP</a>
     <p style="margin:12px 0 0">Android App · Version 1.0.0</p>
   </div>
 
@@ -186,20 +133,59 @@ button{cursor:pointer}
     <div id="homeProducts"><div class="empty">Loading products...</div></div>
   </div>
 
+  <h3 class="payment-title">💳 SKYPAY Payment Methods</h3>
+  <div class="payment-card">
+    <div class="payment-logo bkash-logo">bK</div>
+    <div class="payment-info">
+      <b>bKash Personal</b>
+      <small>Send Money</small>
+      <div class="payment-number">+8801763341991</div>
+    </div>
+    <button class="copy-btn" onclick="copyText('+8801763341991','copyHomeBkash')">COPY</button>
+  </div>
+  <div class="message" id="copyHomeBkash"></div>
+
+  <div class="payment-card">
+    <div class="payment-logo nagad-logo">নগদ</div>
+    <div class="payment-info">
+      <b>Nagad Personal</b>
+      <small>Send Money</small>
+      <div class="payment-number">+8801985052780</div>
+    </div>
+    <button class="copy-btn" onclick="copyText('+8801985052780','copyHomeNagad')">COPY</button>
+  </div>
+  <div class="message" id="copyHomeNagad"></div>
+
   <div class="card">
     <h4>📢 SKYPAY Support</h4>
     <p>Need help with your account or transaction? Contact our support team.</p>
     <button class="secondary" onclick="support()">Contact Support</button>
   </div>
-</section>
-
-<section class="page" id="depositPage">
+</section><section class="page" id="depositPage">
   <div class="welcome"><small>WALLET</small><h2>Deposit Balance</h2></div>
   <div class="card">
     <h4>Payment Instructions</h4>
-    <p>bKash Personal: <b>+8801763341991</b></p>
-    <p>Nagad Personal: <b>+8801985052780</b></p>
-    <div class="notice">Send money to the correct number, then submit your transaction ID. Your wallet will be updated only after admin approval.</div>
+    <div class="payment-card">
+      <div class="payment-logo bkash-logo">bK</div>
+      <div class="payment-info">
+        <b>bKash Personal</b>
+        <div class="payment-number">+8801763341991</div>
+      </div>
+      <button class="copy-btn" onclick="copyText('+8801763341991','depositBkashCopy')">COPY</button>
+    </div>
+    <div class="message" id="depositBkashCopy"></div>
+
+    <div class="payment-card">
+      <div class="payment-logo nagad-logo">নগদ</div>
+      <div class="payment-info">
+        <b>Nagad Personal</b>
+        <div class="payment-number">+8801985052780</div>
+      </div>
+      <button class="copy-btn" onclick="copyText('+8801985052780','depositNagadCopy')">COPY</button>
+    </div>
+    <div class="message" id="depositNagadCopy"></div>
+
+    <div class="notice">সঠিক নম্বরে Send Money করার পর Transaction ID জমা দাও। Admin অনুমোদন না দেওয়া পর্যন্ত Wallet-এ টাকা যোগ হবে না।</div>
     <form id="depositForm">
       <div class="field"><label>Payment Method</label>
         <select id="depositMethod"><option value="bkash">bKash</option><option value="nagad">Nagad</option></select>
@@ -217,7 +203,7 @@ button{cursor:pointer}
   <div class="welcome"><small>WALLET</small><h2>Withdraw Balance</h2></div>
   <div class="card">
     <p>Available balance: <b id="withdrawBalance">৳0.00</b></p>
-    <div class="notice">Withdrawal requests are subject to admin review and the platform's published terms. Never submit another person's payment details without permission.</div>
+    <div class="notice">Withdrawal requests are subject to admin review and the platform's published terms.</div>
     <form id="withdrawForm">
       <div class="field"><label>Payment Method</label>
         <select id="withdrawMethod"><option value="bkash">bKash</option><option value="nagad">Nagad</option></select>
@@ -234,7 +220,9 @@ button{cursor:pointer}
   <div class="welcome"><small>YOUR ACTIVITY</small><h2>My Orders & Plans</h2></div>
   <div class="card"><h4>Active Plans</h4><div id="activePlans"><div class="empty">Loading...</div></div></div>
   <div class="card"><h4>Transaction History</h4><div id="history"><div class="empty">Loading...</div></div></div>
-</section><section class="page" id="teamPage">
+</section>
+
+<section class="page" id="teamPage">
   <div class="welcome"><small>INVITATION</small><h2>My Team</h2></div>
   <div class="card">
     <h4>Your Referral Link</h4>
@@ -272,7 +260,6 @@ button{cursor:pointer}
     <button class="secondary" onclick="logout()">Log Out</button>
   </div>
 </section>
-
 </main>
 
 <nav class="bottom">
@@ -284,7 +271,6 @@ button{cursor:pointer}
 </nav>
 
 <button id="skypayChatButton" onclick="toggleChat()">💬 AI Help</button>
-
 <div id="skypayChatBox">
   <div id="skypayChatHeader">
     <span>🤖 SKYPAY AI Assistant</span>
@@ -302,24 +288,32 @@ const $=id=>document.getElementById(id);
 const token=localStorage.getItem("skypay_token");
 let currentUser=null;
 let referralURL="";
+let chatHistoryLoaded=false;
 
-function money(v){return "৳"+Number(v||0).toLocaleString("en-BD",{maximumFractionDigits:2})}
-function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-
+function money(v){
+  return "৳"+Number(v||0).toLocaleString("en-BD",{maximumFractionDigits:2});
+}
+function safe(v){
+  return String(v??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
 async function api(path,options={}){
-  const headers={"Content-Type":"application/json","Authorization":"Bearer "+token,...(options.headers||{})};
+  const headers={
+    "Content-Type":"application/json",
+    "Authorization":"Bearer "+token,
+    ...(options.headers||{})
+  };
   const response=await fetch(path,{...options,headers});
   const data=await response.json().catch(()=>({error:"Invalid server response"}));
   if(!response.ok)throw new Error(data.error||"Request failed");
   return data;
 }
-
 function logout(){
   localStorage.removeItem("skypay_token");
   localStorage.removeItem("skypay_user");
   location.href="index.html";
 }
-
 function showPage(id,button){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   $(id).classList.add("active");
@@ -330,16 +324,41 @@ function showPage(id,button){
   if(id==="orderedPage")loadOrders();
   if(id==="teamPage")loadTeam();
 }
-
 function setMessage(id,message,ok=false){
-  $(id).style.color=ok?"#168438":"#b12b2b";
-  $(id).textContent=message;
+  const el=$(id);
+  if(!el)return;
+  el.style.color=ok?"#168438":"#b12b2b";
+  el.textContent=message;
 }
 
+/* COPY PAYMENT NUMBER OR TEXT */
+async function copyText(value,messageId){
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(value);
+    }else{
+      const temp=document.createElement("textarea");
+      temp.value=value;
+      temp.style.position="fixed";
+      temp.style.opacity="0";
+      document.body.appendChild(temp);
+      temp.select();
+      const copied=document.execCommand("copy");
+      temp.remove();
+      if(!copied)throw new Error("Copy failed");
+    }
+    setMessage(messageId,"নম্বর কপি হয়েছে ✓",true);
+  }catch(error){
+    setMessage(messageId,"কপি হয়নি। নম্বরটি হাতে কপি করুন।");
+  }
+}
+
+/* USER PROFILE */
 async function loadProfile(){
-  const data=await api("/api/me");
-  currentUser=data.user;
+  const data=await api("/api/profile");
+  currentUser=data.user||data;
   const u=currentUser;
+
   $("userName").textContent=u.name||"User";
   $("uid").textContent=u.uid||"—";
   $("teamUid").textContent=u.uid||"—";
@@ -347,53 +366,91 @@ async function loadProfile(){
   $("profileName").textContent=u.name||"—";
   $("profilePhone").textContent=u.phone||"—";
   $("profileStatus").textContent=u.status||"Active";
+
   $("balance").textContent=money(u.balance);
   $("withdrawBalance").textContent=money(u.balance);
   $("totalDeposit").textContent=money(u.total_deposit);
   $("totalWithdraw").textContent=money(u.total_withdraw);
   $("activeCount").textContent=Number(u.active_plans||0);
-  referralURL=location.origin+"/?ref="+encodeURIComponent(u.referral_code||u.uid||"");
+
+  referralURL=location.origin+"/?ref="+
+    encodeURIComponent(u.referral_code||u.uid||"");
   $("refLink").textContent=referralURL;
   $("shareLink").textContent=referralURL;
 }
 
+/* PRODUCT IMAGE URL CHECK */
+function safeImageUrl(value){
+  const url=String(value||"").trim();
+  if(/^https?:\/\//i.test(url))return safe(url);
+  if(/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(url)){
+    return safe(url);
+  }
+  return "";
+}
+
+/* LOAD PRODUCTS */
 async function loadProducts(){
   try{
     const data=await api("/api/products");
-    const products=data.products||[];
+    const products=Array.isArray(data)?data:(data.products||[]);
+
     const html=products.map(p=>{
       const daily=Number(p.daily_estimate||0);
       const days=Number(p.duration_days||0);
-      const image=p.image_url?`<img src="${safe(p.image_url)}" alt="">`:"SKYPAY";
-      return `<article class="product">
-        <div class="product-image">${image}</div>
-        <h4>${safe(p.name)}</h4>
-        <p>${safe(p.description||"SKYPAY product")}</p>
-        <div class="product-stats">
-          <div><b>${money(p.price)}</b><small>PRICE</small></div>
-          <div><b>${money(daily)}</b><small>DAILY EST.</small></div>
-          <div><b>${days}</b><small>DAYS</small></div>
-          <div><b>${money(daily*days)}</b><small>EST. TOTAL</small></div>
-        </div>
-        <button class="primary" onclick="activateProduct(${Number(p.id)})">ACTIVATE PLAN</button>
-      </article>`;
+      const totalProfit=daily*days;
+      const image=safeImageUrl(p.image_url);
+
+      return `
+        <article class="product">
+          <div class="product-image">
+            ${image
+              ? `<img src="${image}" alt="${safe(p.name||"SKYPAY Product")}" loading="lazy" onerror="this.style.display='none';this.parentElement.textContent='SKYPAY'">`
+              : "SKYPAY"}
+          </div>
+          <h4>${safe(p.name||"SKYPAY Product")}</h4>
+          <p>${safe(p.description||"SKYPAY product")}</p>
+          <div class="product-stats">
+            <div><b>${money(p.price)}</b><small>PRODUCT PRICE</small></div>
+            <div><b>${days} Days</b><small>VALIDITY</small></div>
+            <div><b>${money(daily)}</b><small>DAILY ESTIMATE</small></div>
+            <div><b>${money(totalProfit)}</b><small>EST. TOTAL PROFIT</small></div>
+          </div>
+          <div class="notice">
+            আয় বা লাভের পরিমাণ কেবল আনুমানিক হিসাব; এটি নিশ্চিত বা গ্যারান্টিযুক্ত নয়।
+          </div>
+          <button class="primary" onclick="activateProduct(${Number(p.id)})">
+            ACTIVATE PLAN
+          </button>
+        </article>`;
     }).join("");
-    $("homeProducts").innerHTML=html||'<div class="empty">No products available.</div>';
-  }catch(e){
-    $("homeProducts").innerHTML='<div class="empty">Could not load products. Please try again.</div>';
+
+    $("homeProducts").innerHTML=
+      html||'<div class="empty">No products available.</div>';
+  }catch(error){
+    $("homeProducts").innerHTML=
+      '<div class="empty">Could not load products. Please refresh.</div>';
   }
 }
 
+/* ACTIVATE PRODUCT */
 async function activateProduct(id){
-  if(!confirm("Do you want to submit a request to activate this product?"))return;
+  if(!Number.isInteger(id)||id<=0)return;
+  if(!confirm("Do you want to activate this product?"))return;
   try{
-    const data=await api("/api/activate",{method:"POST",body:JSON.stringify({productId:id})});
+    const data=await api("/api/activate",{
+      method:"POST",
+      body:JSON.stringify({product_id:id})
+    });
     alert(data.message||"Activation request submitted.");
     await loadProfile();
     await loadProducts();
-  }catch(e){alert(e.message)}
+  }catch(error){
+    alert(error.message);
+  }
 }
 
+/* DEPOSIT FORM */
 $("depositForm").addEventListener("submit",async e=>{
   e.preventDefault();
   setMessage("depositMessage","Submitting request...");
@@ -401,16 +458,22 @@ $("depositForm").addEventListener("submit",async e=>{
     const body={
       method:$("depositMethod").value,
       amount:Number($("depositAmount").value),
-      senderNumber:$("senderNumber").value.trim(),
-      transactionId:$("transactionId").value.trim()
+      sender_number:$("senderNumber").value.trim(),
+      transaction_id:$("transactionId").value.trim()
     };
-    const data=await api("/api/deposit",{method:"POST",body:JSON.stringify(body)});
+    const data=await api("/api/deposit",{
+      method:"POST",
+      body:JSON.stringify(body)
+    });
     setMessage("depositMessage",data.message||"Deposit request submitted.",true);
     $("depositForm").reset();
     loadOrders();
-  }catch(err){setMessage("depositMessage",err.message)}
+  }catch(error){
+    setMessage("depositMessage",error.message);
+  }
 });
 
+/* WITHDRAW FORM */
 $("withdrawForm").addEventListener("submit",async e=>{
   e.preventDefault();
   setMessage("withdrawMessage","Submitting request...");
@@ -418,58 +481,90 @@ $("withdrawForm").addEventListener("submit",async e=>{
     const body={
       method:$("withdrawMethod").value,
       amount:Number($("withdrawAmount").value),
-      accountNumber:$("withdrawNumber").value.trim()
+      account_number:$("withdrawNumber").value.trim()
     };
-    const data=await api("/api/withdraw",{method:"POST",body:JSON.stringify(body)});
+    const data=await api("/api/withdraw",{
+      method:"POST",
+      body:JSON.stringify(body)
+    });
     setMessage("withdrawMessage",data.message||"Withdrawal request submitted.",true);
     $("withdrawForm").reset();
     loadOrders();
-  }catch(err){setMessage("withdrawMessage",err.message)}
-});async function loadOrders(){
+  }catch(error){
+    setMessage("withdrawMessage",error.message);
+  }
+});
+
+/* ORDERS AND TRANSACTION HISTORY */
+async function loadOrders(){
   try{
     const data=await api("/api/my-orders");
     const plans=data.plans||[];
     const transactions=data.transactions||[];
-    $("activePlans").innerHTML=plans.length?plans.map(p=>`
-      <div class="listrow"><span>${safe(p.product_name||"Plan")}<br><small>${safe(p.created_at||"")}</small></span><b>${safe(p.status||"Active")}</b></div>
-    `).join(""):'<div class="empty">No active plans yet.</div>';
-    $("history").innerHTML=transactions.length?transactions.map(t=>`
-      <div class="listrow"><span>${safe(t.type)} · ${safe(t.method||"")}<br><small>${safe(t.created_at||"")}</small></span><b>${money(t.amount)}<br><small>${safe(t.status)}</small></b></div>
-    `).join(""):'<div class="empty">No transactions yet.</div>';
-  }catch(e){
+
+    $("activePlans").innerHTML=plans.length
+      ?plans.map(p=>`
+        <div class="listrow">
+          <span>${safe(p.product_name||"Plan")}<br>
+          <small>${safe(p.created_at||"")}</small></span>
+          <b>${safe(p.status||"Active")}</b>
+        </div>`).join("")
+      :'<div class="empty">No active plans yet.</div>';
+
+    $("history").innerHTML=transactions.length
+      ?transactions.map(t=>`
+        <div class="listrow">
+          <span>${safe(t.type)} · ${safe(t.description||"")}<br>
+          <small>${safe(t.created_at||"")}</small></span>
+          <b>${money(t.amount)}<br><small>${safe(t.status)}</small></b>
+        </div>`).join("")
+      :'<div class="empty">No transactions yet.</div>';
+  }catch(error){
     $("activePlans").innerHTML='<div class="empty">Could not load plans.</div>';
     $("history").innerHTML='<div class="empty">Could not load history.</div>';
   }
 }
 
+/* TEAM */
 async function loadTeam(){
   try{
     const data=await api("/api/team");
-    $("teamCount").textContent=Number(data.count||0);
-  }catch(e){$("teamCount").textContent="—"}
+    const members=Array.isArray(data)?data:(data.members||[]);
+    $("teamCount").textContent=members.length;
+  }catch(error){
+    $("teamCount").textContent="—";
+  }
 }
 
+/* REFERRAL */
 async function copyReferral(){
   try{
     await navigator.clipboard.writeText(referralURL);
     setMessage("refMessage","Referral link copied!",true);
-  }catch(e){
+  }catch(error){
     setMessage("refMessage","Please copy the link manually.");
   }
 }
-
 async function shareReferral(){
   try{
-    if(navigator.share)await navigator.share({title:"SKYPAY",text:"Join SKYPAY",url:referralURL});
-    else await copyReferral();
-  }catch(e){}
+    if(navigator.share){
+      await navigator.share({
+        title:"SKYPAY",
+        text:"Join SKYPAY",
+        url:referralURL
+      });
+    }else{
+      await copyReferral();
+    }
+  }catch(error){}
 }
 
+/* SUPPORT */
 function support(){
   window.open("https://t.me/skypay_admin_bot","_blank");
 }
 
-/* AI LIVE CHAT */
+/* AI CHAT */
 function toggleChat(){
   const box=$("skypayChatBox");
   const isOpen=box.style.display==="block";
@@ -479,7 +574,6 @@ function toggleChat(){
     loadChatHistory();
   }
 }
-
 function addChatMessage(message,role){
   const div=document.createElement("div");
   div.className="chatBubble "+(role==="user"?"chatUser":"chatAI");
@@ -487,27 +581,22 @@ function addChatMessage(message,role){
   $("skypayChatMessages").appendChild(div);
   $("skypayChatMessages").scrollTop=$("skypayChatMessages").scrollHeight;
 }
-
-let chatHistoryLoaded=false;
-
 async function loadChatHistory(){
   if(chatHistoryLoaded)return;
   try{
     const data=await api("/api/chat/history");
+    const messages=Array.isArray(data)?data:(data.messages||[]);
     const box=$("skypayChatMessages");
     box.innerHTML="";
-    (data.messages||[]).forEach(m=>{
-      addChatMessage(m.content,m.role);
-    });
-    if(!data.messages||data.messages.length===0){
+    messages.forEach(m=>addChatMessage(m.content,m.role));
+    if(!messages.length){
       addChatMessage("Hello! 👋 Welcome to SKYPAY. How can I help you today?","assistant");
     }
     chatHistoryLoaded=true;
-  }catch(e){
-    addChatMessage("Could not load previous messages. You can still try sending a message.","assistant");
+  }catch(error){
+    addChatMessage("Could not load previous messages. You can still send a message.","assistant");
   }
 }
-
 $("skypayChatForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const input=$("skypayChatInput");
@@ -525,14 +614,12 @@ $("skypayChatForm").addEventListener("submit",async e=>{
       method:"POST",
       body:JSON.stringify({message})
     });
-
     addChatMessage(data.reply||"Sorry, I could not prepare a reply.","assistant");
-
     if(data.needsHuman||data.supportSent){
-      addChatMessage("Your issue has been forwarded to SKYPAY support. Our team will review it.","assistant");
+      addChatMessage("Your issue has been forwarded to SKYPAY support.","assistant");
     }
-  }catch(err){
-    addChatMessage(err.message||"Chat service is temporarily unavailable. Please try again later.","assistant");
+  }catch(error){
+    addChatMessage(error.message||"Chat service is temporarily unavailable.","assistant");
   }finally{
     button.disabled=false;
     button.textContent="Send";
@@ -540,6 +627,7 @@ $("skypayChatForm").addEventListener("submit",async e=>{
   }
 });
 
+/* START DASHBOARD */
 async function start(){
   if(!token){
     location.href="index.html";
@@ -548,12 +636,11 @@ async function start(){
   try{
     await loadProfile();
     await loadProducts();
-  }catch(e){
+  }catch(error){
     alert("Your session has expired. Please log in again.");
     logout();
   }
 }
-
 start();
 </script>
 </body>
