@@ -575,10 +575,6 @@ function showProductForm(product=null) {
   }
 }
 
-function hideProductForm() {
-  document.getElementById("productFormArea").classList.add("hidden");
-}
-
 async function loadProducts() {
   const box = document.getElementById("productsList");
   box.innerHTML = '<div class="empty">Loading products...</div>';
@@ -919,6 +915,34 @@ async function deleteApp(id) {
   }
 }
 
+// Product image preview
+document.getElementById("productImageFile")
+  .addEventListener("change", function () {
+    const file = this.files[0];
+    const preview = document.getElementById("productImagePreview");
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("শুধু ছবির ফাইল নির্বাচন করুন।");
+      this.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("ছবির সাইজ ৫ MB-এর বেশি হতে পারবে না।");
+      this.value = "";
+      return;
+    }
+
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  });
+
+function hideProductForm() {
+  document.getElementById("productFormArea").classList.add("hidden");
+}
+
 /* INITIAL SESSION CHECK */
 
 async function checkSession() {
@@ -940,4 +964,4 @@ checkSession();
 </script>
 
 </body>
-  </html>
+</html>
