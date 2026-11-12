@@ -288,8 +288,21 @@ th{background:#f3f8f4}
                 <input id="productDaily" type="number" min="0" step="0.01" value="0">
               </div>
               <div class="field">
-                <label>Image URL</label>
-                <input id="productImage" type="url">
+                <input id="productImage" type="hidden" value="">
+
+                <label for="productImageFile">প্রোডাক্টের ছবি নির্বাচন করুন</label>
+                <input
+                  id="productImageFile"
+                  type="file"
+                  accept="image/*"
+                  style="width:100%;padding:10px;margin:8px 0;"
+                >
+
+                <img
+                  id="productImagePreview"
+                  alt="Product image preview"
+                  style="display:none;width:120px;height:120px;object-fit:cover;border-radius:12px;margin-top:10px;"
+                >
               </div>
               <div class="field">
                 <label>Status</label>
@@ -372,7 +385,9 @@ th{background:#f3f8f4}
       </div>
     </section>
   </main>
-                  </div><script>
+</div>
+
+<script>
 const API_BASE = "";
 let adminToken = localStorage.getItem("skypay_admin_token") || "";
 let productsCache = [];
@@ -399,15 +414,11 @@ function showNotice(message, bad=false) {
 
 async function api(url, options={}) {
   const headers = {
-    "Content-Type":"application/json",
+    ...(options.body instanceof FormData
+      ? {}
+      : { "Content-Type": "application/json" }),
     ...(options.headers || {})
   };
-const headers = {
-  ...(options.body instanceof FormData
-    ? {}
-    : { "Content-Type": "application/json" }),
-  ...(options.headers || {})
-};
   if (adminToken) {
     headers.Authorization = "Bearer " + adminToken;
   }
@@ -554,6 +565,14 @@ function showProductForm(product=null) {
   document.getElementById("productImage").value = product?.image_url || "";
   document.getElementById("productDescription").value = product?.description || "";
   document.getElementById("productActive").value = String(product?.active !== false);
+
+  const preview = document.getElementById("productImagePreview");
+  if (product?.image_url) {
+    preview.src = product.image_url;
+    preview.style.display = "block";
+  } else {
+    preview.style.display = "none";
+  }
 }
 
 function hideProductForm() {
@@ -717,7 +736,9 @@ async function reviewRequest(id, status) {
   } catch(error) {
     showNotice(error.message, true);
   }
-}/* USERS */
+}
+
+/* USERS */
 
 async function loadUsers() {
   const box = document.getElementById("usersList");
