@@ -1,234 +1,105 @@
 <!doctype html>
 <html lang="bn">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#087a35">
-<title>SKYPAY — User Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#087a35"><title>SKYPAY — User Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--g:#078437;--g2:#0ba34a;--dark:#064d27;--bg:#eff8f0;--ink:#183b26;--muted:#718477;--line:#e4eee5;--white:#fff;--gold:#f6c94c;--shadow:0 5px 18px #164a2410}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 8% 8%,#a6e6b2 0,transparent 28%),radial-gradient(circle at 94% 35%,#b5e9c0 0,transparent 26%),radial-gradient(circle at 50% 90%,#c5ebce 0,transparent 34%),linear-gradient(145deg,#ccebd2,#e8f7eb 48%,#c9e8d0);color:var(--ink);font-family:"Noto Sans Bengali",system-ui,sans-serif;padding-bottom:88px;position:relative}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-.app{max-width:560px;margin:auto;min-height:100vh;background:radial-gradient(ellipse at 100% 8%,#b6edc6b8,transparent 34%),radial-gradient(ellipse at 0% 55%,#c5edcfad,transparent 32%),radial-gradient(ellipse at 55% 100%,#d7f2d9b8,transparent 38%),linear-gradient(180deg,#e9f8ecf5,#f3fbf4f7 48%,#e5f5e8f5);box-shadow:0 0 30px #194b2510;position:relative;isolation:isolate}.app:before{content:"SKYPAY";position:fixed;z-index:-1;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-18deg);font-size:clamp(55px,18vw,125px);font-weight:900;letter-spacing:8px;color:#0784370d;white-space:nowrap;pointer-events:none}
-.topbar{height:68px;padding:10px 15px;background:linear-gradient(110deg,#064b25,#078d3d);color:#fff;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.brand{display:flex;align-items:center;gap:9px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#d6ff9d,#fff);display:grid;place-items:center;color:#087b36;font-size:28px;font-weight:900;box-shadow:0 3px 10px #003d1c55}.brand-name{font-size:20px;font-weight:900;letter-spacing:1px;line-height:1}.brand-tag{font-size:9px;letter-spacing:1px;color:#d7f4df;margin-top:4px}.top-right{display:flex;align-items:center;gap:8px}.icon-btn{width:37px;height:37px;border:1px solid #ffffff35;background:#ffffff18;color:white;border-radius:50%;font-size:17px}.logout{border:0;border-radius:20px;padding:8px 12px;background:#ffffff20;color:white;font-size:11px;font-weight:800}
-main{padding:13px}.view{display:none}.view.active{display:block}
-.hero{border-radius:19px;padding:18px;color:white;background:radial-gradient(circle at 90% 15%,#75d94d55,transparent 30%),linear-gradient(125deg,#075a2c,#0b9a43 65%,#56bd43);box-shadow:0 8px 20px #087a3522;position:relative;overflow:hidden}.hero:after{content:"S";position:absolute;right:9px;bottom:-53px;font-size:190px;font-weight:900;color:#ffffff12;line-height:1}.eyebrow{font-size:10px;letter-spacing:1.5px;color:#d7f7d9;font-weight:800}.hero h1{font-size:22px;line-height:1.35;margin:7px 0}.hero p{font-size:11px;line-height:1.65;color:#e4f7e7;margin:0;max-width:82%}.hero-cta{border:0;border-radius:22px;padding:9px 16px;background:#d3f47b;color:#164c27;font-weight:900;font-size:11px;margin-top:13px}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 10px}.section-head h2{font-size:15px;margin:0}.section-head button{border:0;background:transparent;color:var(--g);font-weight:800;font-size:11px}
-.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:#fff;padding:13px 8px;border-radius:16px;box-shadow:var(--shadow)}.quick{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink);font-size:10px;font-weight:800;padding:3px 0}.quick-icon{width:43px;height:43px;border-radius:15px;display:grid;place-items:center;font-size:20px;background:#e6f7e8;color:#07843a}.quick-icon.orange{background:#fff1dc;color:#dc8510}.quick-icon.blue{background:#e5f1ff;color:#2776c7}.quick-icon.pink{background:#ffe9ed;color:#d8435d}.quick-icon.purple{background:#f2eaff;color:#8051c6}
-.wallet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.wallet-card{border-radius:15px;padding:14px;background:linear-gradient(130deg,#087b35,#07532a);color:white;box-shadow:var(--shadow)}.wallet-card.light{background:white;color:var(--ink);border:1px solid var(--line)}.wallet-card small{font-size:10px;opacity:.82}.wallet-card strong{display:block;font-size:21px;margin-top:6px}.wallet-card .sub{font-size:9px;opacity:.7;margin-top:3px}
-.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-top:12px}.panel h3{font-size:14px;margin:0 0 11px}.feed-row,.data-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #edf3ed;font-size:11px}.feed-row:last-child,.data-row:last-child{border:0}.feed-left{display:flex;gap:8px}.dot{width:8px;height:8px;background:#12a34b;border-radius:50%;margin-top:5px;flex:none}.muted{color:var(--muted)}.small{font-size:10px}
-.product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.product-card{background:white;border:1px solid #dfeae0;border-radius:15px;padding:9px;box-shadow:0 4px 13px #154b2410;min-width:0}.product-image-wrap{height:130px;border-radius:11px;background:#f3faf2;display:grid;place-items:center;overflow:hidden}.product-image{width:100%;height:100%;object-fit:contain}.product-name{font-size:12px;font-weight:900;margin:9px 2px 7px;min-height:34px}.product-tag{font-size:9px;color:#8b6410;background:#fff5d9;border-radius:20px;padding:4px 7px;display:inline-block;margin-bottom:7px}.product-info{display:grid;grid-template-columns:1fr 1fr;gap:5px}.info{background:#f3faf4;border-radius:8px;padding:7px;min-width:0}.info small{font-size:9px;color:var(--muted);display:block}.info b{font-size:11px;color:#087b36;display:block;margin-top:3px;overflow-wrap:anywhere}.product-desc{font-size:9px;line-height:1.5;color:var(--muted);margin:8px 2px}.primary{width:100%;border:0;border-radius:9px;background:linear-gradient(90deg,#0a963f,#05632d);color:white;font-size:11px;font-weight:900;padding:10px;margin-top:8px}.empty{padding:18px;text-align:center;color:#859187;font-size:11px;grid-column:1/-1}
-.notice{padding:10px;border-radius:11px;background:#fff8df;border:1px solid #f0e3b5;color:#74591e;font-size:10px;line-height:1.6;margin-top:10px}
-.form{display:grid;gap:10px}.form label{font-size:11px;font-weight:800}.form input,.form select{width:100%;padding:12px;border:1px solid #dce9dd;border-radius:10px;background:#fbfefb;font-size:13px}.field-help{font-size:10px;color:var(--muted);line-height:1.5}.payline{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px;background:#f7fbf8;border:1px solid #e4eee5;border-radius:12px;margin-top:8px;font-size:11px}.pay-left{display:flex;align-items:center;gap:10px;min-width:0}.pay-logo{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;color:white;font-size:23px;font-weight:900;flex:none;box-shadow:0 3px 9px #0002}.pay-logo.bkash{background:linear-gradient(145deg,#e91e63,#b80e4d)}.pay-logo.nagad{background:linear-gradient(145deg,#f68b20,#e24a16);border-radius:50%}.pay-name{font-weight:900;font-size:13px}.pay-number{display:block;font-size:12px;letter-spacing:.3px;margin-top:3px;color:#294b35}.copy-btn{border:0;border-radius:9px;background:#dff3e2;color:#087b36;padding:9px 12px;font-size:11px;font-weight:900;flex:none}.copy-btn:active{transform:scale(.96)}
-.profile-hero{margin:-13px -13px 12px;padding:22px 16px;background:linear-gradient(120deg,#07552a,#0b9841);color:white;border-radius:0 0 20px 20px}.profile-row{display:flex;align-items:center;gap:12px}.avatar{width:53px;height:53px;border-radius:50%;display:grid;place-items:center;background:#ffffff25;border:2px solid #ffffff85;font-size:24px}.profile-row h2{font-size:16px;margin:0}.profile-row p{font-size:10px;margin:4px 0 0;color:#d9f1dd}.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.action-grid button{border:0;border-radius:10px;background:#e8f6e9;color:#087b36;padding:11px 4px;font-size:10px;font-weight:900}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(560px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:white;border-top:1px solid var(--line);padding:8px 4px max(8px,env(safe-area-inset-bottom));z-index:15;box-shadow:0 -5px 18px #174b2410}.bottom-nav button{border:0;background:transparent;color:#87948a;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px}.bottom-nav button b{font-size:20px;font-weight:500}.bottom-nav button.active{color:#078437;font-weight:900}
-.toast{position:fixed;left:50%;bottom:95px;transform:translateX(-50%);background:#173c26;color:white;border-radius:22px;padding:10px 16px;font-size:11px;z-index:30;box-shadow:0 5px 20px #0002;max-width:90%;text-align:center}
-.chat-fab{position:fixed;right:17px;bottom:91px;border:0;border-radius:50%;width:52px;height:52px;background:var(--green);color:#fff;font-size:22px;box-shadow:0 5px 16px #07532c55;z-index:19}.chat-box{display:none;position:fixed;right:12px;bottom:153px;width:min(340px,calc(100% - 24px));height:420px;max-height:60vh;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);z-index:25;overflow:hidden}.chat-box.open{display:flex;flex-direction:column}.chat-head{padding:13px;background:var(--green);color:#fff;display:flex;justify-content:space-between}.chat-messages{flex:1;overflow:auto;padding:12px;background:#f6faf7}.chat-msg{font-size:12px;padding:9px 11px;border-radius:12px;background:#fff;margin:7px 0;max-width:88%;line-height:1.5}.chat-msg.mine{margin-left:auto;background:#dcf5e5}.chat-send{display:flex;padding:9px;gap:7px}.chat-send input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px}
-@media(min-width:560px){body{padding-top:16px}.app{border-radius:22px;overflow:hidden;min-height:calc(100vh - 16px)}.bottom-nav{bottom:0}}
+:root{--g:#078437;--g2:#0ba34a;--dark:#064d27;--bg:#eff8f0;--ink:#183b26;--muted:#718477;--line:#e4eee5;--white:#fff;--shadow:0 5px 18px #164a2410}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 8% 8%,#a6e6b2 0,transparent 28%),radial-gradient(circle at 94% 35%,#b5e9c0 0,transparent 26%),linear-gradient(145deg,#ccebd2,#e8f7eb 48%,#c9e8d0);color:var(--ink);font-family:"Noto Sans Bengali",system-ui,sans-serif;padding-bottom:88px}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}.app{max-width:560px;margin:auto;min-height:100vh;background:linear-gradient(180deg,#e9f8ecf5,#f3fbf4f7 48%,#e5f5e8f5);box-shadow:0 0 30px #194b2510;position:relative;isolation:isolate}.topbar{height:68px;padding:10px 15px;background:linear-gradient(110deg,#064b25,#078d3d);color:#fff;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}.brand{display:flex;align-items:center;gap:9px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#d6ff9d,#fff);display:grid;place-items:center;color:#087b36;font-size:28px;font-weight:900}.brand-name{font-size:20px;font-weight:900;letter-spacing:1px}.brand-tag{font-size:9px;color:#d7f4df;margin-top:4px}.top-right{display:flex;align-items:center;gap:8px}.icon-btn{width:37px;height:37px;border:1px solid #ffffff35;background:#ffffff18;color:white;border-radius:50%}.logout{border:0;border-radius:20px;padding:8px 12px;background:#ffffff20;color:white;font-size:11px;font-weight:800}main{padding:13px}.view{display:none}.view.active{display:block}.hero{border-radius:19px;padding:18px;color:white;background:linear-gradient(125deg,#075a2c,#0b9a43 65%,#56bd43);box-shadow:0 8px 20px #087a3522}.eyebrow{font-size:10px;letter-spacing:1.5px;color:#d7f7d9;font-weight:800}.hero h1{font-size:22px;margin:7px 0}.hero p{font-size:11px;line-height:1.65;color:#e4f7e7;margin:0}.hero-cta{border:0;border-radius:22px;padding:9px 16px;background:#d3f47b;color:#164c27;font-weight:900;font-size:11px;margin-top:13px}.section-head{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 10px}.section-head h2{font-size:15px;margin:0}.section-head button{border:0;background:transparent;color:var(--g);font-weight:800;font-size:11px}.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:#fff;padding:13px 8px;border-radius:16px;box-shadow:var(--shadow)}.quick{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink);font-size:10px;font-weight:800}.quick-icon{width:43px;height:43px;border-radius:15px;display:grid;place-items:center;font-size:20px;background:#e6f7e8;color:#07843a}.orange{background:#fff1dc;color:#dc8510}.blue{background:#e5f1ff;color:#2776c7}.pink{background:#ffe9ed;color:#d8435d}.purple{background:#f2eaff;color:#8051c6}.wallet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.wallet-card{border-radius:15px;padding:14px;background:linear-gradient(130deg,#087b35,#07532a);color:white;box-shadow:var(--shadow)}.wallet-card.light{background:white;color:var(--ink);border:1px solid var(--line)}.wallet-card small{font-size:10px;opacity:.82}.wallet-card strong{display:block;font-size:21px;margin-top:6px}.wallet-card .sub{font-size:9px;opacity:.7}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-top:12px}.panel h3{font-size:14px;margin:0 0 11px}.feed-row,.data-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #edf3ed;font-size:11px}.feed-row:last-child,.data-row:last-child{border:0}.feed-left{display:flex;gap:8px}.dot{width:8px;height:8px;background:#12a34b;border-radius:50%;margin-top:5px;flex:none}.muted{color:var(--muted)}.small{font-size:10px}.product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.product-card{background:white;border:1px solid #dfeae0;border-radius:15px;padding:9px;box-shadow:0 4px 13px #154b2410;min-width:0}.product-image-wrap{height:130px;border-radius:11px;background:#f3faf2;display:grid;place-items:center;overflow:hidden}.product-image{width:100%;height:100%;object-fit:contain}.product-name{font-size:12px;font-weight:900;margin:9px 2px 7px;min-height:34px}.product-tag{font-size:9px;color:#8b6410;background:#fff5d9;border-radius:20px;padding:4px 7px;display:inline-block;margin-bottom:7px}.product-info{display:grid;grid-template-columns:1fr 1fr;gap:5px}.info{background:#f3faf4;border-radius:8px;padding:7px}.info small{font-size:9px;color:var(--muted);display:block}.info b{font-size:11px;color:#087b36;display:block;margin-top:3px;overflow-wrap:anywhere}.product-desc{font-size:9px;line-height:1.5;color:var(--muted)}.primary{width:100%;border:0;border-radius:9px;background:linear-gradient(90deg,#0a963f,#05632d);color:white;font-size:11px;font-weight:900;padding:10px;margin-top:8px}.primary:disabled{opacity:.6}.empty{padding:18px;text-align:center;color:#859187;font-size:11px;grid-column:1/-1}.notice{padding:10px;border-radius:11px;background:#fff8df;border:1px solid #f0e3b5;color:#74591e;font-size:10px;line-height:1.6;margin-top:10px}.form{display:grid;gap:10px}.form label{font-size:11px;font-weight:800}.form input,.form select{width:100%;padding:12px;border:1px solid #dce9dd;border-radius:10px;background:#fbfefb;font-size:13px}.field-help{font-size:10px;color:var(--muted);line-height:1.5}.payline{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px;background:#f7fbf8;border:1px solid #e4eee5;border-radius:12px;margin-top:8px;font-size:11px}.pay-left{display:flex;align-items:center;gap:10px}.pay-logo{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;color:white;font-size:23px;font-weight:900}.bkash{background:linear-gradient(145deg,#e91e63,#b80e4d)}.nagad{background:linear-gradient(145deg,#f68b20,#e24a16);border-radius:50%}.pay-name{font-weight:900;font-size:13px}.pay-number{display:block;font-size:12px;margin-top:3px}.copy-btn{border:0;border-radius:9px;background:#dff3e2;color:#087b36;padding:9px 12px;font-size:11px;font-weight:900}.profile-hero{margin:-13px -13px 12px;padding:22px 16px;background:linear-gradient(120deg,#07552a,#0b9841);color:white;border-radius:0 0 20px 20px}.profile-row{display:flex;align-items:center;gap:12px}.avatar{width:53px;height:53px;border-radius:50%;display:grid;place-items:center;background:#ffffff25;border:2px solid #ffffff85;font-size:24px}.profile-row h2{font-size:16px;margin:0}.profile-row p{font-size:10px;margin:4px 0;color:#d9f1dd}.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.action-grid button{border:0;border-radius:10px;background:#e8f6e9;color:#087b36;padding:11px 4px;font-size:10px;font-weight:900}.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(560px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:white;border-top:1px solid var(--line);padding:8px 4px max(8px,env(safe-area-inset-bottom));z-index:15;box-shadow:0 -5px 18px #174b2410}.bottom-nav button{border:0;background:transparent;color:#87948a;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px}.bottom-nav button b{font-size:20px;font-weight:500}.bottom-nav button.active{color:#078437;font-weight:900}.toast{position:fixed;left:50%;bottom:95px;transform:translateX(-50%);background:#173c26;color:white;border-radius:22px;padding:10px 16px;font-size:11px;z-index:30;max-width:90%;text-align:center}.chat-fab{position:fixed;right:17px;bottom:91px;border:0;border-radius:50%;width:52px;height:52px;background:var(--g);color:#fff;font-size:22px;box-shadow:0 5px 16px #07532c55;z-index:19}.chat-box{display:none;position:fixed;right:12px;bottom:153px;width:min(340px,calc(100% - 24px));height:420px;max-height:60vh;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);z-index:25;overflow:hidden}.chat-box.open{display:flex;flex-direction:column}.chat-head{padding:13px;background:var(--g);color:#fff;display:flex;justify-content:space-between}.chat-messages{flex:1;overflow:auto;padding:12px;background:#f6faf7}.chat-msg{font-size:12px;padding:9px 11px;border-radius:12px;background:#fff;margin:7px 0;max-width:88%;line-height:1.5}.chat-msg.mine{margin-left:auto;background:#dcf5e5}.chat-send{display:flex;padding:9px;gap:7px}.chat-send input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px}@media(min-width:560px){body{padding-top:16px}.app{border-radius:22px;overflow:hidden;min-height:calc(100vh - 16px)}}
 </style>
 </head>
-<body>
-<div class="app">
-<header class="topbar">
- <div class="brand"><div class="brand-mark">S</div><div><div class="brand-name">SKYPAY</div><div class="brand-tag">EARN • GROW • BE HAPPY</div></div></div>
- <div class="top-right"><button class="icon-btn" onclick="toast('নতুন নোটিফিকেশন নেই')">♧</button><button class="logout" onclick="logout()">লগআউট</button></div>
-</header>
+<body><div class="app">
+<header class="topbar"><div class="brand"><div class="brand-mark">S</div><div><div class="brand-name">SKYPAY</div><div class="brand-tag">EARN • GROW • BE HAPPY</div></div></div><div class="top-right"><button class="icon-btn" onclick="toast('নতুন নোটিফিকেশন নেই')">♧</button><button class="logout" onclick="logout()">লগআউট</button></div></header>
 <main>
 <section class="view active" id="homeView">
- <div class="hero"><div class="eyebrow">WELCOME TO SKYPAY</div><h1>আপনার ডিজিটাল ড্যাশবোর্ড</h1><p>আপনার ওয়ালেট, প্রোডাক্ট, পেমেন্ট অনুরোধ ও অ্যাকাউন্টের তথ্য এক জায়গায় দেখুন।</p><button class="hero-cta" onclick="showView('products')">প্রোডাক্ট দেখুন　→</button></div>
- <div class="section-head"><h2>দ্রুত সেবা</h2><span class="muted small">আপনার প্রয়োজনীয় অপশন</span></div>
- <div class="quick-grid">
-  <button class="quick" onclick="showView('deposit')"><span class="quick-icon">↓</span>জমা</button>
-  <button class="quick" onclick="showView('withdraw')"><span class="quick-icon orange">৳</span>উত্তোলন</button>
-  <button class="quick" onclick="showView('profile')"><span class="quick-icon blue">▤</span>পেমেন্ট</button>
-  <button class="quick" onclick="showView('profile')"><span class="quick-icon purple">ⓘ</span>তথ্য</button>
-  <button class="quick" onclick="showView('products')"><span class="quick-icon orange">◇</span>প্রোডাক্ট</button>
-  <button class="quick" onclick="showView('team')"><span class="quick-icon blue">♧</span>এজেন্ট</button>
-  <button class="quick" onclick="showView('earnings')"><span class="quick-icon">▣</span>আমার হিসাব</button>
-  <button class="quick" onclick="showView('profile')"><span class="quick-icon pink">✿</span>সহায়তা</button>
- </div>
- <div class="wallet-grid">
-  <div class="wallet-card"><small>অ্যাকাউন্ট ব্যালেন্স</small><strong id="balance">৳০</strong><div class="sub">সার্ভার থেকে পাওয়া</div></div>
-  <div class="wallet-card light"><small>সক্রিয় প্ল্যান</small><strong id="activePlans">০</strong><div class="sub">আপনার অ্যাকাউন্টে</div></div>
- </div>
- <div class="section-head"><h2>আমাদের প্রোডাক্টসমূহ</h2><button onclick="showView('products')">সব দেখুন →</button></div>
- <div class="product-grid" id="homeProducts"><div class="empty">প্রোডাক্ট লোড হচ্ছে…</div></div>
- <div class="panel"><h3>সাম্প্রতিক কার্যক্রম</h3><div id="recentRequests"><div class="empty">তথ্য লোড হচ্ছে…</div></div></div>
- <p class="notice">প্রোডাক্টের মূল্য, মেয়াদ ও সম্ভাব্য সুবিধা Admin-প্রকাশিত শর্ত অনুযায়ী দেখানো হয়। কোনো আয় বা রিটার্ন নিশ্চিত নয়।</p>
+<div class="hero"><div class="eyebrow">WELCOME TO SKYPAY</div><h1>আপনার ডিজিটাল ড্যাশবোর্ড</h1><p>আপনার ওয়ালেট, প্রোডাক্ট, পেমেন্ট অনুরোধ ও অ্যাকাউন্টের তথ্য এক জায়গায় দেখুন।</p><button class="hero-cta" onclick="showView('products')">প্রোডাক্ট দেখুন →</button></div>
+<div class="section-head"><h2>দ্রুত সেবা</h2><span class="muted small">আপনার প্রয়োজনীয় অপশন</span></div>
+<div class="quick-grid">
+<button class="quick" onclick="showView('deposit')"><span class="quick-icon">↓</span>জমা</button><button class="quick" onclick="showView('withdraw')"><span class="quick-icon orange">৳</span>উত্তোলন</button><button class="quick" onclick="showView('profile')"><span class="quick-icon blue">▤</span>পেমেন্ট</button><button class="quick" onclick="showView('profile')"><span class="quick-icon purple">ⓘ</span>তথ্য</button><button class="quick" onclick="showView('products')"><span class="quick-icon orange">◇</span>প্রোডাক্ট</button><button class="quick" onclick="showView('team')"><span class="quick-icon blue">♧</span>এজেন্ট</button><button class="quick" onclick="showView('earnings')"><span class="quick-icon">▣</span>আমার হিসাব</button><button class="quick" onclick="openSupport()"><span class="quick-icon pink">✿</span>সহায়তা</button>
+</div>
+<div class="wallet-grid"><div class="wallet-card"><small>অ্যাকাউন্ট ব্যালেন্স</small><strong id="balance">৳০</strong><div class="sub">সার্ভার থেকে পাওয়া</div></div><div class="wallet-card light"><small>সক্রিয় প্ল্যান</small><strong id="activePlans">০</strong><div class="sub">আপনার অ্যাকাউন্টে</div></div></div>
+<div class="section-head"><h2>আমাদের প্রোডাক্টসমূহ</h2><button onclick="showView('products')">সব দেখুন →</button></div><div class="product-grid" id="homeProducts"><div class="empty">প্রোডাক্ট লোড হচ্ছে…</div></div>
+<div class="panel"><h3>সাম্প্রতিক কার্যক্রম</h3><div id="recentRequests"><div class="empty">তথ্য লোড হচ্ছে…</div></div></div>
+<div class="panel"><h3>SKYPAY অ্যাপ</h3><p class="small muted">Android অ্যাপ ডাউনলোড করুন।</p><a href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk" target="_blank" rel="noopener"><button class="primary">APK ডাউনলোড করুন</button></a></div>
+<p class="notice">প্রোডাক্টের মূল্য, মেয়াদ ও সম্ভাব্য সুবিধা Admin-প্রকাশিত শর্ত অনুযায়ী দেখানো হয়। কোনো আয় বা রিটার্ন নিশ্চিত নয়।</p>
 </section>
-
-<section class="view" id="productsView">
- <div class="section-head"><h2>প্রোডাক্ট ও প্যাকেজ</h2><span class="muted small">Admin থেকে আপডেট হয়</span></div>
- <div class="product-grid" id="allProducts"><div class="empty">প্রোডাক্ট লোড হচ্ছে…</div></div>
- <p class="notice">দৈনিক/মোট সম্ভাব্য হিসাব কেবল অনুমান। কোনো বিনিয়োগ বা পেমেন্টের আগে পণ্যের প্রকৃত বিবরণ, শর্ত ও ঝুঁকি যাচাই করুন।</p>
- <div class="panel"><h3>আমার সক্রিয় প্ল্যান</h3><div id="myPlanList" class="empty">লোড হচ্ছে…</div></div>
-</section>
-
-<section class="view" id="earningsView">
- <div class="section-head"><h2>আমার হিসাব</h2><span class="muted small">অ্যাকাউন্ট সারাংশ</span></div>
- <div class="wallet-grid"><div class="wallet-card"><small>মোট সম্ভাব্য দৈনিক সুবিধা</small><strong id="daily">৳০</strong></div><div class="wallet-card light"><small>মোট সম্ভাব্য মেয়াদি সুবিধা</small><strong id="projected">৳০</strong></div></div>
- <div class="panel"><h3>সক্রিয় প্ল্যান</h3><div id="earningPlans" class="empty">লোড হচ্ছে…</div></div>
- <p class="notice">এখানে দেখানো অঙ্কগুলো পণ্যের দৈনিক অনুমান × মেয়াদ। এগুলো নিশ্চিত আয়, সুদ বা পরিশোধের প্রতিশ্রুতি নয়।</p>
-</section>
-
-<section class="view" id="teamView">
- <div class="hero"><div class="eyebrow">SKYPAY COMMUNITY</div><h1>বন্ধুদের আমন্ত্রণ জানান</h1><p>আপনার রেফারেল কোড শেয়ার করুন। পুরস্কার বা কমিশন থাকলে তা প্রকাশিত শর্তসাপেক্ষ।</p></div>
- <div class="panel"><h3>আপনার রেফারেল তথ্য</h3><div class="data-row"><span>আপনার UID</span><b id="teamUid">—</b></div><div class="data-row"><span>রেফারেল কোড</span><b id="refCode">—</b></div><label class="small muted">আমন্ত্রণ লিংক</label><input id="refLink" readonly style="width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;margin-top:6px"><button class="primary" onclick="copyRef()">লিংক কপি করুন</button></div>
-</section>
-
-<section class="view" id="profileView">
- <div class="profile-hero"><div class="profile-row"><div class="avatar">♙</div><div><h2 id="profileName">SKYPAY সদস্য</h2><p id="profileMobile">মোবাইল: —</p><p>UID: <span id="profileUid">—</span></p></div></div></div>
- <div class="wallet-grid"><div class="wallet-card"><small>উপলব্ধ ব্যালেন্স</small><strong id="profileBalance">৳০</strong></div><div class="wallet-card light"><small>সক্রিয় প্ল্যান</small><strong id="profilePlans">০</strong></div></div>
- <div class="action-grid"><button onclick="showView('deposit')">↓ ডিপোজিট</button><button onclick="showView('withdraw')">৳ উত্তোলন</button><button onclick="openSupport()">☏ সাপোর্ট</button></div>
- <div class="panel"><div class="data-row"><span>👤　ব্যক্তিগত তথ্য</span><b>›</b></div><div class="data-row"><span>🔐　অ্যাকাউন্ট নিরাপত্তা</span><b>›</b></div><div class="data-row"><span>💬　গ্রাহক সহায়তা</span><b>›</b></div><div class="data-row"><span>ℹ　SKYPAY সম্পর্কে</span><b>›</b></div></div>
-</section>
-
-<section class="view" id="depositView">
- <div class="section-head"><h2>টাকা জমা / Deposit</h2></div>
- <div class="hero" style="margin-bottom:12px;background:radial-gradient(circle at 88% 18%,#ffffff35,transparent 28%),linear-gradient(125deg,#07552a,#0b9841)"><div class="eyebrow">FAST • SECURE • SIMPLE</div><h1>ডিপোজিট করুন</h1><p>বিকাশ অথবা নগদ নম্বর কপি করে Send Money করুন। এরপর Transaction ID জমা দিন।</p></div><div class="panel"><h3>পেমেন্ট নম্বর</h3><div class="payline"><div class="pay-left"><span class="pay-logo bkash" aria-hidden="true">b</span><span><span class="pay-name" style="color:#d4145a">bKash Personal</span><b class="pay-number">+8801763341991</b></span></div><button class="copy-btn" type="button" onclick="copyText('+8801763341991')">▢ কপি</button></div><div class="payline"><div class="pay-left"><span class="pay-logo nagad" aria-hidden="true">ন</span><span><span class="pay-name" style="color:#e56b1a">নগদ Personal</span><b class="pay-number">+8801985052780</b></span></div><button class="copy-btn" type="button" onclick="copyText('+8801985052780')">▢ কপি</button></div><p class="field-help">পেমেন্ট পাঠানোর আগে নম্বর ও প্রাপকের পরিচয় যাচাই করুন। টাকা পাঠানোর পর নিচে সঠিক Transaction ID দিন।</p></div>
- <div class="panel"><form class="form" id="depositForm"><label>পেমেন্ট মাধ্যম<select name="method"><option>bKash Personal</option><option>Nagad Personal</option></select></label><label>পরিমাণ (৳)<input name="amount" type="number" min="1" max="10000000" required></label><label>প্রেরকের মোবাইল নম্বর<input name="senderNumber" type="tel" required></label><label>Transaction ID<input name="transactionId" required></label><button class="primary" type="submit">ডিপোজিট অনুরোধ পাঠান</button></form><p class="msg" id="depositMsg"></p></div>
- <p class="notice">অনুরোধ Admin যাচাই করে অনুমোদন করবেন। অনুমোদনের আগে Wallet-এ টাকা যোগ হবে না।</p>
-</section>
-
-<section class="view" id="withdrawView">
- <div class="section-head"><h2>টাকা উত্তোলন / Withdraw</h2></div>
- <div class="panel"><form class="form" id="withdrawForm"><label>পেমেন্ট মাধ্যম<select name="method"><option>bKash Personal</option><option>Nagad Personal</option></select></label><label>পরিমাণ (৳)<input name="amount" type="number" min="1" max="10000000" required></label><label>টাকা গ্রহণের মোবাইল নম্বর<input name="accountNumber" type="tel" required></label><button class="primary" type="submit">উত্তোলন অনুরোধ পাঠান</button></form><p class="msg" id="withdrawMsg"></p></div>
- <p class="notice">উত্তোলন অনুরোধ Admin যাচাই করবেন। অনুমোদনের আগে কোনো পেমেন্ট সম্পন্ন হয়েছে বলে গণ্য হবে না।</p>
-</section>
+<section class="view" id="productsView"><div class="section-head"><h2>প্রোডাক্ট ও প্যাকেজ</h2><span class="muted small">Admin থেকে আপডেট হয়</span></div><div class="product-grid" id="allProducts"><div class="empty">প্রোডাক্ট লোড হচ্ছে…</div></div><p class="notice">দৈনিক/মোট সম্ভাব্য হিসাব কেবল অনুমান। কোনো বিনিয়োগ বা পেমেন্টের আগে পণ্যের প্রকৃত বিবরণ, শর্ত ও ঝুঁকি যাচাই করুন।</p><div class="panel"><h3>আমার সক্রিয় প্ল্যান</h3><div id="myPlanList" class="empty">লোড হচ্ছে…</div></div></section>
+<section class="view" id="earningsView"><div class="section-head"><h2>আমার হিসাব</h2><span class="muted small">অ্যাকাউন্ট সারাংশ</span></div><div class="wallet-grid"><div class="wallet-card"><small>মোট সম্ভাব্য দৈনিক সুবিধা</small><strong id="daily">৳০</strong></div><div class="wallet-card light"><small>মোট সম্ভাব্য মেয়াদি সুবিধা</small><strong id="projected">৳০</strong></div></div><div class="panel"><h3>সক্রিয় প্ল্যান</h3><div id="earningPlans" class="empty">লোড হচ্ছে…</div></div><p class="notice">এখানে দেখানো অঙ্কগুলো পণ্যের দৈনিক অনুমান × মেয়াদ। এগুলো নিশ্চিত আয় বা পরিশোধের প্রতিশ্রুতি নয়।</p></section>
+<section class="view" id="teamView"><div class="hero"><div class="eyebrow">SKYPAY COMMUNITY</div><h1>বন্ধুদের আমন্ত্রণ জানান</h1><p>আপনার রেফারেল লিংক শেয়ার করুন। অনুমোদিত ডিপোজিটের ১০% কমিশন জমা হবে কমিশন ব্যালেন্সে; Claim করলে Main Wallet-এ যোগ হবে।</p></div>
+<div class="wallet-grid"><div class="wallet-card"><small>মোট রেফার করা সদস্য</small><strong id="teamCount">০</strong></div><div class="wallet-card light"><small>উপলব্ধ কমিশন</small><strong id="commissionAvailable">৳০</strong></div><div class="wallet-card light"><small>আগে Claim করেছেন</small><strong id="commissionClaimed">৳০</strong></div><div class="wallet-card"><small>মোট কমিশন</small><strong id="commissionTotal">৳০</strong></div></div>
+<div class="panel"><h3>আপনার রেফারেল তথ্য</h3><div class="data-row"><span>আপনার UID</span><b id="teamUid">—</b></div><div class="data-row"><span>রেফারেল কোড</span><b id="refCode">—</b></div><label class="small muted">আমন্ত্রণ লিংক</label><input id="refLink" readonly style="width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;margin-top:6px"><button class="primary" onclick="copyRef()">লিংক কপি করুন</button><button class="primary" id="claimBtn" onclick="claimCommission()">কমিশন Claim করে Wallet-এ নিন</button><p class="field-help" id="commissionNote">শুধু আপনার রেফার করা সদস্যের Admin-অনুমোদিত ডিপোজিটের ১০% কমিশন হিসেবে গণনা হবে।</p></div>
+<div class="panel"><h3>আমার রেফার করা সদস্য</h3><div id="teamMembers" class="empty">লোড হচ্ছে…</div></div></section>
+<section class="view" id="profileView"><div class="profile-hero"><div class="profile-row"><div class="avatar">♙</div><div><h2 id="profileName">SKYPAY সদস্য</h2><p id="profileMobile">মোবাইল: —</p><p>UID: <span id="profileUid">—</span></p></div></div></div><div class="wallet-grid"><div class="wallet-card"><small>উপলব্ধ ব্যালেন্স</small><strong id="profileBalance">৳০</strong></div><div class="wallet-card light"><small>সক্রিয় প্ল্যান</small><strong id="profilePlans">০</strong></div></div><div class="action-grid"><button onclick="showView('deposit')">↓ ডিপোজিট</button><button onclick="showView('withdraw')">৳ উত্তোলন</button><button onclick="openSupport()">☏ সাপোর্ট</button></div><div class="panel"><div class="data-row"><span>👤　ব্যক্তিগত তথ্য</span><b>›</b></div><div class="data-row"><span>🔐　অ্যাকাউন্ট নিরাপত্তা</span><b>›</b></div><div class="data-row"><span>💬　গ্রাহক সহায়তা</span><b>›</b></div><div class="data-row"><span>ℹ　SKYPAY সম্পর্কে</span><b>›</b></div></div></section>
+<section class="view" id="depositView"><div class="section-head"><h2>টাকা জমা / Deposit</h2></div><div class="hero"><div class="eyebrow">FAST • SECURE • SIMPLE</div><h1>ডিপোজিট করুন</h1><p>বিকাশ অথবা নগদ নম্বর কপি করে Send Money করুন। এরপর Transaction ID জমা দিন।</p></div><div class="panel"><h3>পেমেন্ট নম্বর</h3><div class="payline"><div class="pay-left"><span class="pay-logo bkash">b</span><span><span class="pay-name" style="color:#d4145a">bKash Personal</span><b class="pay-number">+8801763341991</b></span></div><button class="copy-btn" onclick="copyText('+8801763341991')">▢ কপি</button></div><div class="payline"><div class="pay-left"><span class="pay-logo nagad">ন</span><span><span class="pay-name" style="color:#e56b1a">নগদ Personal</span><b class="pay-number">+8801985052780</b></span></div><button class="copy-btn" onclick="copyText('+8801985052780')">▢ কপি</button></div><p class="field-help">পেমেন্ট পাঠানোর আগে নম্বর ও প্রাপকের পরিচয় যাচাই করুন।</p></div><div class="panel"><form class="form" id="depositForm"><label>পেমেন্ট মাধ্যম<select name="method"><option>bKash Personal</option><option>Nagad Personal</option></select></label><label>পরিমাণ (৳)<input name="amount" type="number" min="500" max="10000000" required></label><label>প্রেরকের মোবাইল নম্বর<input name="senderNumber" type="tel" required></label><label>Transaction ID<input name="transactionId" required></label><button class="primary" type="submit">ডিপোজিট অনুরোধ পাঠান</button></form><p class="msg" id="depositMsg"></p></div><p class="notice">সর্বনিম্ন ডিপোজিট ৳৫০০। Admin অনুমোদনের আগে Wallet-এ টাকা যোগ হবে না।</p></section>
+<section class="view" id="withdrawView"><div class="section-head"><h2>টাকা উত্তোলন / Withdraw</h2></div><div class="panel"><form class="form" id="withdrawForm"><label>পেমেন্ট মাধ্যম<select name="method"><option>bKash Personal</option><option>Nagad Personal</option></select></label><label>পরিমাণ (৳)<input name="amount" type="number" min="1000" max="10000000" required></label><label>টাকা গ্রহণের মোবাইল নম্বর<input name="accountNumber" type="tel" required></label><button class="primary" type="submit">উত্তোলন অনুরোধ পাঠান</button></form><p class="msg" id="withdrawMsg"></p></div><p class="notice">সর্বনিম্ন উত্তোলন ৳১,০০০। প্রতি চলমান ২৪ ঘণ্টায় সর্বোচ্চ ৩টি উত্তোলন অনুরোধ করা যাবে। Admin যাচাইয়ের পর পেমেন্ট করবেন।</p></section>
 </main>
-<nav class="bottom-nav">
- <button class="active" data-view="home" onclick="showView('home',this)"><b>⌂</b>হোম</button>
- <button data-view="products" onclick="showView('products',this)"><b>▦</b>প্রোডাক্ট</button>
- <button data-view="earnings" onclick="showView('earnings',this)"><b>↗</b>হিসাব</button>
- <button data-view="team" onclick="showView('team',this)"><b>♧</b>টিম</button>
- <button data-view="profile" onclick="showView('profile',this)"><b>♙</b>আমার</button>
-</nav>
+<nav class="bottom-nav"><button class="active" data-view="home" onclick="showView('home',this)"><b>⌂</b>হোম</button><button data-view="products" onclick="showView('products',this)"><b>▦</b>প্রোডাক্ট</button><button data-view="earnings" onclick="showView('earnings',this)"><b>↗</b>হিসাব</button><button data-view="team" onclick="showView('team',this)"><b>♧</b>টিম</button><button data-view="profile" onclick="showView('profile',this)"><b>♙</b>আমার</button></nav>
 </div>
-
 <button class="chat-fab" onclick="toggleChat()" aria-label="AI Live Chat">🤖</button>
-<div class="chat-box" id="chatBox" role="dialog" aria-label="SKYPAY AI Live Chat">
-  <div class="chat-head"><div><b>SKYPAY AI Live Chat</b><div style="font-size:10px;opacity:.9">AI সহায়তা</div></div><button type="button" onclick="toggleChat()" aria-label="বন্ধ করুন" style="background:none;border:0;color:white;font-size:22px">×</button></div>
-  <div class="chat-messages" id="chatMessages"><div class="chat-msg">স্বাগতম! আমি SKYPAY AI Assistant। কীভাবে সাহায্য করতে পারি?</div></div>
-  <form class="chat-send" id="chatForm"><input id="chatInput" placeholder="আপনার প্রশ্ন লিখুন..." autocomplete="off" required><button class="primary" type="submit">পাঠান</button></form>
-</div>
-<div id="toast" class="toast hidden"></div>
+<div class="chat-box" id="chatBox" role="dialog" aria-label="SKYPAY AI Live Chat"><div class="chat-head"><div><b>SKYPAY AI Live Chat</b><div style="font-size:10px;opacity:.9">AI সহায়তা</div></div><button onclick="toggleChat()" style="background:none;border:0;color:white;font-size:22px">×</button></div><div class="chat-messages" id="chatMessages"><div class="chat-msg">স্বাগতম! আমি SKYPAY AI Assistant। কীভাবে সাহায্য করতে পারি?</div></div><form class="chat-send" id="chatForm"><input id="chatInput" placeholder="আপনার প্রশ্ন লিখুন..." autocomplete="off" required><button class="primary" type="submit">পাঠান</button></form></div><div id="toast" class="toast hidden"></div>
 <script>
 const API='/api';
-const token=localStorage.getItem('sky_token') || localStorage.getItem('skypay_token') || localStorage.getItem('sk_token');
+const token=localStorage.getItem('sky_token')||localStorage.getItem('skypay_token')||localStorage.getItem('sk_token');
 const authHeaders={'Content-Type':'application/json','Authorization':'Bearer '+(token||'')};
-const fallbackImages=['skypay-sky-v1.jpg','skypay-sky-v2.jpg','skypay-sky-v3.jpg','skypay-sky-vip.jpg'];
-let currentUser=null, products=[], plans=[];
-let chatHistoryLoaded=false;
+let currentUser=null,products=[],plans=[],chatHistoryLoaded=false,teamSummary=null;
 const $=id=>document.getElementById(id);
 function money(n){return '৳'+Number(n||0).toLocaleString('en-BD',{maximumFractionDigits:2});}
 function bn(n){return Number(n||0).toLocaleString('bn-BD');}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function toast(message){const el=$('toast');el.textContent=message;el.classList.remove('hidden');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.add('hidden'),2600);}
-function showView(name,button){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(name+'View').classList.add('active');document.querySelectorAll('.bottom-nav button').forEach(x=>x.classList.remove('active'));const b=button||document.querySelector('[data-view="'+name+'"]');if(b)b.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
-function logout(){localStorage.removeItem('sky_token');localStorage.removeItem('skypay_token');localStorage.removeItem('sk_token');localStorage.removeItem('sky_user');localStorage.removeItem('skypay_user');location.href='index.html';}
+function showView(name,button){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(name+'View').classList.add('active');document.querySelectorAll('.bottom-nav button').forEach(x=>x.classList.remove('active'));const b=button||document.querySelector('[data-view="'+name+'"]');if(b)b.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(name==='team')loadReferral();}
+function logout(){['sky_token','skypay_token','sk_token','sky_user','skypay_user'].forEach(k=>localStorage.removeItem(k));location.href='index.html';}
 async function api(path,options={}){const response=await fetch(API+path,{...options,headers:{...authHeaders,...(options.headers||{})}});let data={};try{data=await response.json();}catch{}if(!response.ok)throw new Error(data.error||'অনুরোধ সম্পন্ন হয়নি');return data;}
-function fallbackImage(index){return 'https://placehold.co/500x300/e8f5e9/087b36?text=SKYPAY+'+(index+1);}
-function productCard(p,index){const image=p.imageUrl||fallbackImage(index);const price=Number(p.price||0),daily=Number(p.dailyEstimate||0),days=Number(p.durationDays||0);return `<article class="product-card"><div class="product-image-wrap"><img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" onerror="this.onerror=null;this.src='${fallbackImage(index)}'"></div><div class="product-name">${escapeHtml(p.name)}</div><span class="product-tag">SKYPAY PACKAGE</span><div class="product-info"><div class="info"><small>মূল্য</small><b>${money(price)}</b></div><div class="info"><small>মেয়াদ</small><b>${bn(days)} দিন</b></div><div class="info"><small>দৈনিক অনুমান</small><b>${money(daily)}</b></div><div class="info"><small>মোট অনুমান</small><b>${money(daily*days)}</b></div></div>${p.description?`<p class="product-desc">${escapeHtml(p.description)}</p>`:''}<button class="primary" onclick="activateProduct('${encodeURIComponent(p.id)}')">বিস্তারিত / চালু করুন</button></article>`;}
-function renderProducts(){const active=products.filter(p=>p.active!==false);const html=active.map(productCard).join('')||'<div class="empty">এখন কোনো প্রোডাক্ট প্রকাশিত নেই।</div>';$('homeProducts').innerHTML=active.slice(0,4).map(productCard).join('')||'<div class="empty">এখন কোনো প্রোডাক্ট নেই।</div>';$('allProducts').innerHTML=html;}
+function fallbackImage(i){return 'https://placehold.co/500x300/e8f5e9/087b36?text=SKYPAY+'+(i+1);}
+function productCard(p,i){const image=p.imageUrl||fallbackImage(i),price=Number(p.price||0),daily=Number(p.dailyEstimate||0),days=Number(p.durationDays||0);return `<article class="product-card"><div class="product-image-wrap"><img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" onerror="this.onerror=null;this.src='${fallbackImage(i)}'"></div><div class="product-name">${escapeHtml(p.name)}</div><span class="product-tag">SKYPAY PACKAGE</span><div class="product-info"><div class="info"><small>মূল্য</small><b>${money(price)}</b></div><div class="info"><small>মেয়াদ</small><b>${bn(days)} দিন</b></div><div class="info"><small>দৈনিক অনুমান</small><b>${money(daily)}</b></div><div class="info"><small>মোট অনুমান</small><b>${money(daily*days)}</b></div></div>${p.description?`<p class="product-desc">${escapeHtml(p.description)}</p>`:''}<button class="primary" onclick="activateProduct('${encodeURIComponent(p.id)}')">বিস্তারিত / চালু করুন</button></article>`;}
+function renderProducts(){const active=products.filter(p=>p.active!==false);$('homeProducts').innerHTML=active.slice(0,4).map(productCard).join('')||'<div class="empty">এখন কোনো প্রোডাক্ট নেই।</div>';$('allProducts').innerHTML=active.map(productCard).join('')||'<div class="empty">এখন কোনো প্রোডাক্ট প্রকাশিত নেই।</div>';}
 function renderPlans(){const html=plans.map(p=>`<div class="data-row"><span><b>${escapeHtml(p.productName)}</b><br><small class="muted">${bn(p.durationDays)} দিন · ${escapeHtml(p.status)}</small></span><b>${money(p.price)}<br><small class="muted">দৈনিক ${money(p.dailyEstimate)}</small></b></div>`).join('')||'<div class="empty">এখনো কোনো সক্রিয় প্ল্যান নেই।</div>';$('myPlanList').innerHTML=html;$('earningPlans').innerHTML=html;}
-function toggleChat(){
- const box=$("chatBox");box.classList.toggle("open");
- if(box.classList.contains("open")&&!chatHistoryLoaded)loadChatHistory();
+async function loadReferral(){
+ try{
+  const summary=await api('/referral/summary');teamSummary=summary;
+  $('teamCount').textContent=bn(summary.team_count||0);
+  $('commissionAvailable').textContent=money(summary.available_commission||0);
+  $('commissionClaimed').textContent=money(summary.claimed_commission||0);
+  $('commissionTotal').textContent=money(summary.total_commission||0);
+  $('claimBtn').disabled=Number(summary.available_commission||0)<=0;
+  $('commissionNote').textContent='অনুমোদিত ডিপোজিটের ১০% কমিশন। Claim করলে কমিশন Main Wallet-এ যোগ হবে।';
+ }catch(e){$('commissionNote').textContent='কমিশন সারাংশ লোড হয়নি: '+e.message;}
+ try{
+  const members=await api('/team');
+  $('teamMembers').innerHTML=(Array.isArray(members)?members:[]).map(m=>`<div class="data-row"><span><b>${escapeHtml(m.name||'সদস্য')}</b><br><small class="muted">${escapeHtml(m.uid||'')} · ${escapeHtml(m.phone||'')}</small></span><small class="muted">${new Date(m.created_at||Date.now()).toLocaleDateString('bn-BD')}</small></div>`).join('')||'<div class="empty">এখনো কেউ আপনার লিংক দিয়ে নিবন্ধন করেনি।</div>';
+ }catch(e){$('teamMembers').innerHTML='<div class="empty">সদস্য তালিকা লোড করা যায়নি।</div>';}
 }
-function addChatMessage(message,mine=false){
- const el=document.createElement("div");el.className="chat-msg"+(mine?" mine":"");el.textContent=String(message||"");$("chatMessages").appendChild(el);$("chatMessages").scrollTop=$("chatMessages").scrollHeight;
+async function claimCommission(){
+ const btn=$('claimBtn');btn.disabled=true;btn.textContent='Claim হচ্ছে…';
+ try{const result=await api('/referral/claim',{method:'POST',body:JSON.stringify({})});toast(result.message||('কমিশন Wallet-এ যোগ হয়েছে: '+money(result.claimed_amount)));await loadDashboard();await loadReferral();}
+ catch(e){toast(e.message);}finally{btn.textContent='কমিশন Claim করে Wallet-এ নিন';btn.disabled=!(teamSummary&&Number(teamSummary.available_commission)>0);}
 }
-async function loadChatHistory(){
- try{const data=await api("/chat/history");const messages=data.messages||data.history||[];messages.forEach(m=>addChatMessage(m.message||m.text||m.content||"",m.role==="user"||m.sender==="user"));}
- catch(error){addChatMessage("আগের চ্যাট লোড করা যায়নি। আপনি নতুন মেসেজ পাঠাতে পারেন।");}
- chatHistoryLoaded=true;
-}
-$("chatForm").addEventListener("submit",async e=>{
- e.preventDefault();const input=$("chatInput");const message=input.value.trim();if(!message)return;
- input.value="";addChatMessage(message,true);const send=e.submitter; if(send){send.disabled=true;send.textContent="পাঠানো হচ্ছে…";}
- try{const data=await api("/chat",{method:"POST",body:JSON.stringify({message})});addChatMessage(data.reply||data.response||data.message||"আপনার বার্তা গ্রহণ করা হয়েছে।");}
- catch(error){addChatMessage("দুঃখিত, উত্তর পাওয়া যায়নি: "+error.message);}
- finally{if(send){send.disabled=false;send.textContent="পাঠান";}}
-});
-
+function toggleChat(){const box=$('chatBox');box.classList.toggle('open');if(box.classList.contains('open')&&!chatHistoryLoaded)loadChatHistory();}
+function addChatMessage(message,mine=false){const el=document.createElement('div');el.className='chat-msg'+(mine?' mine':'');el.textContent=String(message||'');$('chatMessages').appendChild(el);$('chatMessages').scrollTop=$('chatMessages').scrollHeight;}
+async function loadChatHistory(){try{const data=await api('/chat/history');const messages=Array.isArray(data)?data:(data.messages||data.history||[]);messages.forEach(m=>addChatMessage(m.message||m.text||m.content||'',m.role==='user'||m.sender==='user'));}catch(e){addChatMessage('আগের চ্যাট লোড করা যায়নি। নতুন মেসেজ পাঠাতে পারেন।');}chatHistoryLoaded=true;}
+$('chatForm').addEventListener('submit',async e=>{e.preventDefault();const input=$('chatInput'),message=input.value.trim();if(!message)return;input.value='';addChatMessage(message,true);const btn=e.submitter;if(btn){btn.disabled=true;btn.textContent='পাঠানো হচ্ছে…';}try{const d=await api('/chat',{method:'POST',body:JSON.stringify({message})});addChatMessage(d.reply||d.response||d.message||'আপনার বার্তা গ্রহণ করা হয়েছে।');}catch(err){addChatMessage('দুঃখিত, উত্তর পাওয়া যায়নি: '+err.message);}finally{if(btn){btn.disabled=false;btn.textContent='পাঠান';}}});
 async function loadDashboard(){
  if(!token){location.href='index.html';return;}
  try{
-  const me=await api('/me');
-  currentUser=me.user||me;
-  // এই সার্ভারের /api/products সরাসরি array এবং DB field snake_case পাঠায়।
-  const rawProducts=await api('/products');
-  products=(Array.isArray(rawProducts)?rawProducts:(rawProducts.products||[])).map(p=>({
-   ...p, imageUrl:p.imageUrl||p.image_url||'', dailyEstimate:p.dailyEstimate??p.daily_estimate??0,
-   durationDays:p.durationDays??p.duration_days??0, active:p.active===undefined?true:p.active
-  }));
-  // বর্তমান সার্ভারে my-plans/my-requests নয়, my-orders endpoint রয়েছে।
-  let orders={plans:[],transactions:[]};
-  try{orders=await api('/my-orders');}catch(error){console.warn('Order history unavailable:',error.message);}
-  plans=(orders.plans||[]).map(p=>({
-   ...p, productName:p.productName||p.product_name||p.name||'SKYPAY Plan',
-   durationDays:p.durationDays??p.duration_days??0,
-   dailyEstimate:p.dailyEstimate??p.daily_estimate??0,
-   price:p.price??0, status:p.status||'active'
-  }));
-  const balance=money(currentUser.balance);
-  $('balance').textContent=balance;$('profileBalance').textContent=balance;
-  $('activePlans').textContent=bn(plans.length);$('profilePlans').textContent=bn(plans.length);
-  $('profileName').textContent=currentUser.name||currentUser.full_name||'SKYPAY সদস্য';
-  $('profileMobile').textContent='মোবাইল: '+(currentUser.phone||currentUser.mobile||'—');
-  const uidValue=currentUser.uid||currentUser.user_uid||'—';
-  const referral=currentUser.referral_code||currentUser.referralCode||'';
-  $('profileUid').textContent=uidValue;$('teamUid').textContent=uidValue;
-  $('refCode').textContent=referral||'—';
-  $('refLink').value=referral?(location.origin+'/?ref='+encodeURIComponent(referral)):'রেফারেল কোড পাওয়া যায়নি';
-  const daily=plans.reduce((sum,p)=>sum+Number(p.dailyEstimate||0),0);
-  const total=plans.reduce((sum,p)=>sum+Number(p.dailyEstimate||0)*Number(p.durationDays||0),0);
-  $('daily').textContent=money(daily);$('projected').textContent=money(total);
-  renderProducts();renderPlans();
-  const tx=orders.transactions||[];
+  const me=await api('/me');currentUser=me.user||me;
+  const raw=await api('/products');products=(Array.isArray(raw)?raw:(raw.products||[])).map(p=>({...p,imageUrl:p.imageUrl||p.image_url||'',dailyEstimate:p.dailyEstimate??p.daily_estimate??0,durationDays:p.durationDays??p.duration_days??0,active:p.active===undefined?true:p.active}));
+  let orders={plans:[],transactions:[]};try{orders=await api('/my-orders');}catch(e){console.warn('Order history unavailable:',e.message);}
+  plans=(orders.plans||[]).map(p=>({...p,productName:p.productName||p.product_name||p.name||'SKYPAY Plan',durationDays:p.durationDays??p.duration_days??0,dailyEstimate:p.dailyEstimate??p.daily_estimate??0,price:p.price??0,status:p.status||'active'}));
+  const bal=money(currentUser.balance);$('balance').textContent=bal;$('profileBalance').textContent=bal;$('activePlans').textContent=bn(plans.length);$('profilePlans').textContent=bn(plans.length);
+  $('profileName').textContent=currentUser.name||currentUser.full_name||'SKYPAY সদস্য';$('profileMobile').textContent='মোবাইল: '+(currentUser.phone||currentUser.mobile||'—');
+  const uid=currentUser.uid||currentUser.user_uid||'—',ref=currentUser.referral_code||currentUser.referralCode||'';$('profileUid').textContent=uid;$('teamUid').textContent=uid;$('refCode').textContent=ref||'—';$('refLink').value=ref?(location.origin+'/?ref='+encodeURIComponent(ref)):'রেফারেল কোড পাওয়া যায়নি';
+  const daily=plans.reduce((s,p)=>s+Number(p.dailyEstimate||0),0),total=plans.reduce((s,p)=>s+Number(p.dailyEstimate||0)*Number(p.durationDays||0),0);$('daily').textContent=money(daily);$('projected').textContent=money(total);
+  renderProducts();renderPlans();const tx=orders.transactions||[];
   $('recentRequests').innerHTML=tx.slice(0,4).map(r=>`<div class="feed-row"><span class="dot"></span><div><b>${escapeHtml(r.type||r.description||'লেনদেন')} · ${money(r.amount)}</b><br><small class="muted">${escapeHtml(r.method||'')} · ${escapeHtml(r.status||'')} · ${new Date(r.createdAt||r.created_at||Date.now()).toLocaleString('bn-BD')}</small></div></div>`).join('')||'<div class="empty">এখনো কোনো কার্যক্রম নেই।</div>';
  }catch(e){toast(e.message);if(/login|token/i.test(e.message))logout();}
 }
-async function activateProduct(id){if(!confirm('এই প্রোডাক্ট চালু করতে আপনার Wallet থেকে মূল্য কাটা হবে। প্রোডাক্টের শর্ত যাচাই করেছেন?'))return;try{const result=await api('/activate',{method:'POST',body:JSON.stringify({product_id:decodeURIComponent(id)})});toast(result.message||'অনুরোধ সম্পন্ন');await loadDashboard();showView('products');}catch(e){toast(e.message);}}
-async function submitRequest(form,type,msgId){
- const msg=$(msgId);msg.textContent='';const button=form.querySelector('button[type="submit"]');button.disabled=true;button.textContent='পাঠানো হচ্ছে…';
- try{
-  const f=Object.fromEntries(new FormData(form));
-  const method=String(f.method||'').toLowerCase().includes('nagad')?'nagad':'bkash';
-  const body=type==='deposit'?{amount:Number(f.amount),method,sender_number:f.senderNumber,transaction_id:f.transactionId}:{amount:Number(f.amount),method,account_number:f.accountNumber};
-  const result=await api(type==='deposit'?'/deposit':'/withdraw',{method:'POST',body:JSON.stringify(body)});
-  msg.textContent=result.message||'অনুরোধ জমা হয়েছে';form.reset();await loadDashboard();
- }catch(e){msg.textContent=e.message;}finally{button.disabled=false;button.textContent=type==='deposit'?'ডিপোজিট অনুরোধ পাঠান':'উত্তোলন অনুরোধ পাঠান';}
-}
-$('depositForm').addEventListener('submit',e=>{e.preventDefault();submitRequest(e.target,'deposit','depositMsg');});
-$('withdrawForm').addEventListener('submit',e=>{e.preventDefault();submitRequest(e.target,'withdraw','withdrawMsg');});
-async function copyText(value){
-  try{
-    if(navigator.clipboard && window.isSecureContext){
-      await navigator.clipboard.writeText(value);
-    }else{
-      const el=document.createElement('textarea');
-      el.value=value;
-      el.setAttribute('readonly','');
-      el.style.position='fixed';
-      el.style.opacity='0';
-      document.body.appendChild(el);
-      el.select();
-      const copied=document.execCommand('copy');
-      el.remove();
-      if(!copied) throw new Error('copy failed');
-    }
-    toast('নম্বর কপি হয়েছে: '+value);
-  }catch(error){
-    toast('কপি করা যায়নি। নম্বরটি চেপে ধরে কপি করুন: '+value);
-  }
-}
+async function activateProduct(id){if(!confirm('এই প্রোডাক্ট চালু করতে আপনার Wallet থেকে মূল্য কাটা হবে। প্রোডাক্টের শর্ত যাচাই করেছেন?'))return;try{const r=await api('/activate',{method:'POST',body:JSON.stringify({product_id:decodeURIComponent(id)})});toast(r.message||'অনুরোধ সম্পন্ন');await loadDashboard();showView('products');}catch(e){toast(e.message);}}
+async function submitRequest(form,type,msgId){const msg=$(msgId),btn=form.querySelector('button[type=submit]');msg.textContent='';btn.disabled=true;btn.textContent='পাঠানো হচ্ছে…';try{const f=Object.fromEntries(new FormData(form)),amount=Number(f.amount);if(type==='deposit'&&amount<500)throw new Error('সর্বনিম্ন ডিপোজিট ৳৫০০।');if(type==='withdraw'&&amount<1000)throw new Error('সর্বনিম্ন উত্তোলন ৳১,০০০।');const method=String(f.method||'').toLowerCase().includes('nagad')?'nagad':'bkash';const body=type==='deposit'?{amount,method,sender_number:f.senderNumber,transaction_id:f.transactionId}:{amount,method,account_number:f.accountNumber};const r=await api(type==='deposit'?'/deposit':'/withdraw',{method:'POST',body:JSON.stringify(body)});msg.textContent=r.message||'অনুরোধ জমা হয়েছে';form.reset();await loadDashboard();}catch(e){msg.textContent=e.message;}finally{btn.disabled=false;btn.textContent=type==='deposit'?'ডিপোজিট অনুরোধ পাঠান':'উত্তোলন অনুরোধ পাঠান';}}
+$('depositForm').addEventListener('submit',e=>{e.preventDefault();submitRequest(e.target,'deposit','depositMsg');});$('withdrawForm').addEventListener('submit',e=>{e.preventDefault();submitRequest(e.target,'withdraw','withdrawMsg');});
+async function copyText(value){try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(value);else{const el=document.createElement('textarea');el.value=value;el.readOnly=true;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();if(!document.execCommand('copy'))throw Error('copy failed');el.remove();}toast('কপি হয়েছে: '+value);}catch(e){toast('কপি করা যায়নি। নম্বরটি চেপে ধরে কপি করুন: '+value);}}
 function copyRef(){copyText($('refLink').value);}
 function openSupport(){window.open('https://t.me/skypay_admin_bot','_blank','noopener');}
 loadDashboard();
-</script>
-</body>
-</html>
+</script></body></html>
