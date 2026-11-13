@@ -26,6 +26,7 @@ main{padding:13px}.view{display:none}.view.active{display:block}
 .profile-hero{margin:-13px -13px 12px;padding:22px 16px;background:linear-gradient(120deg,#07552a,#0b9841);color:white;border-radius:0 0 20px 20px}.profile-row{display:flex;align-items:center;gap:12px}.avatar{width:53px;height:53px;border-radius:50%;display:grid;place-items:center;background:#ffffff25;border:2px solid #ffffff85;font-size:24px}.profile-row h2{font-size:16px;margin:0}.profile-row p{font-size:10px;margin:4px 0 0;color:#d9f1dd}.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.action-grid button{border:0;border-radius:10px;background:#e8f6e9;color:#087b36;padding:11px 4px;font-size:10px;font-weight:900}
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(560px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:white;border-top:1px solid var(--line);padding:8px 4px max(8px,env(safe-area-inset-bottom));z-index:15;box-shadow:0 -5px 18px #174b2410}.bottom-nav button{border:0;background:transparent;color:#87948a;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px}.bottom-nav button b{font-size:20px;font-weight:500}.bottom-nav button.active{color:#078437;font-weight:900}
 .toast{position:fixed;left:50%;bottom:95px;transform:translateX(-50%);background:#173c26;color:white;border-radius:22px;padding:10px 16px;font-size:11px;z-index:30;box-shadow:0 5px 20px #0002;max-width:90%;text-align:center}
+.chat-fab{position:fixed;right:17px;bottom:91px;border:0;border-radius:50%;width:52px;height:52px;background:var(--green);color:#fff;font-size:22px;box-shadow:0 5px 16px #07532c55;z-index:19}.chat-box{display:none;position:fixed;right:12px;bottom:153px;width:min(340px,calc(100% - 24px));height:420px;max-height:60vh;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);z-index:25;overflow:hidden}.chat-box.open{display:flex;flex-direction:column}.chat-head{padding:13px;background:var(--green);color:#fff;display:flex;justify-content:space-between}.chat-messages{flex:1;overflow:auto;padding:12px;background:#f6faf7}.chat-msg{font-size:12px;padding:9px 11px;border-radius:12px;background:#fff;margin:7px 0;max-width:88%;line-height:1.5}.chat-msg.mine{margin-left:auto;background:#dcf5e5}.chat-send{display:flex;padding:9px;gap:7px}.chat-send input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px}
 @media(min-width:560px){body{padding-top:16px}.app{border-radius:22px;overflow:hidden;min-height:calc(100vh - 16px)}.bottom-nav{bottom:0}}
 </style>
 </head>
@@ -106,6 +107,13 @@ main{padding:13px}.view{display:none}.view.active{display:block}
  <button data-view="profile" onclick="showView('profile',this)"><b>♙</b>আমার</button>
 </nav>
 </div>
+
+<button class="chat-fab" onclick="toggleChat()" aria-label="AI Live Chat">🤖</button>
+<div class="chat-box" id="chatBox" role="dialog" aria-label="SKYPAY AI Live Chat">
+  <div class="chat-head"><div><b>SKYPAY AI Live Chat</b><div style="font-size:10px;opacity:.9">AI সহায়তা</div></div><button type="button" onclick="toggleChat()" aria-label="বন্ধ করুন" style="background:none;border:0;color:white;font-size:22px">×</button></div>
+  <div class="chat-messages" id="chatMessages"><div class="chat-msg">স্বাগতম! আমি SKYPAY AI Assistant। কীভাবে সাহায্য করতে পারি?</div></div>
+  <form class="chat-send" id="chatForm"><input id="chatInput" placeholder="আপনার প্রশ্ন লিখুন..." autocomplete="off" required><button class="primary" type="submit">পাঠান</button></form>
+</div>
 <div id="toast" class="toast hidden"></div>
 <script>
 const API='/api';
@@ -113,6 +121,7 @@ const token=localStorage.getItem('sky_token') || localStorage.getItem('skypay_to
 const authHeaders={'Content-Type':'application/json','Authorization':'Bearer '+(token||'')};
 const fallbackImages=['skypay-sky-v1.jpg','skypay-sky-v2.jpg','skypay-sky-v3.jpg','skypay-sky-vip.jpg'];
 let currentUser=null, products=[], plans=[];
+let chatHistoryLoaded=false;
 const $=id=>document.getElementById(id);
 function money(n){return '৳'+Number(n||0).toLocaleString('en-BD',{maximumFractionDigits:2});}
 function bn(n){return Number(n||0).toLocaleString('bn-BD');}
@@ -125,6 +134,26 @@ function fallbackImage(index){return 'https://placehold.co/500x300/e8f5e9/087b36
 function productCard(p,index){const image=p.imageUrl||fallbackImage(index);const price=Number(p.price||0),daily=Number(p.dailyEstimate||0),days=Number(p.durationDays||0);return `<article class="product-card"><div class="product-image-wrap"><img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" onerror="this.onerror=null;this.src='${fallbackImage(index)}'"></div><div class="product-name">${escapeHtml(p.name)}</div><span class="product-tag">SKYPAY PACKAGE</span><div class="product-info"><div class="info"><small>মূল্য</small><b>${money(price)}</b></div><div class="info"><small>মেয়াদ</small><b>${bn(days)} দিন</b></div><div class="info"><small>দৈনিক অনুমান</small><b>${money(daily)}</b></div><div class="info"><small>মোট অনুমান</small><b>${money(daily*days)}</b></div></div>${p.description?`<p class="product-desc">${escapeHtml(p.description)}</p>`:''}<button class="primary" onclick="activateProduct('${encodeURIComponent(p.id)}')">বিস্তারিত / চালু করুন</button></article>`;}
 function renderProducts(){const active=products.filter(p=>p.active!==false);const html=active.map(productCard).join('')||'<div class="empty">এখন কোনো প্রোডাক্ট প্রকাশিত নেই।</div>';$('homeProducts').innerHTML=active.slice(0,4).map(productCard).join('')||'<div class="empty">এখন কোনো প্রোডাক্ট নেই।</div>';$('allProducts').innerHTML=html;}
 function renderPlans(){const html=plans.map(p=>`<div class="data-row"><span><b>${escapeHtml(p.productName)}</b><br><small class="muted">${bn(p.durationDays)} দিন · ${escapeHtml(p.status)}</small></span><b>${money(p.price)}<br><small class="muted">দৈনিক ${money(p.dailyEstimate)}</small></b></div>`).join('')||'<div class="empty">এখনো কোনো সক্রিয় প্ল্যান নেই।</div>';$('myPlanList').innerHTML=html;$('earningPlans').innerHTML=html;}
+function toggleChat(){
+ const box=$("chatBox");box.classList.toggle("open");
+ if(box.classList.contains("open")&&!chatHistoryLoaded)loadChatHistory();
+}
+function addChatMessage(message,mine=false){
+ const el=document.createElement("div");el.className="chat-msg"+(mine?" mine":"");el.textContent=String(message||"");$("chatMessages").appendChild(el);$("chatMessages").scrollTop=$("chatMessages").scrollHeight;
+}
+async function loadChatHistory(){
+ try{const data=await api("/chat/history");const messages=data.messages||data.history||[];messages.forEach(m=>addChatMessage(m.message||m.text||m.content||"",m.role==="user"||m.sender==="user"));}
+ catch(error){addChatMessage("আগের চ্যাট লোড করা যায়নি। আপনি নতুন মেসেজ পাঠাতে পারেন।");}
+ chatHistoryLoaded=true;
+}
+$("chatForm").addEventListener("submit",async e=>{
+ e.preventDefault();const input=$("chatInput");const message=input.value.trim();if(!message)return;
+ input.value="";addChatMessage(message,true);const send=e.submitter; if(send){send.disabled=true;send.textContent="পাঠানো হচ্ছে…";}
+ try{const data=await api("/chat",{method:"POST",body:JSON.stringify({message})});addChatMessage(data.reply||data.response||data.message||"আপনার বার্তা গ্রহণ করা হয়েছে।");}
+ catch(error){addChatMessage("দুঃখিত, উত্তর পাওয়া যায়নি: "+error.message);}
+ finally{if(send){send.disabled=false;send.textContent="পাঠান";}}
+});
+
 async function loadDashboard(){
  if(!token){location.href='index.html';return;}
  try{
