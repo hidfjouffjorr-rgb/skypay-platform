@@ -1,5 +1,5 @@
 // ======================================
-// SKYPAY SERVER - FULL CODE (COMBINED)
+// SKYPAY SERVER - UPDATED FULL CODE
 // ======================================
 
 const express = require("express");
@@ -12,19 +12,15 @@ const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 
-// Cloudinary configuration
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Image upload settings
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 5 * 1024 * 1024
-  },
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype || !file.mimetype.startsWith("image/")) {
       return cb(new Error("Only image files are allowed."));
@@ -32,12 +28,12 @@ const upload = multer({
     cb(null, true);
   }
 });
+
 const app = express();
 app.set("trust proxy", 1);
 
 const PORT = process.env.PORT || 3000;
 
-// Required environment variables
 const requiredEnv = [
   "DATABASE_URL",
   "JWT_SECRET",
@@ -52,7 +48,6 @@ for (const key of requiredEnv) {
   }
 }
 
-// Database connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.DATABASE_URL.includes("localhost")
@@ -60,11 +55,10 @@ const pool = new Pool({
     : { rejectUnauthorized: false }
 });
 
-pool.on("error", (error) => {
+pool.on("error", error => {
   console.error("Unexpected database error:", error);
 });
 
-// Security and middleware
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: false }));
@@ -87,14 +81,12 @@ const chatLimiter = rateLimit({
   limit: 10
 });
 
-// JWT token
 function makeToken(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "7d"
   });
 }
 
-// User authentication
 function userAuth(req, res, next) {
   try {
     const header = req.headers.authorization || "";
@@ -117,7 +109,6 @@ function userAuth(req, res, next) {
   }
 }
 
-// Admin authentication
 function adminAuth(req, res, next) {
   try {
     const header = req.headers.authorization || "";
@@ -140,7 +131,6 @@ function adminAuth(req, res, next) {
   }
 }
 
-// Helpers
 function normalizePhone(value) {
   return String(value || "").replace(/[\s\-()]/g, "");
 }
@@ -153,7 +143,6 @@ function validAmountOrZero(value) {
   return Number.isFinite(Number(value)) && Number(value) >= 0;
 }
 
-// Telegram notification
 async function sendTelegramMessage(message) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
 
@@ -172,9 +161,7 @@ async function sendTelegramMessage(message) {
       `https://api.telegram.org/bot${botToken}/sendMessage`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: chatId,
           text: message
@@ -189,7 +176,6 @@ async function sendTelegramMessage(message) {
       return false;
     }
 
-    console.log("Telegram notification sent.");
     return true;
   } catch (error) {
     console.error("Telegram notification error:", error.message);
@@ -197,7 +183,10 @@ async function sendTelegramMessage(message) {
   }
 }
 
-// Database initialization
+// ======================================
+// DATABASE INITIALIZATION
+// ======================================
+
 async function initDatabase() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -245,9 +234,7 @@ async function initDatabase() {
       active BOOLEAN NOT NULL DEFAULT TRUE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-  `);
 
-  await pool.query(`
     CREATE TABLE IF NOT EXISTS payment_requests (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id),
@@ -261,9 +248,7 @@ async function initDatabase() {
       reviewed_at TIMESTAMPTZ,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-  `);
 
-  await pool.query(`
     CREATE TABLE IF NOT EXISTS plans (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id),
@@ -275,9 +260,7 @@ async function initDatabase() {
       status VARCHAR(20) NOT NULL DEFAULT 'active',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-  `);
 
-  await pool.query(`
     CREATE TABLE IF NOT EXISTS transactions (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id),
@@ -287,6 +270,26 @@ async function initDatabase() {
       description TEXT DEFAULT '',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+  `);
+
+  // Referral commission records.
+  // A deposit request can generate commission only once.
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS referral_commissions (
+      id SERIAL PRIMARY KEY,
+      deposit_request_id INTEGER UNIQUE
+        REFERENCES payment_requests(id) ON DELETE CASCADE,
+      referrer_user_id INTEGER NOT NULL REFERENCES users(id),
+      referred_user_id INTEGER NOT NULL REFERENCES users(id),
+      deposit_amount NUMERIC(14,2) NOT NULL,
+      commission_amount NUMERIC(14,2) NOT NULL,
+      status VARCHAR(20) NOT NULL DEFAULT 'available',
+      claimed_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE INDEX IF NOT EXISTS referral_commissions_owner_idx
+    ON referral_commissions(referrer_user_id, status);
   `);
 
   await pool.query(`
@@ -300,9 +303,7 @@ async function initDatabase() {
 
     CREATE INDEX IF NOT EXISTS chat_messages_user_created_idx
     ON chat_messages(user_id, created_at);
-  `);
 
-  await pool.query(`
     CREATE TABLE IF NOT EXISTS chat_escalations (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -311,9 +312,7 @@ async function initDatabase() {
       status VARCHAR(20) NOT NULL DEFAULT 'pending',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-  `);
 
-  await pool.query(`
     CREATE TABLE IF NOT EXISTS managed_apps (
       id SERIAL PRIMARY KEY,
       name TEXT NOT NULL,
@@ -363,7 +362,10 @@ async function initDatabase() {
   console.log("SKYPAY database ready.");
 }
 
-// Health check
+// ======================================
+// HEALTH CHECK
+// ======================================
+
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
@@ -372,7 +374,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// User registration
+// ======================================
+// USER REGISTRATION
+// ======================================
+
 app.post("/api/register", authLimiter, async (req, res) => {
   try {
     const name = String(req.body.name || "").trim();
@@ -429,7 +434,8 @@ app.post("/api/register", authLimiter, async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO users
-       (uid, username, name, phone, password_hash, referral_code, referred_by)
+       (uid, username, name, phone, password_hash,
+        referral_code, referred_by)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING id, uid, name, phone, referral_code, balance`,
       [
@@ -462,7 +468,10 @@ app.post("/api/register", authLimiter, async (req, res) => {
   }
 });
 
-// User login
+// ======================================
+// USER LOGIN
+// ======================================
+
 app.post("/api/login", authLimiter, async (req, res) => {
   try {
     const phone = normalizePhone(req.body.phone);
@@ -529,7 +538,10 @@ app.post("/api/login", authLimiter, async (req, res) => {
   }
 });
 
-// Public products
+// ======================================
+// PUBLIC PRODUCTS
+// ======================================
+
 app.get("/api/products", async (req, res) => {
   try {
     const result = await pool.query(
@@ -549,7 +561,10 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
-// User profile
+// ======================================
+// USER PROFILE
+// ======================================
+
 app.get("/api/profile", userAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -575,15 +590,17 @@ app.get("/api/profile", userAuth, async (req, res) => {
   }
 });
 
-// Dashboard and login session verification
+// ======================================
+// VERIFY USER SESSION
+// ======================================
+
 app.get("/api/me", userAuth, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, uid, username, name, phone,
               balance, total_deposit, total_withdraw,
               referral_code, created_at
-       FROM users
-       WHERE id=$1`,
+       FROM users WHERE id=$1`,
       [req.userId]
     );
 
@@ -593,21 +610,22 @@ app.get("/api/me", userAuth, async (req, res) => {
       });
     }
 
-    return res.json({
+    res.json({
       success: true,
       user: result.rows[0]
     });
-
   } catch (error) {
     console.error("Me API error:", error);
-
-    return res.status(500).json({
+    res.status(500).json({
       error: "Could not verify user session."
     });
   }
 });
 
-// Deposit request
+// ======================================
+// DEPOSIT REQUEST - MINIMUM ৳500
+// ======================================
+
 app.post("/api/deposit", userAuth, async (req, res) => {
   try {
     const amount = Number(req.body.amount);
@@ -615,12 +633,16 @@ app.post("/api/deposit", userAuth, async (req, res) => {
     const senderNumber = normalizePhone(req.body.sender_number);
     const transactionId = String(req.body.transaction_id || "").trim();
 
-    if (!validAmount(amount)) {
-      return res.status(400).json({ error: "Invalid amount." });
+    if (!validAmount(amount) || amount < 500) {
+      return res.status(400).json({
+        error: "Minimum deposit amount is ৳500."
+      });
     }
 
     if (!["bkash", "nagad"].includes(method)) {
-      return res.status(400).json({ error: "Invalid payment method." });
+      return res.status(400).json({
+        error: "Invalid payment method."
+      });
     }
 
     if (!senderNumber || !transactionId) {
@@ -664,21 +686,30 @@ app.post("/api/deposit", userAuth, async (req, res) => {
       error: "Could not submit deposit request."
     });
   }
-});
+});// ======================================
+// WITHDRAWAL REQUEST
+// Minimum ৳1,000
+// Maximum 3 requests in rolling 24 hours
+// ======================================
 
-// Withdrawal request
 app.post("/api/withdraw", userAuth, async (req, res) => {
+  const client = await pool.connect();
+
   try {
     const amount = Number(req.body.amount);
     const method = String(req.body.method || "").toLowerCase();
     const accountNumber = normalizePhone(req.body.account_number);
 
-    if (!validAmount(amount)) {
-      return res.status(400).json({ error: "Invalid amount." });
+    if (!validAmount(amount) || amount < 1000) {
+      return res.status(400).json({
+        error: "Minimum withdrawal amount is ৳1,000."
+      });
     }
 
     if (!["bkash", "nagad"].includes(method)) {
-      return res.status(400).json({ error: "Invalid payment method." });
+      return res.status(400).json({
+        error: "Invalid payment method."
+      });
     }
 
     if (!accountNumber) {
@@ -687,19 +718,45 @@ app.post("/api/withdraw", userAuth, async (req, res) => {
       });
     }
 
-    const userResult = await pool.query(
-      "SELECT balance FROM users WHERE id=$1",
+    await client.query("BEGIN");
+
+    // Lock user row to prevent simultaneous requests bypassing limit.
+    const userResult = await client.query(
+      "SELECT balance FROM users WHERE id=$1 FOR UPDATE",
       [req.userId]
     );
 
-    if (!userResult.rowCount ||
-        Number(userResult.rows[0].balance) < amount) {
+    if (!userResult.rowCount) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({
+        error: "User not found."
+      });
+    }
+
+    if (Number(userResult.rows[0].balance) < amount) {
+      await client.query("ROLLBACK");
       return res.status(400).json({
         error: "Insufficient balance."
       });
     }
 
-    const result = await pool.query(
+    const countResult = await client.query(
+      `SELECT COUNT(*)::int AS total
+       FROM payment_requests
+       WHERE user_id=$1
+         AND type='withdraw'
+         AND created_at >= NOW() - INTERVAL '24 hours'`,
+      [req.userId]
+    );
+
+    if (countResult.rows[0].total >= 3) {
+      await client.query("ROLLBACK");
+      return res.status(429).json({
+        error: "You can submit a maximum of 3 withdrawal requests in 24 hours."
+      });
+    }
+
+    const result = await client.query(
       `INSERT INTO payment_requests
        (user_id, type, method, amount, account_number)
        VALUES ($1, 'withdraw', $2, $3, $4)
@@ -707,12 +764,14 @@ app.post("/api/withdraw", userAuth, async (req, res) => {
       [req.userId, method, amount, accountNumber]
     );
 
-    await pool.query(
+    await client.query(
       `INSERT INTO transactions
        (user_id, type, amount, status, description)
        VALUES ($1, 'withdraw', $2, 'pending', $3)`,
       [req.userId, amount, `${method} withdrawal request`]
     );
+
+    await client.query("COMMIT");
 
     await sendTelegramMessage(
       `SKYPAY Withdrawal Request\nAmount: ${amount}\nMethod: ${method}\nAccount: ${accountNumber}`
@@ -723,14 +782,20 @@ app.post("/api/withdraw", userAuth, async (req, res) => {
       request: result.rows[0]
     });
   } catch (error) {
+    await client.query("ROLLBACK").catch(() => {});
     console.error("Withdrawal error:", error);
     res.status(500).json({
       error: "Could not submit withdrawal request."
     });
+  } finally {
+    client.release();
   }
 });
 
-// Activate product
+// ======================================
+// ACTIVATE PRODUCT
+// ======================================
+
 app.post("/api/activate", userAuth, async (req, res) => {
   const client = await pool.connect();
 
@@ -738,7 +803,9 @@ app.post("/api/activate", userAuth, async (req, res) => {
     const productId = Number(req.body.product_id);
 
     if (!Number.isInteger(productId) || productId <= 0) {
-      return res.status(400).json({ error: "Invalid product." });
+      return res.status(400).json({
+        error: "Invalid product."
+      });
     }
 
     await client.query("BEGIN");
@@ -750,7 +817,9 @@ app.post("/api/activate", userAuth, async (req, res) => {
 
     if (!productResult.rowCount) {
       await client.query("ROLLBACK");
-      return res.status(404).json({ error: "Product not found." });
+      return res.status(404).json({
+        error: "Product not found."
+      });
     }
 
     const product = productResult.rows[0];
@@ -767,8 +836,10 @@ app.post("/api/activate", userAuth, async (req, res) => {
       [req.userId]
     );
 
-    if (!userResult.rowCount ||
-        Number(userResult.rows[0].balance) < Number(product.price)) {
+    if (
+      !userResult.rowCount ||
+      Number(userResult.rows[0].balance) < Number(product.price)
+    ) {
       await client.query("ROLLBACK");
       return res.status(400).json({
         error: "Insufficient balance."
@@ -821,7 +892,10 @@ app.post("/api/activate", userAuth, async (req, res) => {
   }
 });
 
-// My orders
+// ======================================
+// MY ORDERS
+// ======================================
+
 app.get("/api/my-orders", userAuth, async (req, res) => {
   try {
     const plans = await pool.query(
@@ -850,7 +924,10 @@ app.get("/api/my-orders", userAuth, async (req, res) => {
   }
 });
 
-// Team members
+// ======================================
+// TEAM MEMBERS
+// ======================================
+
 app.get("/api/team", userAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -870,7 +947,153 @@ app.get("/api/team", userAuth, async (req, res) => {
   }
 });
 
-// Chat history
+// ======================================
+// REFERRAL SUMMARY
+// ======================================
+
+app.get("/api/referral/summary", userAuth, async (req, res) => {
+  try {
+    const teamResult = await pool.query(
+      `SELECT COUNT(*)::int AS total
+       FROM users
+       WHERE referred_by=$1`,
+      [req.userId]
+    );
+
+    const commissionResult = await pool.query(
+      `SELECT
+         COALESCE(SUM(commission_amount), 0) AS total_commission,
+         COALESCE(SUM(
+           CASE WHEN status='available'
+           THEN commission_amount ELSE 0 END
+         ), 0) AS available_commission,
+         COALESCE(SUM(
+           CASE WHEN status='claimed'
+           THEN commission_amount ELSE 0 END
+         ), 0) AS claimed_commission
+       FROM referral_commissions
+       WHERE referrer_user_id=$1`,
+      [req.userId]
+    );
+
+    res.json({
+      success: true,
+      team_count: teamResult.rows[0].total,
+      total_commission: Number(
+        commissionResult.rows[0].total_commission
+      ),
+      available_commission: Number(
+        commissionResult.rows[0].available_commission
+      ),
+      claimed_commission: Number(
+        commissionResult.rows[0].claimed_commission
+      ),
+      commission_rate: 10
+    });
+  } catch (error) {
+    console.error("Referral summary error:", error);
+    res.status(500).json({
+      error: "Could not load referral summary."
+    });
+  }
+});
+
+// ======================================
+// CLAIM REFERRAL COMMISSION
+// Adds claimed commission to main wallet
+// ======================================
+
+app.post("/api/referral/claim", userAuth, async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    // Lock the account to prevent duplicate simultaneous claims.
+    const userResult = await client.query(
+      "SELECT id FROM users WHERE id=$1 FOR UPDATE",
+      [req.userId]
+    );
+
+    if (!userResult.rowCount) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({
+        error: "User not found."
+      });
+    }
+
+    const availableResult = await client.query(
+      `SELECT COALESCE(SUM(commission_amount), 0) AS total
+       FROM referral_commissions
+       WHERE referrer_user_id=$1
+         AND status='available'`,
+      [req.userId]
+    );
+
+    const amount = Number(availableResult.rows[0].total);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({
+        error: "No referral commission available to claim."
+      });
+    }
+
+    const claimedResult = await client.query(
+      `UPDATE referral_commissions
+       SET status='claimed', claimed_at=NOW()
+       WHERE referrer_user_id=$1
+         AND status='available'
+       RETURNING id`,
+      [req.userId]
+    );
+
+    if (!claimedResult.rowCount) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({
+        error: "No referral commission available to claim."
+      });
+    }
+
+    await client.query(
+      "UPDATE users SET balance=balance+$1 WHERE id=$2",
+      [amount, req.userId]
+    );
+
+    await client.query(
+      `INSERT INTO transactions
+       (user_id, type, amount, status, description)
+       VALUES ($1, 'referral_commission', $2, 'approved', $3)`,
+      [
+        req.userId,
+        amount,
+        "Referral commission claimed to main wallet"
+      ]
+    );
+
+    await client.query("COMMIT");
+
+    res.json({
+      success: true,
+      claimed_amount: amount,
+      message: "Referral commission added to your main wallet."
+    });
+  } catch (error) {
+    await client.query("ROLLBACK").catch(() => {});
+    console.error("Referral claim error:", error);
+    res.status(500).json({
+      error: "Could not claim referral commission."
+    });
+  } finally {
+    client.release();
+  }
+});
+
+// ======================================
+// CHAT HISTORY
+// Returns an array of messages
+// ======================================
+
 app.get("/api/chat/history", userAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -891,7 +1114,10 @@ app.get("/api/chat/history", userAuth, async (req, res) => {
   }
 });
 
-// AI Chat
+// ======================================
+// AI CHAT
+// ======================================
+
 app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
   try {
     const message = String(req.body.message || "").trim();
@@ -961,16 +1187,20 @@ app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
       [req.userId, message, reply]
     );
 
-    res.json({ success: true, reply });
+    res.json({
+      success: true,
+      reply
+    });
   } catch (error) {
     console.error("Chat error:", error);
     res.status(500).json({
       error: "Chat service failed."
     });
   }
-});
+});// ======================================
+// ADMIN LOGIN
+// ======================================
 
-// Admin login
 app.post("/api/admin/login", adminLimiter, async (req, res) => {
   try {
     const email = String(req.body.email || "").trim().toLowerCase();
@@ -1014,7 +1244,10 @@ app.post("/api/admin/login", adminLimiter, async (req, res) => {
   }
 });
 
-// Verify admin session
+// ======================================
+// VERIFY ADMIN SESSION
+// ======================================
+
 app.get("/api/admin/me", adminAuth, (req, res) => {
   res.json({
     success: true,
@@ -1022,7 +1255,11 @@ app.get("/api/admin/me", adminAuth, (req, res) => {
     email: req.admin.email
   });
 });
-// Upload image to Cloudinary
+
+// ======================================
+// CLOUDINARY IMAGE UPLOAD
+// ======================================
+
 function uploadImageToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -1040,12 +1277,11 @@ function uploadImageToCloudinary(buffer) {
   });
 }
 
-// Admin image upload API
 app.post(
   "/api/admin/upload-image",
   adminAuth,
   (req, res, next) => {
-    upload.single("image")(req, res, (error) => {
+    upload.single("image")(req, res, error => {
       if (error) {
         return res.status(400).json({
           error: error.message || "Image upload error."
@@ -1074,21 +1310,24 @@ app.post(
 
       const result = await uploadImageToCloudinary(req.file.buffer);
 
-      return res.status(201).json({
+      res.status(201).json({
         success: true,
         url: result.secure_url,
         public_id: result.public_id
       });
     } catch (error) {
       console.error("Image upload error:", error.message);
-
-      return res.status(500).json({
+      res.status(500).json({
         error: "Could not upload image."
       });
     }
   }
 );
-// Admin dashboard summary
+
+// ======================================
+// ADMIN DASHBOARD STATS
+// ======================================
+
 app.get("/api/admin/stats", adminAuth, async (req, res) => {
   try {
     const users = await pool.query(
@@ -1096,11 +1335,15 @@ app.get("/api/admin/stats", adminAuth, async (req, res) => {
     );
 
     const deposits = await pool.query(
-      "SELECT COALESCE(SUM(amount), 0) AS total FROM payment_requests WHERE type='deposit' AND status='approved'"
+      `SELECT COALESCE(SUM(amount), 0) AS total
+       FROM payment_requests
+       WHERE type='deposit' AND status='approved'`
     );
 
     const withdrawals = await pool.query(
-      "SELECT COALESCE(SUM(amount), 0) AS total FROM payment_requests WHERE type='withdraw' AND status='approved'"
+      `SELECT COALESCE(SUM(amount), 0) AS total
+       FROM payment_requests
+       WHERE type='withdraw' AND status='approved'`
     );
 
     const pending = await pool.query(
@@ -1121,7 +1364,10 @@ app.get("/api/admin/stats", adminAuth, async (req, res) => {
   }
 });
 
-// Admin users
+// ======================================
+// ADMIN USERS
+// ======================================
+
 app.get("/api/admin/users", adminAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -1139,7 +1385,10 @@ app.get("/api/admin/users", adminAuth, async (req, res) => {
   }
 });
 
-// Admin products
+// ======================================
+// ADMIN PRODUCTS - LIST
+// ======================================
+
 app.get("/api/admin/products", adminAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -1155,7 +1404,10 @@ app.get("/api/admin/products", adminAuth, async (req, res) => {
   }
 });
 
-// Add product
+// ======================================
+// ADMIN PRODUCTS - ADD
+// ======================================
+
 app.post("/api/admin/products", adminAuth, async (req, res) => {
   try {
     const name = String(req.body.name || "").trim();
@@ -1207,7 +1459,10 @@ app.post("/api/admin/products", adminAuth, async (req, res) => {
   }
 });
 
-// Edit product
+// ======================================
+// ADMIN PRODUCTS - EDIT
+// ======================================
+
 app.put("/api/admin/products/:id", adminAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -1272,7 +1527,10 @@ app.put("/api/admin/products/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Delete product
+// ======================================
+// ADMIN PRODUCTS - DELETE
+// ======================================
+
 app.delete("/api/admin/products/:id", adminAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -1303,7 +1561,10 @@ app.delete("/api/admin/products/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Admin payment requests
+// ======================================
+// ADMIN PAYMENT REQUESTS - LIST
+// ======================================
+
 app.get("/api/admin/payment-requests", adminAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -1322,7 +1583,12 @@ app.get("/api/admin/payment-requests", adminAuth, async (req, res) => {
   }
 });
 
-// Approve or reject payment request
+// ======================================
+// APPROVE OR REJECT PAYMENT REQUEST
+// Deposit approval creates 10% referral commission.
+// Unique deposit_request_id prevents duplicate commission.
+// ======================================
+
 app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
   const client = await pool.connect();
 
@@ -1365,7 +1631,7 @@ app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
 
     if (status === "approved") {
       const userResult = await client.query(
-        "SELECT balance FROM users WHERE id=$1 FOR UPDATE",
+        "SELECT id, balance, referred_by FROM users WHERE id=$1 FOR UPDATE",
         [request.user_id]
       );
 
@@ -1376,6 +1642,8 @@ app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
         });
       }
 
+      const depositUser = userResult.rows[0];
+
       if (request.type === "deposit") {
         await client.query(
           `UPDATE users
@@ -1384,8 +1652,26 @@ app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
            WHERE id=$2`,
           [request.amount, request.user_id]
         );
+
+        // Give 10% commission to the referrer.
+        // Commission is available to claim after deposit approval.
+        if (depositUser.referred_by) {
+          await client.query(
+            `INSERT INTO referral_commissions
+             (deposit_request_id, referrer_user_id,
+              referred_user_id, deposit_amount, commission_amount)
+             VALUES ($1, $2, $3, $4, ROUND($4::numeric * 0.10, 2))
+             ON CONFLICT (deposit_request_id) DO NOTHING`,
+            [
+              request.id,
+              depositUser.referred_by,
+              request.user_id,
+              request.amount
+            ]
+          );
+        }
       } else if (request.type === "withdraw") {
-        if (Number(userResult.rows[0].balance) < Number(request.amount)) {
+        if (Number(depositUser.balance) < Number(request.amount)) {
           await client.query("ROLLBACK");
           return res.status(400).json({
             error: "Insufficient user balance."
@@ -1443,9 +1729,10 @@ app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
   } finally {
     client.release();
   }
-});
+});// ======================================
+// ADMIN CHAT ESCALATIONS
+// ======================================
 
-// Admin chat escalations
 app.get("/api/admin/chat-escalations", adminAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -1463,7 +1750,10 @@ app.get("/api/admin/chat-escalations", adminAuth, async (req, res) => {
   }
 });
 
-// Public app list
+// ======================================
+// PUBLIC APP LIST
+// ======================================
+
 app.get("/api/apps", async (req, res) => {
   try {
     const result = await pool.query(
@@ -1481,7 +1771,10 @@ app.get("/api/apps", async (req, res) => {
   }
 });
 
-// Add app
+// ======================================
+// ADMIN ADD APP
+// ======================================
+
 app.post("/api/admin/apps", adminAuth, async (req, res) => {
   try {
     const name = String(req.body.name || "").trim();
@@ -1531,7 +1824,10 @@ app.post("/api/admin/apps", adminAuth, async (req, res) => {
   }
 });
 
-// Edit app
+// ======================================
+// ADMIN EDIT APP
+// ======================================
+
 app.put("/api/admin/apps/:id", adminAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -1540,7 +1836,13 @@ app.put("/api/admin/apps/:id", adminAuth, async (req, res) => {
     const size = String(req.body.size || "").trim();
     const downloadUrl = String(req.body.download_url || "").trim();
 
-    if (!Number.isInteger(id) || id <= 0 || !name || !version || !downloadUrl) {
+    if (
+      !Number.isInteger(id) ||
+      id <= 0 ||
+      !name ||
+      !version ||
+      !downloadUrl
+    ) {
       return res.status(400).json({
         error: "Invalid app information."
       });
@@ -1588,7 +1890,10 @@ app.put("/api/admin/apps/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Delete app
+// ======================================
+// ADMIN DELETE APP
+// ======================================
+
 app.delete("/api/admin/apps/:id", adminAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -1619,14 +1924,20 @@ app.delete("/api/admin/apps/:id", adminAuth, async (req, res) => {
   }
 });
 
-// API not found
+// ======================================
+// API NOT FOUND
+// ======================================
+
 app.use("/api", (req, res) => {
   res.status(404).json({
     error: "API endpoint not found."
   });
 });
 
-// General error handler
+// ======================================
+// GENERAL ERROR HANDLER
+// ======================================
+
 app.use((error, req, res, next) => {
   console.error("Server error:", error);
 
@@ -1639,14 +1950,17 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Start server
+// ======================================
+// START SERVER
+// ======================================
+
 initDatabase()
   .then(() => {
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`SKYPAY server running on port ${PORT}`);
     });
   })
-  .catch((error) => {
+  .catch(error => {
     console.error("Database initialization failed:", error);
     process.exit(1);
   });
