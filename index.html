@@ -240,7 +240,10 @@ $("authForm").addEventListener("submit",async e=>{
     });
     const data=await response.json();
     if(!response.ok) throw new Error(data.error||"Request failed");
-    localStorage.setItem("skypay_token",data.token);
+    
+    // ড্যাশবোর্ডের সাথে মিলিয়ে টোকেনের নাম sky_token করা হলো
+    localStorage.setItem("sky_token",data.token);
+    
     localStorage.setItem("skypay_user",JSON.stringify(data.user));
     $("message").style.color="green";
     $("message").textContent="Success! Opening dashboard...";
@@ -261,12 +264,13 @@ async function loadProducts(){
     const data=await response.json();
     const list=$("productList");
 
-    if(!response.ok||!Array.isArray(data.products)||!data.products.length){
+    // সার্ভার থেকে সরাসরি অ্যারে আসে, তাই data চেক করা হচ্ছে
+    if(!response.ok||!Array.isArray(data)||!data.length){
       list.innerHTML="<p>No products available right now.</p>";
       return;
     }
 
-    list.innerHTML=data.products.map(p=>{
+    list.innerHTML=data.map(p=>{
       const price=Number(p.price||0);
       const daily=Number(p.daily_estimate||0);
       const days=Number(p.duration_days||0);
