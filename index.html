@@ -9,7 +9,6 @@
 <meta name="apple-mobile-web-app-title" content="SKYPAY">
 <link rel="manifest" href="/manifest.json">
 <title>SKYPAY - Smart Platform</title>
-
 <style>
 :root{--green:#168438;--dark:#155329;--light:#eff8e9;--text:#183d24}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -85,9 +84,7 @@ input:focus{border:2px solid #39964b}
 @media(min-width:650px){.hero,.notice,.download-section{max-width:650px;margin-left:auto;margin-right:auto}.quick{max-width:650px;margin-left:auto;margin-right:auto}.products{grid-template-columns:1fr 1fr;max-width:900px;margin:auto}.section{max-width:900px;margin:22px auto}.hero{min-height:300px}}
 </style>
 </head>
-
 <body>
-
 <header class="top">
   <div class="brand"><div class="logo">S</div>SKYPAY</div>
   <div class="top-actions">
@@ -95,17 +92,13 @@ input:focus{border:2px solid #39964b}
     <button class="round" onclick="openAuth('login')" aria-label="Account">♙</button>
   </div>
 </header>
-
 <section class="hero">
   <div class="eyebrow">SMART PLATFORM · SKYPAY</div>
   <h1>Build Your Brighter Tomorrow</h1>
   <p>Welcome to SKYPAY. Explore products and manage your account in one place.</p>
   <span class="pill">🌱 GROW WITH CONFIDENCE</span>
-  <a class="download-btn" href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk">
-    ⬇ DOWNLOAD SKYPAY APP
-  </a>
+  <a class="download-btn" href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk">⬇ DOWNLOAD SKYPAY APP</a>
 </section>
-
 <section class="quick">
   <div class="quick-item" onclick="openAuth('login')"><div class="quick-icon q-green">$</div><b>Recharge</b><small>Add Balance</small></div>
   <div class="quick-item" onclick="openAuth('login')"><div class="quick-icon q-orange">▤</div><b>Withdraw</b><small>Request</small></div>
@@ -113,37 +106,28 @@ input:focus{border:2px solid #39964b}
   <div class="quick-item" onclick="contactSupport()"><div class="quick-icon q-teal">▢</div><b>Service</b><small>Support</small></div>
   <div class="quick-item" onclick="joinTelegram()"><div class="quick-icon q-blue">➤</div><b>Channel</b><small>Join Now</small></div>
 </section>
-
 <section class="download-section">
   <h2>📱 SKYPAY Android App</h2>
   <p>Download the SKYPAY Android application and access the platform from your phone.</p>
-  <a class="download-btn" href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk">
-    ⬇ Download APK
-  </a>
+  <a class="download-btn" href="https://github.com/hidfjouffjorr-rgb/skypay-platform/releases/download/v1.0.0/SKYPAY.apk">⬇ Download APK</a>
   <p style="margin-top:10px">Version 1.0.0 · Android APK</p>
 </section>
-
 <section class="notice">
   <div class="notice-head"><h3>🌿 SKYPAY Official Notice</h3><span>📢</span></div>
   <p>Welcome to SKYPAY! Create your account to explore the platform. Please read product details and payment terms carefully before making any transaction.</p>
   <button class="soft-btn" onclick="contactSupport()">▢ Contact Support</button>
   <button class="telegram-btn" onclick="joinTelegram()">➤ Join Telegram</button>
 </section>
-
 <section class="section" id="products">
   <div class="section-head">
     <h2>Our Products</h2>
     <a href="dashboard.html">My Dashboard →</a>
   </div>
   <div class="products" id="productList">
-    <div class="product">
-      <div class="product-image">SKYPAY</div>
-      <h3>Loading products...</h3>
-    </div>
+    <div class="product"><div class="product-image">SKYPAY</div><h3>Loading products...</h3></div>
   </div>
   <p class="disclaimer">Important: Daily and total figures are estimates only, not guaranteed returns. Review all terms and risks before making a payment.</p>
 </section>
-
 <nav class="bottom">
   <a class="active" href="index.html"><span>⌂</span>Home</a>
   <a href="dashboard.html"><span>＄</span>Ordered</a>
@@ -151,7 +135,6 @@ input:focus{border:2px solid #39964b}
   <a href="#" onclick="shareSite();return false"><span>♧</span>Share</a>
   <a href="#" onclick="openAuth('login');return false"><span>♙</span>My</a>
 </nav>
-
 <div class="modal-bg" id="authModal">
   <div class="modal">
     <button class="close" onclick="closeModal()">×</button>
@@ -179,7 +162,6 @@ input:focus{border:2px solid #39964b}
     </div>
   </div>
 </div>
-
 <div class="modal-bg" id="noticeModal">
   <div class="modal">
     <button class="close" onclick="closeNotice()">×</button>
@@ -190,23 +172,30 @@ input:focus{border:2px solid #39964b}
     <button class="telegram-btn" onclick="joinTelegram()">Join Telegram</button>
   </div>
 </div>
-
 <script>
 const $ = id => document.getElementById(id);
 let authMode = "register";
 
+// URL-এর ?ref=CODE থেকে রেফারেল কোড নেওয়া হচ্ছে।
+const referralFromUrl = (new URLSearchParams(window.location.search).get("ref") || "").trim();
+
 function openAuth(mode){
   authMode=mode;
   updateAuthForm();
+  if(mode==="register" && referralFromUrl){
+    $("referral").value=referralFromUrl;
+  }
   $("authModal").style.display="flex";
 }
 function closeModal(){ $("authModal").style.display="none"; }
 function closeNotice(){ $("noticeModal").style.display="none"; }
 function openNotice(){ $("noticeModal").style.display="flex"; }
-
 function toggleAuth(){
   authMode=authMode==="register"?"login":"register";
   updateAuthForm();
+  if(authMode==="register" && referralFromUrl){
+    $("referral").value=referralFromUrl;
+  }
 }
 function updateAuthForm(){
   const isRegister=authMode==="register";
@@ -220,7 +209,6 @@ function updateAuthForm(){
   $("switchLink").textContent=isRegister?"Log in":"Register";
   $("message").textContent="";
 }
-
 $("authForm").addEventListener("submit",async e=>{
   e.preventDefault();
   $("message").style.color="#718273";
@@ -228,9 +216,8 @@ $("authForm").addEventListener("submit",async e=>{
   const phone=$("phone").value.trim();
   const password=$("password").value;
   const body=authMode==="register"
-    ? {name:$("name").value.trim(),phone,password,referralCode:$("referral").value.trim()}
+    ? {name:$("name").value.trim(),phone,password,referral_code:$("referral").value.trim()}
     : {phone,password};
-
   try{
     const endpoint=authMode==="register"?"/api/register":"/api/login";
     const response=await fetch(endpoint,{
@@ -240,10 +227,7 @@ $("authForm").addEventListener("submit",async e=>{
     });
     const data=await response.json();
     if(!response.ok) throw new Error(data.error||"Request failed");
-    
-    // ড্যাশবোর্ডের সাথে মিলিয়ে টোকেনের নাম sky_token করা হলো
     localStorage.setItem("sky_token",data.token);
-    
     localStorage.setItem("skypay_user",JSON.stringify(data.user));
     $("message").style.color="green";
     $("message").textContent="Success! Opening dashboard...";
@@ -253,23 +237,18 @@ $("authForm").addEventListener("submit",async e=>{
     $("message").textContent=error.message||"Connection error. Please try again.";
   }
 });
-
 function escapeHTML(value){
   return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-
 async function loadProducts(){
   try{
     const response=await fetch("/api/products");
     const data=await response.json();
     const list=$("productList");
-
-    // সার্ভার থেকে সরাসরি অ্যারে আসে, তাই data চেক করা হচ্ছে
     if(!response.ok||!Array.isArray(data)||!data.length){
       list.innerHTML="<p>No products available right now.</p>";
       return;
     }
-
     list.innerHTML=data.map(p=>{
       const price=Number(p.price||0);
       const daily=Number(p.daily_estimate||0);
@@ -277,7 +256,6 @@ async function loadProducts(){
       const image=p.image_url
         ? `<img src="${escapeHTML(p.image_url)}" alt="${escapeHTML(p.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:17px">`
         : "SKYPAY";
-
       return `<article class="product">
         <div class="product-image">${image}</div>
         <h3>${escapeHTML(p.name)}</h3>
@@ -291,19 +269,12 @@ async function loadProducts(){
         <button class="buy" onclick="openAuth('login')">VIEW / ACTIVATE</button>
       </article>`;
     }).join("");
-
   }catch(error){
     $("productList").innerHTML="<p>Products could not be loaded. Please refresh.</p>";
   }
 }
-
-function contactSupport(){
-  window.open("https://t.me/skypay_admin_bot","_blank");
-}
-function joinTelegram(){
-  window.open("https://t.me/skypay_admin_bot","_blank");
-}
-
+function contactSupport(){ window.open("https://t.me/skypay_admin_bot","_blank"); }
+function joinTelegram(){ window.open("https://t.me/skypay_admin_bot","_blank"); }
 async function shareSite(){
   const shareData={title:"SKYPAY",text:"Join SKYPAY",url:location.origin};
   try{
@@ -316,7 +287,6 @@ async function shareSite(){
     }
   }catch(e){}
 }
-
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("/service-worker.js")
@@ -330,6 +300,11 @@ if ("serviceWorker" in navigator) {
 }
 
 loadProducts();
+
+// রেফারেল লিংক দিয়ে এলে রেজিস্ট্রেশন ফর্ম অটোমেটিক খুলবে।
+if(referralFromUrl){
+  openAuth("register");
+}
 </script>
 </body>
 </html>
