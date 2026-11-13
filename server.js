@@ -575,6 +575,38 @@ app.get("/api/profile", userAuth, async (req, res) => {
   }
 });
 
+// Dashboard and login session verification
+app.get("/api/me", userAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, uid, username, name, phone,
+              balance, total_deposit, total_withdraw,
+              referral_code, created_at
+       FROM users
+       WHERE id=$1`,
+      [req.userId]
+    );
+
+    if (!result.rowCount) {
+      return res.status(404).json({
+        error: "User not found."
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: result.rows[0]
+    });
+
+  } catch (error) {
+    console.error("Me API error:", error);
+
+    return res.status(500).json({
+      error: "Could not verify user session."
+    });
+  }
+});
+
 // Deposit request
 app.post("/api/deposit", userAuth, async (req, res) => {
   try {
