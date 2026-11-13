@@ -10,8 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--g:#078437;--g2:#0ba34a;--dark:#064d27;--bg:#eff8f0;--ink:#183b26;--muted:#718477;--line:#e4eee5;--white:#fff;--gold:#f6c94c;--shadow:0 5px 18px #164a2410}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 8% 8%,#b8e8bd 0,transparent 26%),radial-gradient(circle at 94% 35%,#c9edcf 0,transparent 24%),linear-gradient(145deg,#dcefe0,#edf8ee 48%,#d8eddd);color:var(--ink);font-family:"Noto Sans Bengali",system-ui,sans-serif;padding-bottom:88px;position:relative}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-.app{max-width:560px;margin:auto;min-height:100vh;background:radial-gradient(ellipse at 100% 8%,#c9f0cb80,transparent 30%),radial-gradient(ellipse at 0% 55%,#d7f1d980,transparent 28%),linear-gradient(180deg,#f1faf1f2,#f8fcf8f7);box-shadow:0 0 30px #194b2510;position:relative;isolation:isolate}.app:before{content:"SKYPAY";position:fixed;z-index:-1;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-18deg);font-size:clamp(55px,18vw,125px);font-weight:900;letter-spacing:8px;color:#07843708;white-space:nowrap;pointer-events:none}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 8% 8%,#a6e6b2 0,transparent 28%),radial-gradient(circle at 94% 35%,#b5e9c0 0,transparent 26%),radial-gradient(circle at 50% 90%,#c5ebce 0,transparent 34%),linear-gradient(145deg,#ccebd2,#e8f7eb 48%,#c9e8d0);color:var(--ink);font-family:"Noto Sans Bengali",system-ui,sans-serif;padding-bottom:88px;position:relative}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.app{max-width:560px;margin:auto;min-height:100vh;background:radial-gradient(ellipse at 100% 8%,#b6edc6b8,transparent 34%),radial-gradient(ellipse at 0% 55%,#c5edcfad,transparent 32%),radial-gradient(ellipse at 55% 100%,#d7f2d9b8,transparent 38%),linear-gradient(180deg,#e9f8ecf5,#f3fbf4f7 48%,#e5f5e8f5);box-shadow:0 0 30px #194b2510;position:relative;isolation:isolate}.app:before{content:"SKYPAY";position:fixed;z-index:-1;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-18deg);font-size:clamp(55px,18vw,125px);font-weight:900;letter-spacing:8px;color:#0784370d;white-space:nowrap;pointer-events:none}
 .topbar{height:68px;padding:10px 15px;background:linear-gradient(110deg,#064b25,#078d3d);color:#fff;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .brand{display:flex;align-items:center;gap:9px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#d6ff9d,#fff);display:grid;place-items:center;color:#087b36;font-size:28px;font-weight:900;box-shadow:0 3px 10px #003d1c55}.brand-name{font-size:20px;font-weight:900;letter-spacing:1px;line-height:1}.brand-tag{font-size:9px;letter-spacing:1px;color:#d7f4df;margin-top:4px}.top-right{display:flex;align-items:center;gap:8px}.icon-btn{width:37px;height:37px;border:1px solid #ffffff35;background:#ffffff18;color:white;border-radius:50%;font-size:17px}.logout{border:0;border-radius:20px;padding:8px 12px;background:#ffffff20;color:white;font-size:11px;font-weight:800}
 main{padding:13px}.view{display:none}.view.active{display:block}
@@ -22,7 +22,7 @@ main{padding:13px}.view{display:none}.view.active{display:block}
 .panel{background:white;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-top:12px}.panel h3{font-size:14px;margin:0 0 11px}.feed-row,.data-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #edf3ed;font-size:11px}.feed-row:last-child,.data-row:last-child{border:0}.feed-left{display:flex;gap:8px}.dot{width:8px;height:8px;background:#12a34b;border-radius:50%;margin-top:5px;flex:none}.muted{color:var(--muted)}.small{font-size:10px}
 .product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.product-card{background:white;border:1px solid #dfeae0;border-radius:15px;padding:9px;box-shadow:0 4px 13px #154b2410;min-width:0}.product-image-wrap{height:130px;border-radius:11px;background:#f3faf2;display:grid;place-items:center;overflow:hidden}.product-image{width:100%;height:100%;object-fit:contain}.product-name{font-size:12px;font-weight:900;margin:9px 2px 7px;min-height:34px}.product-tag{font-size:9px;color:#8b6410;background:#fff5d9;border-radius:20px;padding:4px 7px;display:inline-block;margin-bottom:7px}.product-info{display:grid;grid-template-columns:1fr 1fr;gap:5px}.info{background:#f3faf4;border-radius:8px;padding:7px;min-width:0}.info small{font-size:9px;color:var(--muted);display:block}.info b{font-size:11px;color:#087b36;display:block;margin-top:3px;overflow-wrap:anywhere}.product-desc{font-size:9px;line-height:1.5;color:var(--muted);margin:8px 2px}.primary{width:100%;border:0;border-radius:9px;background:linear-gradient(90deg,#0a963f,#05632d);color:white;font-size:11px;font-weight:900;padding:10px;margin-top:8px}.empty{padding:18px;text-align:center;color:#859187;font-size:11px;grid-column:1/-1}
 .notice{padding:10px;border-radius:11px;background:#fff8df;border:1px solid #f0e3b5;color:#74591e;font-size:10px;line-height:1.6;margin-top:10px}
-.form{display:grid;gap:10px}.form label{font-size:11px;font-weight:800}.form input,.form select{width:100%;padding:12px;border:1px solid #dce9dd;border-radius:10px;background:#fbfefb;font-size:13px}.field-help{font-size:10px;color:var(--muted);line-height:1.5}.payline{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px;background:#f7fbf8;border:1px solid #e4eee5;border-radius:12px;margin-top:8px;font-size:11px}.pay-left{display:flex;align-items:center;gap:10px;min-width:0}.pay-logo{width:54px;height:42px;object-fit:contain;flex:none;background:#fff;border-radius:8px;padding:3px}.pay-logo.nagad{width:48px;height:48px}.pay-name{font-weight:900;font-size:13px}.pay-number{display:block;font-size:12px;letter-spacing:.3px;margin-top:3px;color:#294b35}.copy-btn{border:0;border-radius:9px;background:#dff3e2;color:#087b36;padding:9px 12px;font-size:11px;font-weight:900;flex:none}.copy-btn:active{transform:scale(.96)}
+.form{display:grid;gap:10px}.form label{font-size:11px;font-weight:800}.form input,.form select{width:100%;padding:12px;border:1px solid #dce9dd;border-radius:10px;background:#fbfefb;font-size:13px}.field-help{font-size:10px;color:var(--muted);line-height:1.5}.payline{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px;background:#f7fbf8;border:1px solid #e4eee5;border-radius:12px;margin-top:8px;font-size:11px}.pay-left{display:flex;align-items:center;gap:10px;min-width:0}.pay-logo{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;color:white;font-size:23px;font-weight:900;flex:none;box-shadow:0 3px 9px #0002}.pay-logo.bkash{background:linear-gradient(145deg,#e91e63,#b80e4d)}.pay-logo.nagad{background:linear-gradient(145deg,#f68b20,#e24a16);border-radius:50%}.pay-name{font-weight:900;font-size:13px}.pay-number{display:block;font-size:12px;letter-spacing:.3px;margin-top:3px;color:#294b35}.copy-btn{border:0;border-radius:9px;background:#dff3e2;color:#087b36;padding:9px 12px;font-size:11px;font-weight:900;flex:none}.copy-btn:active{transform:scale(.96)}
 .profile-hero{margin:-13px -13px 12px;padding:22px 16px;background:linear-gradient(120deg,#07552a,#0b9841);color:white;border-radius:0 0 20px 20px}.profile-row{display:flex;align-items:center;gap:12px}.avatar{width:53px;height:53px;border-radius:50%;display:grid;place-items:center;background:#ffffff25;border:2px solid #ffffff85;font-size:24px}.profile-row h2{font-size:16px;margin:0}.profile-row p{font-size:10px;margin:4px 0 0;color:#d9f1dd}.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.action-grid button{border:0;border-radius:10px;background:#e8f6e9;color:#087b36;padding:11px 4px;font-size:10px;font-weight:900}
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(560px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:white;border-top:1px solid var(--line);padding:8px 4px max(8px,env(safe-area-inset-bottom));z-index:15;box-shadow:0 -5px 18px #174b2410}.bottom-nav button{border:0;background:transparent;color:#87948a;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px}.bottom-nav button b{font-size:20px;font-weight:500}.bottom-nav button.active{color:#078437;font-weight:900}
 .toast{position:fixed;left:50%;bottom:95px;transform:translateX(-50%);background:#173c26;color:white;border-radius:22px;padding:10px 16px;font-size:11px;z-index:30;box-shadow:0 5px 20px #0002;max-width:90%;text-align:center}
@@ -87,7 +87,7 @@ main{padding:13px}.view{display:none}.view.active{display:block}
 
 <section class="view" id="depositView">
  <div class="section-head"><h2>টাকা জমা / Deposit</h2></div>
- <div class="hero" style="margin-bottom:12px;background:radial-gradient(circle at 88% 18%,#ffffff35,transparent 28%),linear-gradient(125deg,#07552a,#0b9841)"><div class="eyebrow">FAST • SECURE • SIMPLE</div><h1>ডিপোজিট করুন</h1><p>বিকাশ অথবা নগদ নম্বর কপি করে Send Money করুন। এরপর Transaction ID জমা দিন।</p></div><div class="panel"><h3>পেমেন্ট নম্বর</h3><div class="payline"><div class="pay-left"><img class="pay-logo bkash" src="https://raw.githubusercontent.com/mdmubarokhosin/Bd-MFS-Logo/refs/heads/main/logos/png/bkash.png" alt="bKash logo"><span><span class="pay-name" style="color:#d4145a">bKash Personal</span><b class="pay-number">+8801763341991</b></span></div><button class="copy-btn" type="button" onclick="copyText('+8801763341991')">▢ কপি</button></div><div class="payline"><div class="pay-left"><img class="pay-logo nagad" src="https://raw.githubusercontent.com/mdmubarokhosin/Bd-MFS-Logo/refs/heads/main/logos/png/nagad.png" alt="Nagad logo"><span><span class="pay-name" style="color:#e56b1a">নগদ Personal</span><b class="pay-number">+8801985052780</b></span></div><button class="copy-btn" type="button" onclick="copyText('+8801985052780')">▢ কপি</button></div><p class="field-help">পেমেন্ট পাঠানোর আগে নম্বর ও প্রাপকের পরিচয় যাচাই করুন। টাকা পাঠানোর পর নিচে সঠিক Transaction ID দিন।</p></div>
+ <div class="hero" style="margin-bottom:12px;background:radial-gradient(circle at 88% 18%,#ffffff35,transparent 28%),linear-gradient(125deg,#07552a,#0b9841)"><div class="eyebrow">FAST • SECURE • SIMPLE</div><h1>ডিপোজিট করুন</h1><p>বিকাশ অথবা নগদ নম্বর কপি করে Send Money করুন। এরপর Transaction ID জমা দিন।</p></div><div class="panel"><h3>পেমেন্ট নম্বর</h3><div class="payline"><div class="pay-left"><span class="pay-logo bkash" aria-hidden="true">b</span><span><span class="pay-name" style="color:#d4145a">bKash Personal</span><b class="pay-number">+8801763341991</b></span></div><button class="copy-btn" type="button" onclick="copyText('+8801763341991')">▢ কপি</button></div><div class="payline"><div class="pay-left"><span class="pay-logo nagad" aria-hidden="true">ন</span><span><span class="pay-name" style="color:#e56b1a">নগদ Personal</span><b class="pay-number">+8801985052780</b></span></div><button class="copy-btn" type="button" onclick="copyText('+8801985052780')">▢ কপি</button></div><p class="field-help">পেমেন্ট পাঠানোর আগে নম্বর ও প্রাপকের পরিচয় যাচাই করুন। টাকা পাঠানোর পর নিচে সঠিক Transaction ID দিন।</p></div>
  <div class="panel"><form class="form" id="depositForm"><label>পেমেন্ট মাধ্যম<select name="method"><option>bKash Personal</option><option>Nagad Personal</option></select></label><label>পরিমাণ (৳)<input name="amount" type="number" min="1" max="10000000" required></label><label>প্রেরকের মোবাইল নম্বর<input name="senderNumber" type="tel" required></label><label>Transaction ID<input name="transactionId" required></label><button class="primary" type="submit">ডিপোজিট অনুরোধ পাঠান</button></form><p class="msg" id="depositMsg"></p></div>
  <p class="notice">অনুরোধ Admin যাচাই করে অনুমোদন করবেন। অনুমোদনের আগে Wallet-এ টাকা যোগ হবে না।</p>
 </section>
@@ -108,8 +108,8 @@ main{padding:13px}.view{display:none}.view.active{display:block}
 </div>
 <div id="toast" class="toast hidden"></div>
 <script>
-const API='/api',token=localStorage.getItem('sk_token') || localStorage.getItem('sky_token');
-
+const API='/api';
+const token=localStorage.getItem('sky_token') || localStorage.getItem('skypay_token') || localStorage.getItem('sk_token');
 const authHeaders={'Content-Type':'application/json','Authorization':'Bearer '+(token||'')};
 const fallbackImages=['skypay-sky-v1.jpg','skypay-sky-v2.jpg','skypay-sky-v3.jpg','skypay-sky-vip.jpg'];
 let currentUser=null, products=[], plans=[];
@@ -119,18 +119,84 @@ function bn(n){return Number(n||0).toLocaleString('bn-BD');}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function toast(message){const el=$('toast');el.textContent=message;el.classList.remove('hidden');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.add('hidden'),2600);}
 function showView(name,button){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(name+'View').classList.add('active');document.querySelectorAll('.bottom-nav button').forEach(x=>x.classList.remove('active'));const b=button||document.querySelector('[data-view="'+name+'"]');if(b)b.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
-function logout(){localStorage.removeItem('sk_token');localStorage.removeItem('sky_token');localStorage.removeItem('sky_user');location.href='index.html';}
+function logout(){localStorage.removeItem('sky_token');localStorage.removeItem('skypay_token');localStorage.removeItem('sk_token');localStorage.removeItem('sky_user');localStorage.removeItem('skypay_user');location.href='index.html';}
 async function api(path,options={}){const response=await fetch(API+path,{...options,headers:{...authHeaders,...(options.headers||{})}});let data={};try{data=await response.json();}catch{}if(!response.ok)throw new Error(data.error||'অনুরোধ সম্পন্ন হয়নি');return data;}
-function fallbackImage(index){return fallbackImages[index%fallbackImages.length];}
+function fallbackImage(index){return 'https://placehold.co/500x300/e8f5e9/087b36?text=SKYPAY+'+(index+1);}
 function productCard(p,index){const image=p.imageUrl||fallbackImage(index);const price=Number(p.price||0),daily=Number(p.dailyEstimate||0),days=Number(p.durationDays||0);return `<article class="product-card"><div class="product-image-wrap"><img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" onerror="this.onerror=null;this.src='${fallbackImage(index)}'"></div><div class="product-name">${escapeHtml(p.name)}</div><span class="product-tag">SKYPAY PACKAGE</span><div class="product-info"><div class="info"><small>মূল্য</small><b>${money(price)}</b></div><div class="info"><small>মেয়াদ</small><b>${bn(days)} দিন</b></div><div class="info"><small>দৈনিক অনুমান</small><b>${money(daily)}</b></div><div class="info"><small>মোট অনুমান</small><b>${money(daily*days)}</b></div></div>${p.description?`<p class="product-desc">${escapeHtml(p.description)}</p>`:''}<button class="primary" onclick="activateProduct('${encodeURIComponent(p.id)}')">বিস্তারিত / চালু করুন</button></article>`;}
 function renderProducts(){const active=products.filter(p=>p.active!==false);const html=active.map(productCard).join('')||'<div class="empty">এখন কোনো প্রোডাক্ট প্রকাশিত নেই।</div>';$('homeProducts').innerHTML=active.slice(0,4).map(productCard).join('')||'<div class="empty">এখন কোনো প্রোডাক্ট নেই।</div>';$('allProducts').innerHTML=html;}
 function renderPlans(){const html=plans.map(p=>`<div class="data-row"><span><b>${escapeHtml(p.productName)}</b><br><small class="muted">${bn(p.durationDays)} দিন · ${escapeHtml(p.status)}</small></span><b>${money(p.price)}<br><small class="muted">দৈনিক ${money(p.dailyEstimate)}</small></b></div>`).join('')||'<div class="empty">এখনো কোনো সক্রিয় প্ল্যান নেই।</div>';$('myPlanList').innerHTML=html;$('earningPlans').innerHTML=html;}
-async function loadDashboard(){if(!token){location.href='index.html';return;}try{const me=await api('/me');currentUser=me.user;const [prod,plan,req]=await Promise.all([api('/products'),api('/my-plans'),api('/my-requests')]);products=prod.products||[];plans=plan.plans||[];const balance=money(currentUser.balance);$('balance').textContent=balance;$('profileBalance').textContent=balance;$('activePlans').textContent=bn(plans.length);$('profilePlans').textContent=bn(plans.length);$('profileName').textContent=currentUser.full_name||currentUser.name||'SKYPAY সদস্য';$('profileMobile').textContent='মোবাইল: '+(currentUser.phone||currentUser.mobile||'—');$('profileUid').textContent=currentUser.id||currentUser.uid||'—';$('teamUid').textContent=currentUser.id||currentUser.uid||'—';const referral=currentUser.referral_code||currentUser.referralCode||'';$('refCode').textContent=referral||'—';const ref=location.origin+location.pathname.replace(/dashboard\.html$/,'index.html')+'?ref='+encodeURIComponent(referral);$('refLink').value=ref;const daily=plans.reduce((sum,p)=>sum+Number(p.dailyEstimate||0),0),total=plans.reduce((sum,p)=>sum+Number(p.dailyEstimate||0)*Number(p.durationDays||0),0);$('daily').textContent=money(daily);$('projected').textContent=money(total);renderProducts();renderPlans();$('recentRequests').innerHTML=(req.requests||[]).slice(0,4).map(r=>`<div class="feed-row"><span class="dot"></span><div><b>${r.type==='deposit'?'ডিপোজিট':'উত্তোলন'} · ${money(r.amount)}</b><br><small class="muted">${escapeHtml(r.method)} · ${escapeHtml(r.status)} · ${new Date(r.createdAt).toLocaleString('bn-BD')}</small></div></div>`).join('')||'<div class="empty">এখনো কোনো অনুরোধ নেই।</div>';}catch(e){toast(e.message);if(/login|token/i.test(e.message))logout();}}
-async function activateProduct(id){if(!confirm('এই প্রোডাক্ট চালু করতে আপনার Wallet থেকে মূল্য কাটা হবে। প্রোডাক্টের শর্ত যাচাই করেছেন?'))return;try{const result=await api('/plans/'+id+'/activate',{method:'POST',body:'{}'});toast(result.message||'অনুরোধ সম্পন্ন');await loadDashboard();showView('products');}catch(e){toast(e.message);}}
-async function submitRequest(form,path,msgId){const msg=$(msgId);msg.textContent='';const button=form.querySelector('button[type="submit"]');button.disabled=true;button.textContent='পাঠানো হচ্ছে…';try{const body=Object.fromEntries(new FormData(form));const result=await api(path,{method:'POST',body:JSON.stringify(body)});msg.textContent=result.message||'অনুরোধ জমা হয়েছে';form.reset();await loadDashboard();}catch(e){msg.textContent=e.message;}finally{button.disabled=false;button.textContent=path.includes('deposit')?'ডিপোজিট অনুরোধ পাঠান':'উত্তোলন অনুরোধ পাঠান';}}
-$('depositForm').addEventListener('submit',e=>{e.preventDefault();submitRequest(e.target,'/requests/deposit','depositMsg');});
-$('withdrawForm').addEventListener('submit',e=>{e.preventDefault();submitRequest(e.target,'/requests/withdraw','withdrawMsg');});
-function copyText(value){if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(value).then(()=>toast('কপি হয়েছে')).catch(()=>toast(value));}else{const el=document.createElement('textarea');el.value=value;document.body.appendChild(el);el.select();document.execCommand('copy');el.remove();toast('কপি হয়েছে');}}
+async function loadDashboard(){
+ if(!token){location.href='index.html';return;}
+ try{
+  const me=await api('/me');
+  currentUser=me.user||me;
+  // এই সার্ভারের /api/products সরাসরি array এবং DB field snake_case পাঠায়।
+  const rawProducts=await api('/products');
+  products=(Array.isArray(rawProducts)?rawProducts:(rawProducts.products||[])).map(p=>({
+   ...p, imageUrl:p.imageUrl||p.image_url||'', dailyEstimate:p.dailyEstimate??p.daily_estimate??0,
+   durationDays:p.durationDays??p.duration_days??0, active:p.active===undefined?true:p.active
+  }));
+  // বর্তমান সার্ভারে my-plans/my-requests নয়, my-orders endpoint রয়েছে।
+  let orders={plans:[],transactions:[]};
+  try{orders=await api('/my-orders');}catch(error){console.warn('Order history unavailable:',error.message);}
+  plans=(orders.plans||[]).map(p=>({
+   ...p, productName:p.productName||p.product_name||p.name||'SKYPAY Plan',
+   durationDays:p.durationDays??p.duration_days??0,
+   dailyEstimate:p.dailyEstimate??p.daily_estimate??0,
+   price:p.price??0, status:p.status||'active'
+  }));
+  const balance=money(currentUser.balance);
+  $('balance').textContent=balance;$('profileBalance').textContent=balance;
+  $('activePlans').textContent=bn(plans.length);$('profilePlans').textContent=bn(plans.length);
+  $('profileName').textContent=currentUser.name||currentUser.full_name||'SKYPAY সদস্য';
+  $('profileMobile').textContent='মোবাইল: '+(currentUser.phone||currentUser.mobile||'—');
+  const uidValue=currentUser.uid||currentUser.user_uid||'—';
+  const referral=currentUser.referral_code||currentUser.referralCode||'';
+  $('profileUid').textContent=uidValue;$('teamUid').textContent=uidValue;
+  $('refCode').textContent=referral||'—';
+  $('refLink').value=referral?(location.origin+'/?ref='+encodeURIComponent(referral)):'রেফারেল কোড পাওয়া যায়নি';
+  const daily=plans.reduce((sum,p)=>sum+Number(p.dailyEstimate||0),0);
+  const total=plans.reduce((sum,p)=>sum+Number(p.dailyEstimate||0)*Number(p.durationDays||0),0);
+  $('daily').textContent=money(daily);$('projected').textContent=money(total);
+  renderProducts();renderPlans();
+  const tx=orders.transactions||[];
+  $('recentRequests').innerHTML=tx.slice(0,4).map(r=>`<div class="feed-row"><span class="dot"></span><div><b>${escapeHtml(r.type||r.description||'লেনদেন')} · ${money(r.amount)}</b><br><small class="muted">${escapeHtml(r.method||'')} · ${escapeHtml(r.status||'')} · ${new Date(r.createdAt||r.created_at||Date.now()).toLocaleString('bn-BD')}</small></div></div>`).join('')||'<div class="empty">এখনো কোনো কার্যক্রম নেই।</div>';
+ }catch(e){toast(e.message);if(/login|token/i.test(e.message))logout();}
+}
+async function activateProduct(id){if(!confirm('এই প্রোডাক্ট চালু করতে আপনার Wallet থেকে মূল্য কাটা হবে। প্রোডাক্টের শর্ত যাচাই করেছেন?'))return;try{const result=await api('/activate',{method:'POST',body:JSON.stringify({product_id:decodeURIComponent(id)})});toast(result.message||'অনুরোধ সম্পন্ন');await loadDashboard();showView('products');}catch(e){toast(e.message);}}
+async function submitRequest(form,type,msgId){
+ const msg=$(msgId);msg.textContent='';const button=form.querySelector('button[type="submit"]');button.disabled=true;button.textContent='পাঠানো হচ্ছে…';
+ try{
+  const f=Object.fromEntries(new FormData(form));
+  const method=String(f.method||'').toLowerCase().includes('nagad')?'nagad':'bkash';
+  const body=type==='deposit'?{amount:Number(f.amount),method,sender_number:f.senderNumber,transaction_id:f.transactionId}:{amount:Number(f.amount),method,account_number:f.accountNumber};
+  const result=await api(type==='deposit'?'/deposit':'/withdraw',{method:'POST',body:JSON.stringify(body)});
+  msg.textContent=result.message||'অনুরোধ জমা হয়েছে';form.reset();await loadDashboard();
+ }catch(e){msg.textContent=e.message;}finally{button.disabled=false;button.textContent=type==='deposit'?'ডিপোজিট অনুরোধ পাঠান':'উত্তোলন অনুরোধ পাঠান';}
+}
+$('depositForm').addEventListener('submit',e=>{e.preventDefault();submitRequest(e.target,'deposit','depositMsg');});
+$('withdrawForm').addEventListener('submit',e=>{e.preventDefault();submitRequest(e.target,'withdraw','withdrawMsg');});
+async function copyText(value){
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(value);
+    }else{
+      const el=document.createElement('textarea');
+      el.value=value;
+      el.setAttribute('readonly','');
+      el.style.position='fixed';
+      el.style.opacity='0';
+      document.body.appendChild(el);
+      el.select();
+      const copied=document.execCommand('copy');
+      el.remove();
+      if(!copied) throw new Error('copy failed');
+    }
+    toast('নম্বর কপি হয়েছে: '+value);
+  }catch(error){
+    toast('কপি করা যায়নি। নম্বরটি চেপে ধরে কপি করুন: '+value);
+  }
+}
 function copyRef(){copyText($('refLink').value);}
 function openSupport(){window.open('https://t.me/skypay_admin_bot','_blank','noopener');}
 loadDashboard();
