@@ -342,11 +342,21 @@ async function initDatabase() {
     CREATE TABLE IF NOT EXISTS payment_settings (
       id INTEGER PRIMARY KEY DEFAULT 1,
       bkash_number VARCHAR(40) NOT NULL DEFAULT '+8801763341991',
-      nagad_number VARCHAR(40) NOT NULL DEFAULT '+8801763341991',
+      nagad_number VARCHAR(40) NOT NULL DEFAULT '+8801985052780',
       bkash_logo TEXT DEFAULT '',
       nagad_logo TEXT DEFAULT '',
+      bkash_type VARCHAR(20) NOT NULL DEFAULT 'send_money',
+      nagad_type VARCHAR(20) NOT NULL DEFAULT 'send_money',
       updated_at TIMESTAMPTZ DEFAULT NOW()
     );
+
+    ALTER TABLE payment_settings
+    ADD COLUMN IF NOT EXISTS bkash_type VARCHAR(20)
+    NOT NULL DEFAULT 'send_money';
+
+    ALTER TABLE payment_settings
+    ADD COLUMN IF NOT EXISTS nagad_type VARCHAR(20)
+    NOT NULL DEFAULT 'send_money';
 
     INSERT INTO payment_settings (id)
     VALUES (1)
@@ -1920,7 +1930,7 @@ app.delete("/api/admin/apps/:id", adminAuth, async (req, res) => {
 
     if (!result.rowCount) {
       return res.status(404).json({
-        error: "Payment settings error:"
+        error: "App not found."
       });
     }
 
@@ -1941,8 +1951,10 @@ app.get("/api/payment-settings", async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT bkash_number, nagad_number,
-              bkash_logo, nagad_logo
-       FROM payment_settings WHERE id=1`
+              bkash_logo, nagad_logo,
+              bkash_type, nagad_type
+       FROM payment_settings
+       WHERE id=1`
     );
 
     res.json(result.rows[0] || {});
@@ -1962,6 +1974,7 @@ app.get("/api/admin/payment-settings", adminAuth, async (req, res) => {
 
     res.json(result.rows[0] || {});
   } catch (error) {
+    console.error("Admin payment settings error:", error);
     res.status(500).json({
       error: "Could not load payment settings."
     });
@@ -1972,12 +1985,25 @@ app.put("/api/admin/payment-settings", adminAuth, async (req, res) => {
   try {
     const bkash = normalizePhone(req.body.bkash_number);
     const nagad = normalizePhone(req.body.nagad_number);
+
     const bkashLogo = String(req.body.bkash_logo || "");
     const nagadLogo = String(req.body.nagad_logo || "");
+
+    const bkashType = String(req.body.bkash_type || "send_money");
+    const nagadType = String(req.body.nagad_type || "send_money");
 
     if (!bkash || !nagad) {
       return res.status(400).json({
         error: "Both payment numbers are required."
+      });
+    }
+
+    if (
+      !["send_money", "cash_out"].includes(bkashType) ||
+      !["send_money", "cash_out"].includes(nagadType)
+    ) {
+      return res.status(400).json({
+        error: "Invalid payment transaction type."
       });
     }
 
@@ -1987,9 +2013,18 @@ app.put("/api/admin/payment-settings", adminAuth, async (req, res) => {
            nagad_number=$2,
            bkash_logo=$3,
            nagad_logo=$4,
+           bkash_type=$5,
+           nagad_type=$6,
            updated_at=NOW()
        WHERE id=1`,
-      [bkash, nagad, bkashLogo, nagadLogo]
+      [
+        bkash,
+        nagad,
+        bkashLogo,
+        nagadLogo,
+        bkashType,
+        nagadType
+      ]
     );
 
     res.json({
