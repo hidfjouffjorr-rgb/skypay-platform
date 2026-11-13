@@ -334,8 +334,12 @@ async function initDatabase() {
       version TEXT NOT NULL,
       size TEXT DEFAULT '',
       download_url TEXT NOT NULL,
+      image_url TEXT DEFAULT '',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE managed_apps
+    ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT '';
   `);
 
   await pool.query(`
@@ -1776,7 +1780,7 @@ app.get("/api/admin/chat-escalations", adminAuth, async (req, res) => {
 app.get("/api/apps", async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, name, version, size, download_url, created_at
+      `SELECT id, name, version, size, download_url, image_url, created_at
        FROM managed_apps
        ORDER BY id DESC`
     );
@@ -1800,6 +1804,7 @@ app.post("/api/admin/apps", adminAuth, async (req, res) => {
     const version = String(req.body.version || "").trim();
     const size = String(req.body.size || "").trim();
     const downloadUrl = String(req.body.download_url || "").trim();
+    const imageUrl = String(req.body.image_url || "").trim();
 
     if (!name || !version || !downloadUrl) {
       return res.status(400).json({
@@ -1825,10 +1830,10 @@ app.post("/api/admin/apps", adminAuth, async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO managed_apps
-       (name, version, size, download_url)
-       VALUES ($1, $2, $3, $4)
+       (name, version, size, download_url, image_url)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [name, version, size, downloadUrl]
+      [name, version, size, downloadUrl, imageUrl]
     );
 
     res.status(201).json({
@@ -1854,6 +1859,7 @@ app.put("/api/admin/apps/:id", adminAuth, async (req, res) => {
     const version = String(req.body.version || "").trim();
     const size = String(req.body.size || "").trim();
     const downloadUrl = String(req.body.download_url || "").trim();
+    const imageUrl = String(req.body.image_url || "").trim();
 
     if (
       !Number.isInteger(id) ||
@@ -1885,10 +1891,10 @@ app.put("/api/admin/apps/:id", adminAuth, async (req, res) => {
 
     const result = await pool.query(
       `UPDATE managed_apps
-       SET name=$1, version=$2, size=$3, download_url=$4
-       WHERE id=$5
+       SET name=$1, version=$2, size=$3, download_url=$4, image_url=$5
+       WHERE id=$6
        RETURNING *`,
-      [name, version, size, downloadUrl, id]
+      [name, version, size, downloadUrl, imageUrl, id]
     );
 
     if (!result.rowCount) {
