@@ -108,8 +108,8 @@ main{padding:13px}.view{display:none}.view.active{display:block}
 </div>
 <div id="toast" class="toast hidden"></div>
 <script>
-const API='/api';
-const token=localStorage.getItem('sk_token') || localStorage.getItem('sky_token');
+const API='/api',token=localStorage.getItem('sk_token') || localStorage.getItem('sky_token');
+
 const authHeaders={'Content-Type':'application/json','Authorization':'Bearer '+(token||'')};
 const fallbackImages=['skypay-sky-v1.jpg','skypay-sky-v2.jpg','skypay-sky-v3.jpg','skypay-sky-vip.jpg'];
 let currentUser=null, products=[], plans=[];
