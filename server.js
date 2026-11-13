@@ -183,6 +183,23 @@ async function sendTelegramMessage(message) {
   }
 }
 
+function uploadImageToCloudinary(buffer, folder = "skypay/products") {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: "image"
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+
+    stream.end(buffer);
+  });
+}
+
 // ======================================
 // DATABASE INITIALIZATION
 // ======================================
@@ -272,8 +289,6 @@ async function initDatabase() {
     );
   `);
 
-  // Referral commission records.
-  // A deposit request can generate commission only once.
   await pool.query(`
     CREATE TABLE IF NOT EXISTS referral_commissions (
       id SERIAL PRIMARY KEY,
@@ -321,6 +336,21 @@ async function initDatabase() {
       download_url TEXT NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS payment_settings (
+      id INTEGER PRIMARY KEY DEFAULT 1,
+      bkash_number VARCHAR(40) NOT NULL DEFAULT '+8801763341991',
+      nagad_number VARCHAR(40) NOT NULL DEFAULT '+8801763341991',
+      bkash_logo TEXT DEFAULT '',
+      nagad_logo TEXT DEFAULT '',
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    );
+
+    INSERT INTO payment_settings (id)
+    VALUES (1)
+    ON CONFLICT (id) DO NOTHING;
   `);
 
   const productCount = await pool.query(
@@ -686,10 +716,10 @@ app.post("/api/deposit", userAuth, async (req, res) => {
       error: "Could not submit deposit request."
     });
   }
-});// ======================================
+});
+
+// ======================================
 // WITHDRAWAL REQUEST
-// Minimum ৳1,000
-// Maximum 3 requests in rolling 24 hours
 // ======================================
 
 app.post("/api/withdraw", userAuth, async (req, res) => {
@@ -720,7 +750,6 @@ app.post("/api/withdraw", userAuth, async (req, res) => {
 
     await client.query("BEGIN");
 
-    // Lock user row to prevent simultaneous requests bypassing limit.
     const userResult = await client.query(
       "SELECT balance FROM users WHERE id=$1 FOR UPDATE",
       [req.userId]
@@ -1000,7 +1029,6 @@ app.get("/api/referral/summary", userAuth, async (req, res) => {
 
 // ======================================
 // CLAIM REFERRAL COMMISSION
-// Adds claimed commission to main wallet
 // ======================================
 
 app.post("/api/referral/claim", userAuth, async (req, res) => {
@@ -1009,7 +1037,6 @@ app.post("/api/referral/claim", userAuth, async (req, res) => {
   try {
     await client.query("BEGIN");
 
-    // Lock the account to prevent duplicate simultaneous claims.
     const userResult = await client.query(
       "SELECT id FROM users WHERE id=$1 FOR UPDATE",
       [req.userId]
@@ -1091,7 +1118,6 @@ app.post("/api/referral/claim", userAuth, async (req, res) => {
 
 // ======================================
 // CHAT HISTORY
-// Returns an array of messages
 // ======================================
 
 app.get("/api/chat/history", userAuth, async (req, res) => {
@@ -1197,7 +1223,9 @@ app.post("/api/chat", userAuth, chatLimiter, async (req, res) => {
       error: "Chat service failed."
     });
   }
-});// ======================================
+});
+
+// ======================================
 // ADMIN LOGIN
 // ======================================
 
@@ -1259,23 +1287,6 @@ app.get("/api/admin/me", adminAuth, (req, res) => {
 // ======================================
 // CLOUDINARY IMAGE UPLOAD
 // ======================================
-
-function uploadImageToCloudinary(buffer) {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: "skypay/products",
-        resource_type: "image"
-      },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      }
-    );
-
-    stream.end(buffer);
-  });
-}
 
 app.post(
   "/api/admin/upload-image",
@@ -1585,8 +1596,6 @@ app.get("/api/admin/payment-requests", adminAuth, async (req, res) => {
 
 // ======================================
 // APPROVE OR REJECT PAYMENT REQUEST
-// Deposit approval creates 10% referral commission.
-// Unique deposit_request_id prevents duplicate commission.
 // ======================================
 
 app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
@@ -1653,8 +1662,6 @@ app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
           [request.amount, request.user_id]
         );
 
-        // Give 10% commission to the referrer.
-        // Commission is available to claim after deposit approval.
         if (depositUser.referred_by) {
           await client.query(
             `INSERT INTO referral_commissions
@@ -1729,7 +1736,9 @@ app.patch("/api/admin/payment-requests/:id", adminAuth, async (req, res) => {
   } finally {
     client.release();
   }
-});// ======================================
+});
+
+// ======================================
 // ADMIN CHAT ESCALATIONS
 // ======================================
 
@@ -1911,7 +1920,7 @@ app.delete("/api/admin/apps/:id", adminAuth, async (req, res) => {
 
     if (!result.rowCount) {
       return res.status(404).json({
-        error: "App not found."
+        error: "Payment settings error:"
       });
     }
 
@@ -1923,6 +1932,134 @@ app.delete("/api/admin/apps/:id", adminAuth, async (req, res) => {
     });
   }
 });
+
+// ======================================
+// PAYMENT SETTINGS
+// ======================================
+
+app.get("/api/payment-settings", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT bkash_number, nagad_number,
+              bkash_logo, nagad_logo
+       FROM payment_settings WHERE id=1`
+    );
+
+    res.json(result.rows[0] || {});
+  } catch (error) {
+    console.error("Payment settings error:", error);
+    res.status(500).json({
+      error: "Could not load payment settings."
+    });
+  }
+});
+
+app.get("/api/admin/payment-settings", adminAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM payment_settings WHERE id=1"
+    );
+
+    res.json(result.rows[0] || {});
+  } catch (error) {
+    res.status(500).json({
+      error: "Could not load payment settings."
+    });
+  }
+});
+
+app.put("/api/admin/payment-settings", adminAuth, async (req, res) => {
+  try {
+    const bkash = normalizePhone(req.body.bkash_number);
+    const nagad = normalizePhone(req.body.nagad_number);
+    const bkashLogo = String(req.body.bkash_logo || "");
+    const nagadLogo = String(req.body.nagad_logo || "");
+
+    if (!bkash || !nagad) {
+      return res.status(400).json({
+        error: "Both payment numbers are required."
+      });
+    }
+
+    await pool.query(
+      `UPDATE payment_settings
+       SET bkash_number=$1,
+           nagad_number=$2,
+           bkash_logo=$3,
+           nagad_logo=$4,
+           updated_at=NOW()
+       WHERE id=1`,
+      [bkash, nagad, bkashLogo, nagadLogo]
+    );
+
+    res.json({
+      success: true,
+      message: "Payment settings saved."
+    });
+  } catch (error) {
+    console.error("Payment settings save error:", error);
+    res.status(500).json({
+      error: "Could not save payment settings."
+    });
+  }
+});
+
+app.post(
+  "/api/admin/payment-logo",
+  adminAuth,
+  (req, res, next) => {
+    upload.single("image")(req, res, error => {
+      if (error) {
+        return res.status(400).json({
+          error: error.message || "Image upload error."
+        });
+      }
+      next();
+    });
+  },
+  async (req, res) => {
+    try {
+      const method = String(req.body.method || "").toLowerCase();
+
+      if (!["bkash", "nagad"].includes(method)) {
+        return res.status(400).json({
+          error: "Select bKash or Nagad."
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          error: "Please choose a logo image."
+        });
+      }
+
+      if (
+        !process.env.CLOUDINARY_CLOUD_NAME ||
+        !process.env.CLOUDINARY_API_KEY ||
+        !process.env.CLOUDINARY_API_SECRET
+      ) {
+        return res.status(503).json({
+          error: "Cloudinary is not configured."
+        });
+      }
+
+      const result = await uploadImageToCloudinary(
+        req.file.buffer,
+        "skypay/payment-logos"
+      );
+
+      res.status(201).json({
+        success: true,
+        url: result.secure_url
+      });
+    } catch (error) {
+      console.error("Payment logo upload error:", error);
+      res.status(500).json({
+        error: "Could not upload payment logo."
+      });
+    }
+  }
+);
 
 // ======================================
 // API NOT FOUND
