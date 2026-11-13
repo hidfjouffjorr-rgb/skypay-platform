@@ -32,7 +32,51 @@
 <div class="panel"><h3>আপনার রেফারেল তথ্য</h3><div class="data-row"><span>আপনার UID</span><b id="teamUid">—</b></div><div class="data-row"><span>রেফারেল কোড</span><b id="refCode">—</b></div><label class="small muted">আমন্ত্রণ লিংক</label><input id="refLink" readonly style="width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;margin-top:6px"><button class="primary" onclick="copyRef()">লিংক কপি করুন</button><button class="primary" id="claimBtn" onclick="claimCommission()">কমিশন Claim করে Wallet-এ নিন</button><p class="field-help" id="commissionNote">শুধু আপনার রেফার করা সদস্যের Admin-অনুমোদিত ডিপোজিটের ১০% কমিশন হিসেবে গণনা হবে।</p></div>
 <div class="panel"><h3>আমার রেফার করা সদস্য</h3><div id="teamMembers" class="empty">লোড হচ্ছে…</div></div></section>
 <section class="view" id="profileView"><div class="profile-hero"><div class="profile-row"><div class="avatar">♙</div><div><h2 id="profileName">SKYPAY সদস্য</h2><p id="profileMobile">মোবাইল: —</p><p>UID: <span id="profileUid">—</span></p></div></div></div><div class="wallet-grid"><div class="wallet-card"><small>উপলব্ধ ব্যালেন্স</small><strong id="profileBalance">৳০</strong></div><div class="wallet-card light"><small>সক্রিয় প্ল্যান</small><strong id="profilePlans">০</strong></div></div><div class="action-grid"><button onclick="showView('deposit')">↓ ডিপোজিট</button><button onclick="showView('withdraw')">৳ উত্তোলন</button><button onclick="openSupport()">☏ সাপোর্ট</button></div><div class="panel"><div class="data-row"><span>👤　ব্যক্তিগত তথ্য</span><b>›</b></div><div class="data-row"><span>🔐　অ্যাকাউন্ট নিরাপত্তা</span><b>›</b></div><div class="data-row"><span>💬　গ্রাহক সহায়তা</span><b>›</b></div><div class="data-row"><span>ℹ　SKYPAY সম্পর্কে</span><b>›</b></div></div></section>
-<section class="view" id="depositView"><div class="section-head"><h2>টাকা জমা / Deposit</h2></div><div class="hero"><div class="eyebrow">FAST • SECURE • SIMPLE</div><h1>ডিপোজিট করুন</h1><p>বিকাশ অথবা নগদ নম্বর কপি করে Send Money করুন। এরপর Transaction ID জমা দিন।</p></div><div class="panel"><h3>পেমেন্ট নম্বর</h3><div class="payline"><div class="pay-left"><img id="bkashPayLogo" class="pay-logo bkash" src="https://raw.githubusercontent.com/mdmubarokhosin/Bd-MFS-Logo/refs/heads/main/logos/png/bkash.png" alt="bKash logo" onerror="this.style.display='none'"><span><span class="pay-name" style="color:#d4145a">bKash Personal</span><b class="pay-number" id="bkashPayNumber">+8801763341991</b></span></div><button class="copy-btn" onclick="copyText(document.getElementById('bkashPayNumber').textContent)">▢ কপি</button></div><div class="payline"><div class="pay-left"><img id="nagadPayLogo" class="pay-logo nagad" src="https://raw.githubusercontent.com/mdmubarokhosin/Bd-MFS-Logo/refs/heads/main/logos/png/nagad.png" alt="Nagad logo" onerror="this.style.display='none'"><span><span class="pay-name" style="color:#e56b1a">নগদ Personal</span><b class="pay-number" id="nagadPayNumber">+8801763341991</b></span></div><button class="copy-btn" onclick="copyText(document.getElementById('nagadPayNumber').textContent)">▢ কপি</button></div><p class="field-help">পেমেন্ট পাঠানোর আগে নম্বর ও প্রাপকের পরিচয় যাচাই করুন।</p></div><div class="panel"><form class="form" id="depositForm"><label>পেমেন্ট মাধ্যম<select name="method"><option>bKash Personal</option><option>Nagad Personal</option></select></label><label>পরিমাণ (৳)<input name="amount" type="number" min="500" max="10000000" required></label><label>প্রেরকের মোবাইল নম্বর<input name="senderNumber" type="tel" required></label><label>Transaction ID<input name="transactionId" required></label><button class="primary" type="submit">ডিপোজিট অনুরোধ পাঠান</button></form><p class="msg" id="depositMsg"></p></div><p class="notice">সর্বনিম্ন ডিপোজিট ৳৫০০। Admin অনুমোদনের আগে Wallet-এ টাকা যোগ হবে না।</p></section>
+<section class="view" id="depositView">
+<div class="section-head"><h2>টাকা জমা / Deposit</h2></div>
+<div class="hero">
+  <div class="eyebrow">FAST • SECURE • SIMPLE</div>
+  <h1>ডিপোজিট করুন</h1>
+  <p id="depositPaymentInstruction">বিকাশ অথবা নগদ নম্বর কপি করে নির্ধারিত পদ্ধতিতে পেমেন্ট করুন। এরপর Transaction ID জমা দিন।</p>
+</div>
+<div class="panel">
+  <h3>পেমেন্ট নম্বর</h3>
+  <div class="payline">
+    <div class="pay-left">
+      <img id="bkashPayLogo" class="pay-logo bkash" src="https://raw.githubusercontent.com/mdmubarokhosin/Bd-MFS-Logo/refs/heads/main/logos/png/bkash.png" alt="bKash logo" onerror="this.style.display='none'">
+      <span>
+        <span class="pay-name" style="color:#d4145a">bKash Personal</span>
+        <b class="pay-number" id="bkashPayNumber">+8801763341991</b>
+        <small class="field-help" id="bkashPayType">Send Money</small>
+      </span>
+    </div>
+    <button class="copy-btn" onclick="copyText(document.getElementById('bkashPayNumber').textContent)">▢ কপি</button>
+  </div>
+  <div class="payline">
+    <div class="pay-left">
+      <img id="nagadPayLogo" class="pay-logo nagad" src="https://raw.githubusercontent.com/mdmubarokhosin/Bd-MFS-Logo/refs/heads/main/logos/png/nagad.png" alt="Nagad logo" onerror="this.style.display='none'">
+      <span>
+        <span class="pay-name" style="color:#e56b1a">নগদ Personal</span>
+        <b class="pay-number" id="nagadPayNumber">+8801985052780</b>
+        <small class="field-help" id="nagadPayType">Send Money</small>
+      </span>
+    </div>
+    <button class="copy-btn" onclick="copyText(document.getElementById('nagadPayNumber').textContent)">▢ কপি</button>
+  </div>
+  <p class="field-help">পেমেন্ট পাঠানোর আগে নম্বর ও প্রাপকের পরিচয় যাচাই করুন।</p>
+</div>
+<div class="panel">
+  <form class="form" id="depositForm">
+    <label>পেমেন্ট মাধ্যম<select name="method"><option>bKash Personal</option><option>Nagad Personal</option></select></label>
+    <label>পরিমাণ (৳)<input name="amount" type="number" min="500" max="10000000" required></label>
+    <label>প্রেরকের মোবাইল নম্বর<input name="senderNumber" type="tel" required></label>
+    <label>Transaction ID<input name="transactionId" required></label>
+    <button class="primary" type="submit">ডিপোজিট অনুরোধ পাঠান</button>
+  </form>
+  <p class="msg" id="depositMsg"></p>
+</div>
+<p class="notice">সর্বনিম্ন ডিপোজিট ৳৫০০। Admin অনুমোদনের আগে Wallet-এ টাকা যোগ হবে না।</p>
+</section>
 <section class="view" id="withdrawView"><div class="section-head"><h2>টাকা উত্তোলন / Withdraw</h2></div><div class="panel"><form class="form" id="withdrawForm"><label>পেমেন্ট মাধ্যম<select name="method"><option>bKash Personal</option><option>Nagad Personal</option></select></label><label>পরিমাণ (৳)<input name="amount" type="number" min="1000" max="10000000" required></label><label>টাকা গ্রহণের মোবাইল নম্বর<input name="accountNumber" type="tel" required></label><button class="primary" type="submit">উত্তোলন অনুরোধ পাঠান</button></form><p class="msg" id="withdrawMsg"></p></div><p class="notice">সর্বনিম্ন উত্তোলন ৳১,০০০। প্রতি চলমান ২৪ ঘণ্টায় সর্বোচ্চ ৩টি উত্তোলন অনুরোধ করা যাবে। Admin যাচাইয়ের পর পেমেন্ট করবেন।</p></section>
 </main>
 <nav class="bottom-nav"><button class="active" data-view="home" onclick="showView('home',this)"><b>⌂</b>হোম</button><button data-view="products" onclick="showView('products',this)"><b>▦</b>প্রোডাক্ট</button><button data-view="earnings" onclick="showView('earnings',this)"><b>↗</b>হিসাব</button><button data-view="team" onclick="showView('team',this)"><b>♧</b>টিম</button><button data-view="profile" onclick="showView('profile',this)"><b>♙</b>আমার</button></nav>
@@ -80,19 +124,55 @@ function toggleChat(){const box=$('chatBox');box.classList.toggle('open');if(box
 function addChatMessage(message,mine=false){const el=document.createElement('div');el.className='chat-msg'+(mine?' mine':'');el.textContent=String(message||'');$('chatMessages').appendChild(el);$('chatMessages').scrollTop=$('chatMessages').scrollHeight;}
 async function loadChatHistory(){try{const data=await api('/chat/history');const messages=Array.isArray(data)?data:(data.messages||data.history||[]);messages.forEach(m=>addChatMessage(m.message||m.text||m.content||'',m.role==='user'||m.sender==='user'));}catch(e){addChatMessage('আগের চ্যাট লোড করা যায়নি। নতুন মেসেজ পাঠাতে পারেন।');}chatHistoryLoaded=true;}
 $('chatForm').addEventListener('submit',async e=>{e.preventDefault();const input=$('chatInput'),message=input.value.trim();if(!message)return;input.value='';addChatMessage(message,true);const btn=e.submitter;if(btn){btn.disabled=true;btn.textContent='পাঠানো হচ্ছে…';}try{const d=await api('/chat',{method:'POST',body:JSON.stringify({message})});addChatMessage(d.reply||d.response||d.message||'আপনার বার্তা গ্রহণ করা হয়েছে।');}catch(err){addChatMessage('দুঃখিত, উত্তর পাওয়া যায়নি: '+err.message);}finally{if(btn){btn.disabled=false;btn.textContent='পাঠান';}}});
+
 async function loadPaymentSettings(){
- try{
-  const response=await fetch(API+'/payment-settings');
-  if(!response.ok)throw new Error('Payment settings unavailable');
-  const settings=await response.json();
-  const bkashNumber=settings.bkash_number||'+8801763341991';
-  const nagadNumber=settings.nagad_number||'+8801763341991';
-  $('bkashPayNumber').textContent=bkashNumber;
-  $('nagadPayNumber').textContent=nagadNumber;
-  if(settings.bkash_logo_url){$('bkashPayLogo').src=settings.bkash_logo_url;$('bkashPayLogo').style.display='block';}
-  if(settings.nagad_logo_url){$('nagadPayLogo').src=settings.nagad_logo_url;$('nagadPayLogo').style.display='block';}
- }catch(error){console.warn('Payment settings could not load:',error.message);}
+  try{
+    const response=await fetch(API+'/payment-settings');
+
+    if(!response.ok){
+      throw new Error('Payment settings unavailable');
+    }
+
+    const settings=await response.json();
+
+    // Payment numbers
+    const bkashNumber=settings.bkash_number||'+8801763341991';
+    const nagadNumber=settings.nagad_number||'+8801985052780';
+
+    $('bkashPayNumber').textContent=bkashNumber;
+    $('nagadPayNumber').textContent=nagadNumber;
+
+    // Transaction types
+    const bkashType=settings.bkash_type==='cash_out'?'Cash Out':'Send Money';
+    const nagadType=settings.nagad_type==='cash_out'?'Cash Out':'Send Money';
+
+    $('bkashPayType').textContent=bkashType;
+    $('nagadPayType').textContent=nagadType;
+
+    // Payment logos
+    if(settings.bkash_logo||settings.bkash_logo_url){
+      $('bkashPayLogo').src=settings.bkash_logo||settings.bkash_logo_url;
+      $('bkashPayLogo').style.display='block';
+    }
+
+    if(settings.nagad_logo||settings.nagad_logo_url){
+      $('nagadPayLogo').src=settings.nagad_logo||settings.nagad_logo_url;
+      $('nagadPayLogo').style.display='block';
+    }
+
+    // Deposit instructions
+    $('depositPaymentInstruction').textContent=
+      'bKash: '+bkashType+' এবং Nagad: '+nagadType+
+      ' পদ্ধতিতে পেমেন্ট করুন। এরপর সঠিক Transaction ID জমা দিন।';
+
+  }catch(error){
+    console.warn(
+      'Payment settings could not load:',
+      error.message
+    );
+  }
 }
+
 async function loadDashboard(){
  if(!token){location.href='index.html';return;}
  try{
