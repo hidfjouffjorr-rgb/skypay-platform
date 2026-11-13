@@ -15,7 +15,61 @@
 <section id="products" class="tab-content hidden"><div class="panel"><div class="section-head"><h3>Product Management</h3><button class="btn" onclick="showProductForm()">+ Add Product</button></div><div id="productFormArea" class="hidden"><form id="productForm"><input type="hidden" id="productId"><div class="form-grid"><div class="field"><label>Product Name</label><input id="productName" required></div><div class="field"><label>Price</label><input id="productPrice" type="number" min="0" step="0.01" required></div><div class="field"><label>Duration (Days)</label><input id="productDuration" type="number" min="0" value="30"></div><div class="field"><label>Daily Estimate</label><input id="productDaily" type="number" min="0" step="0.01" value="0"></div><div class="field"><input id="productImage" type="hidden" value=""><label for="productImageFile">প্রোডাক্টের ছবি নির্বাচন করুন</label><input id="productImageFile" type="file" accept="image/*" style="width:100%;padding:10px;margin:8px 0"><img id="productImagePreview" alt="Product image preview" style="display:none;width:120px;height:120px;object-fit:cover;border-radius:12px;margin-top:10px"></div><div class="field"><label>Status</label><select id="productActive"><option value="true">Active</option><option value="false">Inactive</option></select></div></div><div class="field"><label>Description</label><textarea id="productDescription" rows="3"></textarea></div><button class="btn" type="submit">Save Product</button> <button class="btn btn-gray" type="button" onclick="hideProductForm()">Cancel</button></form></div></div><div class="panel"><div class="section-head"><h3>Product List</h3></div><div id="productsList" class="table-wrap"></div></div></section>
 <section id="requests" class="tab-content hidden"><div class="panel"><div class="section-head"><h3>Payment Requests</h3><button class="btn" onclick="loadRequests()">Refresh</button></div><div id="requestsList" class="table-wrap"></div></div></section>
 <section id="users" class="tab-content hidden"><div class="panel"><div class="section-head"><h3>User Management</h3><button class="btn" onclick="loadUsers()">Refresh</button></div><div id="usersList" class="table-wrap"></div></div></section>
-<section id="apps" class="tab-content hidden"><div class="panel"><div class="section-head"><h3>App Management</h3><button class="btn" onclick="showAppForm()">+ Add App</button></div><div id="appFormArea" class="hidden"><form id="appForm"><input type="hidden" id="appId"><div class="form-grid"><div class="field"><label>App Name</label><input id="appName" required></div><div class="field"><label>Version</label><input id="appVersion" required></div><div class="field"><label>File Size</label><input id="appSize" placeholder="Example: 15 MB"></div><div class="field"><label>Download URL</label><input id="appUrl" type="url" required></div></div><button class="btn" type="submit">Save App</button> <button class="btn btn-gray" type="button" onclick="hideAppForm()">Cancel</button></form></div></div><div class="panel"><h3>Managed Apps</h3><div id="appsList" class="table-wrap"></div></div></section>
+
+<!-- App Management Section Updated -->
+<section id="apps" class="tab-content hidden">
+  <div class="panel">
+    <div class="section-head">
+      <h3>App Management</h3>
+      <button class="btn" onclick="showAppForm()">+ Add App</button>
+    </div>
+
+    <div id="appFormArea" class="hidden">
+      <form id="appForm">
+        <input type="hidden" id="appId">
+        <input type="hidden" id="appImage" value="">
+
+        <div class="form-grid">
+          <div class="field">
+            <label>App Name</label>
+            <input id="appName" required>
+          </div>
+
+          <div class="field">
+            <label>Version</label>
+            <input id="appVersion" required>
+          </div>
+
+          <div class="field">
+            <label>File Size</label>
+            <input id="appSize" placeholder="Example: 15 MB">
+          </div>
+
+          <div class="field">
+            <label>Download URL</label>
+            <input id="appUrl" type="url" required>
+          </div>
+
+          <div class="field">
+            <label>App Image (Phone Gallery)</label>
+            <input id="appImageFile" type="file" accept="image/*">
+            <img id="appImagePreview" alt="App image preview"
+              style="display:none;width:120px;height:120px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid #ddd">
+            <small class="settings-note">সর্বোচ্চ ৫ MB-এর ছবি নির্বাচন করুন।</small>
+          </div>
+        </div>
+
+        <button class="btn" id="saveAppBtn" type="submit">Save App</button>
+        <button class="btn btn-gray" type="button" onclick="hideAppForm()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Managed Apps</h3>
+    <div id="appsList" class="table-wrap"></div>
+  </div>
+</section>
 
 <!-- Payment Settings Section Updated -->
 <section id="paymentSettings" class="tab-content hidden">
@@ -88,12 +142,184 @@ async function deleteProduct(id){if(!confirm("Are you sure you want to delete th
 async function loadRequests(){const box=document.getElementById("requestsList");box.innerHTML='<div class="empty">Loading requests...</div>';try{const data=await api("/api/admin/payment-requests");requestsCache=getArray(data,"requests");if(!requestsCache.length){box.innerHTML='<div class="empty">No payment requests found.</div>';updateStats();return;}box.innerHTML=`<table><thead><tr><th>ID</th><th>User</th><th>Type</th><th>Method</th><th>Amount</th><th>Sender</th><th>Transaction ID</th><th>Status</th><th>Action</th></tr></thead><tbody>${requestsCache.map(r=>`<tr><td>${escapeHTML(r.id)}</td><td>${escapeHTML(r.user_name||r.user_phone||r.user_id)}</td><td>${escapeHTML(r.type)}</td><td>${escapeHTML(r.method)}</td><td>${Number(r.amount||0).toFixed(2)}</td><td>${escapeHTML(r.sender_number||"")}</td><td>${escapeHTML(r.transaction_id||"")}</td><td><span class="badge ${r.status==="pending"?"pending":r.status==="rejected"?"rejected":""}">${escapeHTML(r.status)}</span></td><td>${r.status==="pending"?`<div class="actions"><button class="btn" onclick="reviewRequest(${Number(r.id)},'approved')">Approve</button><button class="btn btn-red" onclick="reviewRequest(${Number(r.id)},'rejected')">Reject</button></div>`:"—"}</td></tr>`).join("")}</tbody></table>`;updateStats();}catch(error){box.innerHTML=`<div class="empty">${escapeHTML(error.message)}</div>`;throw error;}}
 async function reviewRequest(id,status){const action=status==="approved"?"approve":"reject";if(!confirm("Are you sure you want to "+action+" this request?"))return;try{await api("/api/admin/payment-requests/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({status})});await loadRequests();showNotice("Payment request "+status+".");}catch(error){showNotice(error.message,true);}}
 async function loadUsers(){const box=document.getElementById("usersList");box.innerHTML='<div class="empty">Loading users...</div>';try{const data=await api("/api/admin/users");usersCache=getArray(data,"users");if(!usersCache.length){box.innerHTML='<div class="empty">No users found.</div>';updateStats();return;}box.innerHTML=`<table><thead><tr><th>ID</th><th>UID</th><th>Name</th><th>Phone</th><th>Balance</th><th>Status</th><th>Joined</th></tr></thead><tbody>${usersCache.map(u=>`<tr><td>${escapeHTML(u.id)}</td><td>${escapeHTML(u.uid||"")}</td><td>${escapeHTML(u.name||u.username||"")}</td><td>${escapeHTML(u.phone||"")}</td><td>${Number(u.balance||0).toFixed(2)}</td><td><span class="badge">${escapeHTML(u.status||"active")}</span></td><td>${u.created_at?escapeHTML(new Date(u.created_at).toLocaleDateString()):"—"}</td></tr>`).join("")}</tbody></table>`;updateStats();}catch(error){box.innerHTML=`<div class="empty">${escapeHTML(error.message)}</div>`;throw error;}}
-function showAppForm(app=null){document.getElementById("appFormArea").classList.remove("hidden");document.getElementById("appForm").reset();document.getElementById("appId").value=app?.id||"";document.getElementById("appName").value=app?.name||"";document.getElementById("appVersion").value=app?.version||"";document.getElementById("appSize").value=app?.size||"";document.getElementById("appUrl").value=app?.download_url||"";}
-function hideAppForm(){document.getElementById("appFormArea").classList.add("hidden");}
-async function loadApps(){const box=document.getElementById("appsList");box.innerHTML='<div class="empty">Loading apps...</div>';try{const data=await api("/api/apps");appsCache=getArray(data,"apps");if(!appsCache.length){box.innerHTML='<div class="empty">No apps added yet.</div>';return;}box.innerHTML=`<table><thead><tr><th>ID</th><th>App Name</th><th>Version</th><th>Size</th><th>Download</th><th>Actions</th></tr></thead><tbody>${appsCache.map(app=>`<tr><td>${escapeHTML(app.id)}</td><td>${escapeHTML(app.name)}</td><td>${escapeHTML(app.version)}</td><td>${escapeHTML(app.size||"—")}</td><td><a href="${escapeHTML(app.download_url)}" target="_blank" rel="noopener noreferrer">Open link</a></td><td><div class="actions"><button class="btn btn-orange" onclick="editApp(${Number(app.id)})">Edit</button><button class="btn btn-red" onclick="deleteApp(${Number(app.id)})">Delete</button></div></td></tr>`).join("")}</tbody></table>`;}catch(error){box.innerHTML=`<div class="empty">${escapeHTML(error.message)}</div>`;}}
-function editApp(id){const app=appsCache.find(x=>Number(x.id)===id);if(app)showAppForm(app);}
-document.getElementById("appForm").addEventListener("submit",async function(e){e.preventDefault();const id=document.getElementById("appId").value,app={name:document.getElementById("appName").value.trim(),version:document.getElementById("appVersion").value.trim(),size:document.getElementById("appSize").value.trim(),download_url:document.getElementById("appUrl").value.trim()};try{await api("/api/admin/apps"+(id?"/"+encodeURIComponent(id):""),{method:id?"PUT":"POST",body:JSON.stringify(app)});hideAppForm();await loadApps();showNotice("App saved successfully.");}catch(error){showNotice(error.message,true);}});
-async function deleteApp(id){if(!confirm("Are you sure you want to delete this app?"))return;try{await api("/api/admin/apps/"+encodeURIComponent(id),{method:"DELETE"});await loadApps();showNotice("App deleted successfully.");}catch(error){showNotice(error.message,true);}}
+
+function showAppForm(app=null){
+  document.getElementById("appFormArea").classList.remove("hidden");
+  document.getElementById("appForm").reset();
+
+  document.getElementById("appId").value=app?.id||"";
+  document.getElementById("appName").value=app?.name||"";
+  document.getElementById("appVersion").value=app?.version||"";
+  document.getElementById("appSize").value=app?.size||"";
+  document.getElementById("appUrl").value=app?.download_url||"";
+  document.getElementById("appImage").value=app?.image_url||"";
+
+  const preview=document.getElementById("appImagePreview");
+
+  if(app?.image_url){
+    preview.src=app.image_url;
+    preview.style.display="block";
+  }else{
+    preview.removeAttribute("src");
+    preview.style.display="none";
+  }
+}
+
+function hideAppForm(){
+  document.getElementById("appFormArea").classList.add("hidden");
+}
+
+document.getElementById("appImageFile").addEventListener("change",function(){
+  const file=this.files[0];
+  const preview=document.getElementById("appImagePreview");
+
+  if(!file)return;
+
+  if(!file.type.startsWith("image/")){
+    alert("শুধু ছবির ফাইল নির্বাচন করুন।");
+    this.value="";
+    return;
+  }
+
+  if(file.size>5*1024*1024){
+    alert("ছবির সাইজ ৫ MB-এর বেশি হতে পারবে না।");
+    this.value="";
+    return;
+  }
+
+  preview.src=URL.createObjectURL(file);
+  preview.style.display="block";
+});
+
+async function loadApps(){
+  const box=document.getElementById("appsList");
+  box.innerHTML='<div class="empty">Loading apps...</div>';
+
+  try{
+    const data=await api("/api/apps");
+    appsCache=getArray(data,"apps");
+
+    if(!appsCache.length){
+      box.innerHTML='<div class="empty">No apps added yet.</div>';
+      return;
+    }
+
+    box.innerHTML=`
+      <table>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>ID</th>
+            <th>App Name</th>
+            <th>Version</th>
+            <th>Size</th>
+            <th>Download</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${appsCache.map(app=>`
+            <tr>
+              <td>
+                ${app.image_url
+                  ? `<img src="${escapeHTML(app.image_url)}" alt="App image" style="width:55px;height:55px;object-fit:cover;border-radius:10px">`
+                  : "No Image"}
+              </td>
+              <td>${escapeHTML(app.id)}</td>
+              <td>${escapeHTML(app.name)}</td>
+              <td>${escapeHTML(app.version)}</td>
+              <td>${escapeHTML(app.size||"—")}</td>
+              <td>
+                <a href="${escapeHTML(app.download_url)}" target="_blank" rel="noopener noreferrer">Open link</a>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="btn btn-orange" onclick="editApp(${Number(app.id)})">Edit</button>
+                  <button class="btn btn-red" onclick="deleteApp(${Number(app.id)})">Delete</button>
+                </div>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>`;
+  }catch(error){
+    box.innerHTML=`<div class="empty">${escapeHTML(error.message)}</div>`;
+  }
+}
+
+function editApp(id){
+  const app=appsCache.find(x=>Number(x.id)===id);
+  if(app)showAppForm(app);
+}
+
+document.getElementById("appForm").addEventListener("submit",async function(e){
+  e.preventDefault();
+
+  const id=document.getElementById("appId").value;
+  const file=document.getElementById("appImageFile").files[0];
+  const btn=document.getElementById("saveAppBtn");
+  const oldText=btn.textContent;
+
+  btn.disabled=true;
+
+  try{
+    let imageUrl=document.getElementById("appImage").value.trim();
+
+    if(file){
+      btn.textContent="Uploading app image...";
+
+      const fd=new FormData();
+      fd.append("image",file);
+
+      const uploaded=await api("/api/admin/app-image",{
+        method:"POST",
+        body:fd
+      });
+
+      if(!uploaded.url){
+        throw new Error("App image URL was not returned.");
+      }
+
+      imageUrl=uploaded.url;
+    }
+
+    const app={
+      name:document.getElementById("appName").value.trim(),
+      version:document.getElementById("appVersion").value.trim(),
+      size:document.getElementById("appSize").value.trim(),
+      download_url:document.getElementById("appUrl").value.trim(),
+      image_url:imageUrl
+    };
+
+    btn.textContent="Saving app...";
+
+    await api("/api/admin/apps"+(id?"/"+encodeURIComponent(id):""),{
+      method:id?"PUT":"POST",
+      body:JSON.stringify(app)
+    });
+
+    hideAppForm();
+    await loadApps();
+    showNotice("App and image saved successfully.");
+
+  }catch(error){
+    showNotice(error.message,true);
+  }finally{
+    btn.disabled=false;
+    btn.textContent=oldText;
+  }
+});
+
+async function deleteApp(id){
+  if(!confirm("Are you sure you want to delete this app?"))return;
+  try{
+    await api("/api/admin/apps/"+encodeURIComponent(id),{method:"DELETE"});
+    await loadApps();
+    showNotice("App deleted successfully.");
+  }catch(error){
+    showNotice(error.message,true);
+  }
+}
 
 async function uploadPaymentLogo(method,file){
   if(!file)return "";
